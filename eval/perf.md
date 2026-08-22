@@ -150,3 +150,7 @@ Not the rename limit: `git log` emitted no "rename detection was skipped" warnin
 
 Update cost is proportional to the new commits plus a constant (~0.1 s: `merge-base --is-ancestor`, `rev-list --count`, one `check-mailmap`), not to repository size. The result is identical to a full rebuild on every fixture file (test), including a rename, a merge, a co-author and a sweep crossing the update boundary. A HEAD that is not a descendant of the indexed commit (rebase, amend) falls back to a full rebuild.
 
+## 8. `memoir person` and index v4 (2026-08-22, branch `person`)
+
+Materializing `file_lineage` and per-file top-5 ranks at build time costs +7 s (valkey) to +23 s (elasticsearch) on the build (measured with all five builds concurrent) and roughly doubles index size. `memoir person` then answers in 0.17–0.28 s for Valkey/OpenCV authors and 1.4 s for Shay Banon across 1,488 Elasticsearch files (the per-file author-count query for theme weighting dominates), versus 1.3–1.6 s per person on the prototype's per-file live path — which could not even find Shay's files without lineage. See eval/person.md §7.
+

@@ -54,7 +54,33 @@ $ uv run memoir index            # or: memoir index src   (limit to a directory)
 indexed 14019 commits at 1a2b3c4d5e in 6.9 s -> .git/memoir/index.sqlite (3.7 MB)
 ```
 
-One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`. `who` and `audit` always read from it: if it is missing they build it (seconds on most repositories, ~80 s on a 160k-commit one); if `HEAD` has moved they update it incrementally — only the new commits are walked, a fraction of a second — and say so on stderr; a rebased or amended `HEAD` triggers a full rebuild. `memoir index` builds it explicitly, optionally scoped to a directory; `--path` chooses another location.
+One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`, together with each file's lineage and its top-5 experts per list (used by `person` and kept current on update). `who` and `audit` always read from it: if it is missing they build it (seconds on most repositories, ~80 s on a 160k-commit one); if `HEAD` has moved they update it incrementally — only the new commits are walked, a fraction of a second — and say so on stderr; a rebased or amended `HEAD` triggers a full rebuild. `memoir index` builds it explicitly, optionally scoped to a directory; `--path` chooses another location.
+
+**What does a person know?**
+
+```sh
+$ uv run memoir person "Viktor Söderqvist"        # name or email; split identities are merged and reported
+Viktor Söderqvist — keys: viktor.soderqvist@est.tech, viktor@zuiderkwast.se
+  files touched (at HEAD): 384; top-3 current: 200; top-3 built_it: 164; last touch 2026-08-13; ranks as of 2026-08-22; vendored excluded
+  themes: hashtable, moduleapi, cluster, module, …
+  current — can answer today:
+    src/hashtable.c  #1 cur 7.30 · #1 raw 7.90
+    …
+  built_it — built it (undecayed):
+    …
+  directories (by expertise mass; top-3 current / built_it of files):
+    tests/support/  8/13 (62%) · 5/13 (38%)  mass 22.0  e.g. stacktrace.tcl, server.tcl, cluster_util.tcl
+```
+
+A rollup, not a file list: the files where the person is in the top-3 (`current` = decayed, `built_it` = undecayed, always both), the directories ranked by expertise mass with a few representative files, and themes from path tokens (TF-IDF, no model). Vendored trees (`deps/`, `3rdparty/`, `vendor/` …) are excluded unless `--include-vendored`. `--json` for the full structure. Ranks come from the index's materialized per-file top-5 (computed at build/update time); `--now` outside the index's 30-day window recomputes live.
+
+**Split identities**
+
+```sh
+$ uv run memoir identities          # suggested .mailmap lines, tiered (same name / GitHub noreply / spellings); nothing is written
+```
+
+Review, paste into `.mailmap`, rebuild the index. `person` already merges identities that share an email or a full name for its report and says so.
 
 **For agents (MCP)**
 

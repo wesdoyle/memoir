@@ -60,3 +60,28 @@ def test_person_cli_text_and_json(fixture_repo):
     assert {"summary", "themes", "top_files", "directories"} <= set(data)
     amb = runner.invoke(app, ["person", "example.com", "--repo", str(fixture_repo)])
     assert amb.exit_code != 0 and "ambiguous" in amb.output
+
+
+def test_split_identities_take_the_strongest_row_per_file(tmp_path):
+    import subprocess
+    from memoir.index import build_index
+    r = tmp_path / "split2"; r.mkdir()
+    def git(*a, name, email, date):
+        env = {"GIT_AUTHOR_NAME": name, "GIT_AUTHOR_EMAIL": email, "GIT_COMMITTER_NAME": name, "GIT_COMMITTER_EMAIL": email,
+               "GIT_AUTHOR_DATE": date, "GIT_COMMITTER_DATE": date, "GIT_CONFIG_GLOBAL": "/dev/null", "HOME": str(r), "PATH": "/usr/bin:/bin"}
+        subprocess.run(["git", "-C", str(r), *a], check=True, capture_output=True, env=env)
+    git("init", "-q", "-b", "main", name="x", email="x@x", date="2024-01-01T00:00:00")
+    for i, (name, email) in enumerate([("Zed Zee", "zed@work.example")] * 4 + [("Zed Zee", "zed@home.example")] + [("Ann Lee", "ann@x.example")] * 2):
+        (r / "shared.txt").write_text("\n".join(str(j) for j in range(i + 1)) + "\n")
+        git("add", "-A", name=name, email=email, date=f"2024-01-{i+1:02d}T00:00:00")
+        git("commit", "-qm", f"c{i}", name=name, email=email, date=f"2024-01-{i+1:02d}T00:00:00")
+    db = tmp_path / "s.sqlite"
+    build_index(r, db, now=__import__("datetime").datetime(2024, 2, 1, tzinfo=__import__("datetime").timezone.utc))
+    with open_index(db) as ix:
+        keys, note = resolve_person(ix, "Zed Zee")
+        assert keys == {"zed@work.example", "zed@home.example"} and "merged" in note
+        rep = person_report(ix, keys, now="2024-02-01")
+    f = rep["top_files"]["built_it"][0]
+    # Ann out-ranks Zed (Zed's creation is the root commit: no +3 under not_root); the point is that the report
+    # takes Zed's 4-commit identity (rank 2), not the 1-commit one (rank 3)
+    assert f["path"] == "shared.txt" and f["rank_built_it"] == 2

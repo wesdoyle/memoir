@@ -144,7 +144,8 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
             [("head", head), ("pathspec", pathspec or ""), ("schema", str(SCHEMA)),
              ("built_at", datetime.now(tz=timezone.utc).isoformat(timespec="seconds")),
              ("commits", str(n)),
-             ("rank_now", now.isoformat(timespec="seconds")), ("rank_weights", json.dumps(asdict(w)))],
+             ("rank_now", now.isoformat(timespec="seconds")), ("rank_weights", json.dumps(asdict(w))),
+             ("repo_name", repo.resolve().name)],
         )
         _materialize(con, repo, _head_files(repo, pathspec), now, w)
         con.execute("CREATE INDEX file_lineage_path ON file_lineage(path)")

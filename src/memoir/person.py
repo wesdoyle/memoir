@@ -23,6 +23,7 @@ VENDORED = re.compile(r"(^|/)(3rdparty|third_party|thirdparty|deps|vendor|extern
 STOP = set("src main java org com test tests unit integration include lib h c cpp hpp hxx cc ts js py rb md json txt "
            "yml yaml xml in cmake internal impl base core common util utils misc api v1 v2".split())
 IDF_FLOOR = 0.2  # tokens present in more than this share of files (repo names, ubiquitous dirs) are not themes
+DIR_TOKEN_WEIGHT = 1.0  # directory tokens carry module identity (imgproc, cluster); basename weighting tested worse
 
 
 def _norm_name(n: str) -> str:
@@ -62,16 +63,24 @@ def resolve_person(ix: Index, query: str) -> tuple[set[str], str | None]:
     return keys, f"merged {len(keys)} identities for this report: {desc}. Add them to .mailmap to make it permanent."
 
 
-def _tokens(path: str) -> list[str]:
+def _tokens(path: str) -> dict[str, float]:
+    """token -> weight (1.0 if it occurs in the file name, else DIR_TOKEN_WEIGHT)."""
     last = path.rsplit("/", 1)[-1]
-    base = path[: -len(last)] + (last.rsplit(".", 1)[0] if "." in last else last)
-    toks = []
-    for part in re.split(r"[/_\-. ]+", base):
-        for t in re.findall(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+", part):
-            t = t.lower()
-            if len(t) >= 3 and t not in STOP:
-                toks.append(t)
-    return toks
+    stem = last.rsplit(".", 1)[0] if "." in last else last
+    out: dict[str, float] = {}
+    for part, wgt in [(path[: -len(last)], DIR_TOKEN_WEIGHT), (stem, 1.0)]:
+        for piece in re.split(r"[/_\-. ]+", part):
+            for t in re.findall(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+", piece):
+                t = t.lower()
+                if len(t) >= 3 and t not in STOP:
+                    out[t] = max(out.get(t, 0.0), wgt)
+    return out
+
+
+def _repo_stop(ix: Index) -> set[str]:
+    """The repository's own name is not a theme (valkey-cli.c, opencv2/...)."""
+    root = ix.meta.get("repo_name") or ""
+    return {t for t in re.findall(r"[a-z]+", root.lower()) if len(t) >= 3}
 
 
 def _head_files(ix: Index, include_vendored: bool) -> list[str]:
@@ -106,8 +115,12 @@ def person_report(ix: Index, keys: set[str], now: str | datetime | None = None, 
             rows = [x for x in ix.ranks_for(p) if x[0] in keys]
             if not rows:
                 continue  # P is not in the top-5 of either list: a record, but not strength
-            x = rows[0]
+            # split identities can each hold a row on the same file; take the strongest (the .mailmap fix is the real one)
+            x = max(rows, key=lambda x: (x[4], x[6]))
             rc, sc, rr, raw, name = x[3], x[4], x[5], x[6], x[1]
+            n_auth = ix.con.execute(
+                "SELECT COUNT(DISTINCT LOWER(c.email)) FROM file_lineage l JOIN commits c ON c.pos=l.pos WHERE l.path=? AND c.merge=0",
+                (p,)).fetchone()[0]
         per[p] = {"path": p, "rank_cur": rc, "score": sc, "rank_raw": rr, "raw": raw, "name": name,
                   "commits": commits, "last_touch": last, "authors": n_auth}
 
@@ -171,18 +184,21 @@ def person_report(ix: Index, keys: set[str], now: str | datetime | None = None, 
     keep.sort(key=lambda r: -r["mass"])
 
     # themes
+    stop = _repo_stop(ix)
     df = Counter()
     for p in existing:
-        for t in set(_tokens(p)):
-            df[t] += 1
+        for t in _tokens(p):
+            if t not in stop:
+                df[t] += 1
     N = max(1, len(existing))
     tf, cnt = Counter(), Counter()
     for p, v in per.items():
         if strong_cur(v) or strong_raw(v):
             w = max(v["score"] if strong_cur(v) else 0.0, v["raw"] if strong_raw(v) else 0.0)
             w *= math.log1p(v["authors"]) if v.get("authors") else 1.0
-            for t in set(_tokens(p)):
-                tf[t] += w; cnt[t] += 1
+            for t, tw in _tokens(p).items():
+                if t not in stop:
+                    tf[t] += w * tw; cnt[t] += 1
     themes = sorted(((t, w * math.log(N / df[t])) for t, w in tf.items() if cnt[t] >= 2 and df[t] / N <= IDF_FLOOR),
                     key=lambda x: -x[1])[:6]
 
