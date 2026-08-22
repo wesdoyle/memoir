@@ -127,16 +127,22 @@ class Index:
         return ps is None or path == ps or path.startswith(ps.rstrip("/") + "/")
 
     # -- queries
+    def pos_of(self, sha: str) -> int | None:
+        row = self.con.execute("SELECT pos FROM commits WHERE sha=?", (sha,)).fetchone()
+        return row[0] if row else None
+
     def _records(self, path: str, after: int) -> list[tuple[int, int, int, int, str | None]]:
         return self.con.execute(
             "SELECT pos, added, deleted, binary, renamed_from FROM files WHERE path=? AND pos>? ORDER BY pos",
             (path, after),
         ).fetchall()
 
-    def lineage(self, path: str) -> list[tuple[str, int, int, int, bool, str | None]]:
+    def lineage(self, path: str, before: int | None = None) -> list[tuple[str, int, int, int, bool, str | None]]:
+        """Records newest first following renames backwards; `before` = only commits older than that pos
+        (pos 0 is HEAD), i.e. the file's history as it was just before commit `before`."""
         out = []
         cur: str | None = path
-        after = -1
+        after = -1 if before is None else before
         seen = set()
         while cur is not None and (cur, after) not in seen:
             seen.add((cur, after))
@@ -149,8 +155,8 @@ class Index:
             cur = nxt
         return out
 
-    def history(self, path: str) -> FileHistory:
-        lin = self.lineage(path)
+    def history(self, path: str, before: int | None = None) -> FileHistory:
+        lin = self.lineage(path, before)
         if not lin:
             return _history_from_commits(path, [])
         positions = [l[1] for l in lin]

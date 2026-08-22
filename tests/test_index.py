@@ -66,3 +66,16 @@ def test_index_stores_breadth(fixture_repo, tmp_path):
     with open_index(db) as ix:
         h = ix.history("src/core.py")
         assert {c.author.name: c.breadth for c in h.commits}["Carol Chen"] == 3
+
+
+def test_history_before_a_position_excludes_newer_commits(fixture_repo, tmp_path):
+    db = tmp_path / "idx.sqlite"
+    build_index(fixture_repo, db)
+    with open_index(db) as ix:
+        full = ix.history("src/core.py")
+        # pos 0 is Carol's sweep (newest). History strictly before it must not contain her.
+        carol_pos = ix.con.execute("SELECT pos FROM commits WHERE name='Carol Chen'").fetchone()[0]
+        before = ix.history("src/core.py", before=carol_pos)
+        assert "Carol Chen" not in {a.name for a in before.authors}
+        assert len(before.commits) == len(full.commits) - 1
+        assert before.last_commit.author.name == "Alice Adams"

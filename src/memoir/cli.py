@@ -11,7 +11,7 @@ import typer
 
 from memoir.index import Index, build_index, default_index_path, open_index
 from memoir.mining import FileHistory, mine_file
-from memoir.scoring import Evidence, divergence, rank
+from memoir.scoring import Evidence, Weights, divergence, rank
 
 app = typer.Typer(no_args_is_help=True, help="Find who most likely holds the mental model of a file.")
 
@@ -100,6 +100,37 @@ def _dormancy(h: FileHistory, now: datetime | None) -> tuple[bool, float]:
     return idle > DORMANT_MONTHS, idle
 
 
+SWEEP_BREADTH = 50  # a last commit touching more files than this is flagged as a sweep
+STABILITY_HALF_LIVES = {"12": 12.0, "18": 18.0, "36": 36.0, "inf": 1e9}
+
+
+def _lists_and_flags(h: FileHistory, ranked: list[Evidence], n: int, now: datetime | None) -> tuple[dict, dict]:
+    """Proposal 5: labeled answers, each with the decay regime that fits its question, plus trust flags."""
+    recent = []
+    for a in sorted(h.authors, key=lambda a: a.last_touch, reverse=True):
+        if a.name not in recent:
+            recent.append(a.name)
+        if len(recent) >= n:
+            break
+    top1_by_hl = {k: (r[0].author.name if (r := rank(h, now=now, w=Weights(half_life_months=hl))) else None)
+                  for k, hl in STABILITY_HALF_LIVES.items()}
+    dormant, idle = _dormancy(h, now)
+    last = h.last_commit
+    flags = {
+        "dormant": dormant,
+        "dormant_months": round(idle, 1),
+        "last_touch_is_sweep": bool(last and last.breadth is not None and last.breadth > SWEEP_BREADTH),
+        "last_touch_breadth": last.breadth if last else None,
+        "stability": {"top1_by_half_life": top1_by_hl, "top1_stable": len(set(top1_by_hl.values())) == 1},
+    }
+    lists = {
+        "current": [e.to_dict() for e in ranked[:n]],          # decayed: can answer today
+        "built_it": [e.to_dict() for e in _by_raw(ranked)[:n]],  # raw: deepest accumulated knowledge
+        "recent": recent,                                      # pure recency baseline: what blame/log says
+    }
+    return lists, flags
+
+
 def _who(src: _Source, rel: str, n: int, now: datetime | None) -> tuple[FileHistory, list[Evidence], dict]:
     """Rank; on a dormant file the decayed order is noise, so rank by raw score instead."""
     h = src.history(rel)
@@ -127,10 +158,12 @@ def who(
     dormant, idle = _dormancy(h, when)
     src.close()
     if as_json:
+        lists, flags = _lists_and_flags(h, ranked, n, when)
         typer.echo(json.dumps({"path": rel, "paths": h.paths, "experts": [e.to_dict() for e in ranked[:n]],
-                               "by_raw_score": [e.to_dict() for e in _by_raw(ranked)[:n]],
+                               "by_raw_score": lists["built_it"],
                                "ranked_by": "raw_score" if dormant else "score",
                                "dormant": dormant, "dormant_months": round(idle, 1),
+                               "lists": lists, "flags": flags,
                                "last_commit": div["last_commit"], "diverges": div["diverges"],
                                "source": src.name}, indent=2))
         return

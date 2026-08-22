@@ -133,3 +133,15 @@ def test_dormant_file_is_announced_and_ranked_by_raw(fixture_repo):
 def test_active_file_is_not_dormant(fixture_repo):
     data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2024-06-01", "--live", "--json"))
     assert data["dormant"] is False
+
+
+def test_json_carries_labeled_lists_and_flags(fixture_repo):
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--live", "--now", "2026-08-21"))
+    lists = data["lists"]
+    assert [e["author"]["name"] for e in lists["current"]][:2] == ["Alice Adams", "Carol Chen"]
+    assert [e["author"]["name"] for e in lists["built_it"]][:1] == ["Alice Adams"]
+    assert lists["recent"][:2] == ["Carol Chen", "Alice Adams"]  # last distinct humans by last substantive touch, newest first
+    assert data["flags"]["dormant"] is False
+    assert data["flags"]["last_touch_is_sweep"] is False  # live mining: breadth unknown -> False
+    assert data["flags"]["stability"]["top1_stable"] in (True, False)
+    assert set(data["flags"]["stability"]["top1_by_half_life"]) == {"12", "18", "36", "inf"}
