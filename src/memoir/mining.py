@@ -162,7 +162,7 @@ def _numstat_path(p: str) -> str:
     # rename forms: "old => new" or "dir/{old => new}/file"
     m = re.match(r"^(.*)\{(.*) => (.*)\}(.*)$", p)
     if m:
-        return f"{m.group(1)}{m.group(3)}{m.group(4)}"
+        return re.sub(r"/{2,}", "/", f"{m.group(1)}{m.group(3)}{m.group(4)}")
     if " => " in p:
         return p.split(" => ", 1)[1]
     return p
