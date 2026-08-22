@@ -174,3 +174,30 @@ def identities(
         typer.echo(format_mailmap(suggest_mailmap(src.index)))
     finally:
         src.close()
+
+
+@app.command()
+def person(
+    who: str = typer.Argument(..., help="Name or email (substring; exact email wins)"),
+    repo: Path | None = typer.Option(None, "--repo"),
+    as_json: bool = typer.Option(False, "--json"),
+    now: str | None = typer.Option(None, "--now", help="Reference date YYYY-MM-DD; ranks are recomputed live if it is outside the index's window"),
+    include_vendored: bool = typer.Option(False, "--include-vendored", help="Count vendored trees (deps/, 3rdparty/, vendor/ ...)"),
+    top: int = typer.Option(8, "--top", help="Files to list per answer"),
+) -> None:
+    """What does this person know: top files, directories and themes, for `current` and `built_it`."""
+    from memoir.person import format_person, person_report, resolve_person
+
+    root, _ = _resolve(".", repo)
+    src = Source(root)
+    try:
+        keys, note = resolve_person(src.index, who)
+        if not keys:
+            typer.echo(f"memoir: {note}", err=True)
+            raise typer.Exit(code=1)
+        rep = person_report(src.index, keys, now=_parse_now(now), n_top=top, include_vendored=include_vendored)
+    finally:
+        src.close()
+    if note:
+        rep["person"]["note"] = note
+    typer.echo(json.dumps(rep, indent=2) if as_json else format_person(rep, who, note))
