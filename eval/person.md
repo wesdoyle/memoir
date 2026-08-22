@@ -242,3 +242,7 @@ Shay Banon — keys: kimchy@gmail.com
     server/src/main/java/org/elasticsearch/rest/action/admin/indices/  4/47 (8%) · 20/47 (43%)  mass 104.6  e.g. RestIndicesStatsAction.java, RestDeleteIndexAction.java, 
 ```
 
+## 8. `memoir experts` (branch `person`)
+
+Built after the topic discussion: the valuable primitive is expertise over a file set; a topic word is one selector. `memoir experts --dir/--glob/--match [--prefix]/--files` (ANDed), MCP `experts_for_files`. Mass per person = Σ score/rank × log1p(authors) over files where they are top-3 (current: decayed score; built_it: raw). Measured: valkey `--match cluster` 121 files, 0.11 s → Binbin (69 files), Viktor Söderqvist, Harkrishn Patro, Jacob Murphy; built_it Binbin, antirez, guybe7. ES `--match security` 2,513 files, 0.8 s → Tim Vernum (658), Slobodan Adamović, Nikolaj Volgushev, Johannes Fredén; built_it Tim Vernum, Yang Wang, Ioannis Kakavas, jaymode/Jay Modi. ES exact `auth` → google-auth license files; `--prefix` → the security team (the sample line is what tells the user which). vscode `--match terminal` → Daniel Imms 80% of 782 files, Megan Rogge 42% (plus `meganrogge` unmerged: single-token name, the `.mailmap` case). A diff-style list (`git show --name-only | memoir experts --files -`) with 2 files at HEAD is flagged as a file question.
+

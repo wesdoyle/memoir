@@ -51,7 +51,8 @@ def select_files(ix: Index, dir: str | None = None, glob: str | None = None, mat
     if files is not None:
         wanted = {f.strip().lstrip("./") for f in files if f.strip()}
         paths = [p for p in paths if p in wanted]
-        parts.append(f"{len(wanted)} listed files")
+        skipped = len(wanted) - len(paths)
+        parts.append(f"{len(wanted)} listed files" + (f", {skipped} skipped: not at HEAD or vendored" if skipped else ""))
     return paths, ", ".join(parts) or "all files"
 
 

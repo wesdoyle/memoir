@@ -145,3 +145,9 @@ Decisions
 - Measured corrections: basename weighting for themes reverted (worse); IDF floor 0.2 (0.1 drops `cluster`); repo name stop-listed (`opencv`, `valkey`); author count restored for the contested-file weight via file_lineage; strongest row per file when identities are split. Residual theme noise: `server`, `type`, `data`, `support`.
 - Cost: person 0.17-0.28 s (valkey/opencv), 1.4 s for Shay Banon on ES (1,488 files; was not findable before lineage); build +7..+23 s per repo; `who`/`audit` unchanged (regress v4 == fixes).
 
+## P10 (branch `person`) — person_profile in MCP; memoir experts
+
+- MCP gains `person_profile` (ambiguity -> candidates, not an error) and `experts_for_files` (five tools now; the "exactly three" of v0 was for the file ladder).
+- Direction (2026-08-22): `topic` as a word lookup is the transpose of person's themes and epistemically weaker (prescriptive: the user's word must exist in the path vocabulary; a near-miss gives a confident wrong answer). The valuable primitive is expertise over a *file set*; built as `memoir experts` with selectors dir / glob / match (token, --prefix) / --files (diff, grep -l, stdin), ANDed. Mass = Σ score/rank x log1p(authors) over top-3 files; identities sharing a full name merged; <3 files flagged as a file question; match words bypass the theme stop list. 0.1 s (valkey) to 0.8 s (ES, 2,513 files).
+- Outputs: valkey cluster -> Binbin 69 files, Viktor, Harkrishn Patro; built_it adds antirez. ES security -> Tim Vernum, Slobodan Adamović, Nikolaj Volgushev; auth (prefix) -> the same team, exact `auth` -> license files (the sample makes that visible). vscode terminal -> Daniel Imms 80%, Megan Rogge 42%.
+
