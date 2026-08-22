@@ -17,7 +17,15 @@ uv run memoir --help
 
 ## Usage
 
-Run inside any git repository (or point at one with `--repo`).
+Install it once as a command, then run it inside any git repository (or point at one with `--repo`):
+
+```sh
+uv tool install --editable /path/to/memoir     # `memoir` on your PATH, tracking the checkout
+cd /path/to/some-repo
+memoir who src/foo.c
+```
+
+(Without installing: `uv run --directory /path/to/memoir memoir who src/foo.c`.) The first command in a repository builds the index under `.git/memoir/` and says so on stderr; after that queries are instant and the index updates itself when `HEAD` moves.
 
 **Who knows a file?**
 
