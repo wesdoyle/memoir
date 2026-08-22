@@ -55,8 +55,8 @@ def test_blame_divergence_explains(fixture_repo):
     assert out1["diverges"] is True and "Alice Adams" in out1["explanation"]
 
 
-def test_four_tools_now_include_person_profile(fixture_repo):
-    assert tools(make_server(fixture_repo, now="2026-08-21")) == ["blame_divergence", "expertise_evidence", "person_profile", "who_knows"]
+def test_five_tools(fixture_repo):
+    assert tools(make_server(fixture_repo, now="2026-08-21")) == ["blame_divergence", "expertise_evidence", "experts_for_files", "person_profile", "who_knows"]
 
 
 def test_person_profile_tool(fixture_repo):
@@ -70,3 +70,15 @@ def test_person_profile_tool(fixture_repo):
     assert amb["ambiguous"] is True and len(amb["candidates"]) >= 3
     none = call(srv, "person_profile", query="nobody")
     assert none["ambiguous"] is False and none["person"] is None
+
+
+def test_experts_for_files_tool(fixture_repo):
+    srv = make_server(fixture_repo, now="2026-08-21")
+    assert "experts_for_files" in tools(srv)
+    out = call(srv, "experts_for_files", paths=["src/core.py", "src/helpers.py"], n=3)
+    assert out["selection"]["files"] == 2
+    assert {e["name"] for e in out["current"][:2]} == {"Alice Adams", "Bob Smith"}
+    out = call(srv, "experts_for_files", match="core")
+    assert out["selection"]["files"] == 1 and out["current"][0]["name"] == "Alice Adams"
+    out = call(srv, "experts_for_files", dir="src", match="zzz")
+    assert out["selection"]["files"] == 0 and out["current"] == []

@@ -4,6 +4,7 @@
   expertise_evidence(path, author)  full evidence record for one author
   blame_divergence(path, n=3)       last committer vs memoir top-n, explained
   person_profile(query, n=5)        what a person knows: themes, top files, directories (current / built_it)
+  experts_for_files(...)            who has the most expertise across a set of files (diff, dir, glob, topic)
 
 Run: `memoir mcp [--repo PATH]` (stdio). The repository is fixed at server start; paths are
 relative to its root. The on-disk index is built or refreshed on demand, like the CLI.
@@ -17,6 +18,7 @@ from pathlib import Path
 from fastmcp import FastMCP
 
 from memoir.api import Source, answer, by_raw, lists_and_flags
+from memoir.experts import experts_report, select_files
 from memoir.person import person_report, resolve_person
 from memoir.scoring import Evidence
 
@@ -135,6 +137,25 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
             d["representative"] = d["representative"][:3]
         rep["query"] = query
         rep["ambiguous"] = False
+        return rep
+
+    @mcp.tool
+    def experts_for_files(paths: list[str] | None = None, dir: str | None = None, glob: str | None = None,
+                          match: str | None = None, prefix: bool = False, n: int = 5) -> dict:
+        """Who has the most expertise across a set of files — e.g. the files of a change you are about to make
+        or review. Select by explicit `paths` (relative to the repo root), a `dir`, a `glob`, and/or `match`
+        (space-separated path-token words, any matches; `prefix` matches stems). Selectors are ANDed.
+        Returns the selection (count, sample), and `current` / `built_it` lists of people with how many of
+        the files they are top-3 on, an expertise mass, and their best file. A selection under 3 files is a
+        file question: use who_knows."""
+        src = Source(root)
+        try:
+            sel, desc = select_files(src.index, dir=dir, glob=glob, match=match.split() if match else None,
+                                     prefix=prefix, files=paths)
+            rep = experts_report(src.index, sel, n=n, now=when)
+        finally:
+            src.close()
+        rep["selection"]["selector"] = desc
         return rep
 
     return mcp

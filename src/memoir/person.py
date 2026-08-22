@@ -63,8 +63,11 @@ def resolve_person(ix: Index, query: str) -> tuple[set[str], str | None]:
     return keys, f"merged {len(keys)} identities for this report: {desc}. Add them to .mailmap to make it permanent."
 
 
-def _tokens(path: str) -> dict[str, float]:
-    """token -> weight (1.0 if it occurs in the file name, else DIR_TOKEN_WEIGHT)."""
+def _tokens(path: str, stop: set[str] | None = None) -> dict[str, float]:
+    """token -> weight (1.0 if it occurs in the file name, else DIR_TOKEN_WEIGHT). `stop` defaults to STOP;
+    pass an empty set when the user supplies the word (a requested `core` must match core/)."""
+    if stop is None:
+        stop = STOP
     last = path.rsplit("/", 1)[-1]
     stem = last.rsplit(".", 1)[0] if "." in last else last
     out: dict[str, float] = {}
@@ -72,7 +75,7 @@ def _tokens(path: str) -> dict[str, float]:
         for piece in re.split(r"[/_\-. ]+", part):
             for t in re.findall(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+", piece):
                 t = t.lower()
-                if len(t) >= 3 and t not in STOP:
+                if len(t) >= 3 and t not in stop:
                     out[t] = max(out.get(t, 0.0), wgt)
     return out
 

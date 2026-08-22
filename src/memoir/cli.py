@@ -201,3 +201,38 @@ def person(
     if note:
         rep["person"]["note"] = note
     typer.echo(json.dumps(rep, indent=2) if as_json else format_person(rep, who, note))
+
+
+@app.command()
+def experts(
+    dir: str | None = typer.Option(None, "--dir", help="Files under this directory"),
+    glob: str | None = typer.Option(None, "--glob", help="Files matching this glob (full path or file name)"),
+    match: list[str] = typer.Option([], "--match", help="Path-token word (repeatable; any word matches)"),
+    prefix: bool = typer.Option(False, "--prefix", help="Match token prefixes (auth -> authc, authz ...)"),
+    files: str | None = typer.Option(None, "--files", help="File list: a path, or - for stdin (one per line; e.g. a diff's files)"),
+    repo: Path | None = typer.Option(None, "--repo"),
+    top: int = typer.Option(10, "--top"),
+    as_json: bool = typer.Option(False, "--json"),
+    now: str | None = typer.Option(None, "--now"),
+    include_vendored: bool = typer.Option(False, "--include-vendored"),
+) -> None:
+    """Who has the most expertise across a set of files (a directory, a glob, a topic word, or a file list)."""
+    import sys
+    from memoir.experts import experts_report, format_experts, select_files
+
+    root, _ = _resolve(".", repo)
+    listed = None
+    if files is not None:
+        listed = (sys.stdin.read() if files == "-" else Path(files).read_text()).splitlines()
+    src = Source(root)
+    try:
+        paths, desc = select_files(src.index, dir=dir, glob=glob, match=list(match) or None, prefix=prefix,
+                                   files=listed, include_vendored=include_vendored)
+        if not paths:
+            typer.echo(f"memoir: no files selected ({desc})", err=True)
+            raise typer.Exit(code=1)
+        rep = experts_report(src.index, paths, n=top, now=_parse_now(now))
+    finally:
+        src.close()
+    rep["selection"]["selector"] = desc
+    typer.echo(json.dumps(rep, indent=2) if as_json else format_experts(rep, desc))
