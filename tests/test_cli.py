@@ -44,7 +44,7 @@ def test_audit_headline_stat_and_bot_exclusion(fixture_repo):
 
 def test_audit_top1_reports_divergence_and_worst_cases(fixture_repo):
     out = run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21")
-    assert "3/4" in out and "75" in out
+    assert "2/4" in out and "50" in out  # README.md: Alice's root-commit creation is not credited, Carol's sweep wins
     assert "src/core.py" in out and "Carol Chen" in out and "Alice Adams" in out
     assert ".mailmap" not in out.split("worst")[1]
 
@@ -59,19 +59,19 @@ def test_audit_works_without_a_working_tree(fixture_repo, tmp_path):
     bare = tmp_path / "nocheckout"
     subprocess.run(["git", "clone", "-q", "--no-checkout", str(fixture_repo), str(bare)], check=True)
     out = run("audit", "--repo", str(bare), "--top", "1", "--now", "2026-08-21")
-    assert "3/4" in out
+    assert "2/4" in out
 
 
 def test_audit_reports_divergence_among_contested_files(fixture_repo):
     # core.py (3 authors), helpers.py (3), README (2), .mailmap (1): none has >1 author... except all but .mailmap
     out = run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21")
-    assert "contested" in out and "3/3" in out  # files with >1 author: core, helpers, README; all diverge at top-1
+    assert "contested" in out and "2/3" in out  # files with >1 author: core, helpers, README; core and helpers diverge at top-1
 
 
 def test_who_shows_raw_alongside_decayed(fixture_repo):
     out = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2026-08-21")
     first = [l for l in out.splitlines() if l.strip().startswith("1.")][0]
-    assert "score 1.87" in first and "raw 6.21" in first
+    assert "score 0.97" in first and "raw 3.21" in first  # root-commit creation earns no w_first (not_root)
 
 
 def test_who_lists_raw_top_when_it_differs(fixture_repo):
@@ -93,7 +93,7 @@ def test_index_command_then_who_and_audit_use_it(fixture_repo, monkeypatch):
     idx = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2026-08-21")
     assert idx == live  # stdout identical; provenance goes to stderr
     audit_idx = run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21")
-    assert "3/4" in audit_idx
+    assert "2/4" in audit_idx
 
 
 def test_stale_index_falls_back_to_live(fixture_repo, tmp_path):

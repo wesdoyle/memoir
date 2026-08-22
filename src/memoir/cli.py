@@ -49,7 +49,7 @@ def _fmt_expert(i: int, e: Evidence) -> str:
     bits.append(f"{e.lines_changed} lines")
     bits.append(f"last {e.last_touch} ({e.months_since_last_touch:.0f} mo ago)")
     if e.others_commits_since:
-        bits.append(f"{e.others_commits_since} by others since")
+        bits.append(f"{e.others_commits_since:g} by others since")
     return f"{i}. {e.author.name} <{e.author.email}>  score {e.score:.2f} (raw {e.raw_score:.2f})  " + " · ".join(bits)
 
 

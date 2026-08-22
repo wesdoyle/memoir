@@ -28,14 +28,18 @@ class Weights:
     w_size: float = 0.5
     w_decay: float = 0.7
     half_life_months: float = 18.0
-    # --- shapes, all off by default (defaults reproduce v0 exactly) ---
-    breadth_k: int = 0          # >0: a commit touching B files is worth min(1, breadth_k/B) of a commit (credit, lines, erosion)
+    # --- shapes; V0 below has them all off. Defaults adopted at the P6 gate: breadth_k=10, line_cap=300, first_rule=not_root ---
+    breadth_k: int = 10         # >0: a commit touching B files is worth min(1, breadth_k/B) of a commit (credit, lines, erosion)
     line_scale: float = 0.0     # >0: delivery credit per commit = 1 - exp(-lines/line_scale) (small commits earn less)
-    line_cap: int = 0           # >0: lines per commit are capped here before the size term (size saturates)
+    line_cap: int = 300         # >0: lines per commit are capped here before the size term (size saturates)
     decay_floor: float = 0.0    # in [0,1): decay multiplier = floor + (1-floor) * 0.5^(t/HL); knowledge fades to a floor
     decay_depth: float = 0.0    # >0: HL_eff = HL * (1 + decay_depth * log1p(deliveries)); deep history fades slower
-    first_rule: str = "any"     # any | not_root | not_mass | needs_followup: when first_authored earns w_first
+    first_rule: str = "not_root"  # any | not_root | not_mass | needs_followup: when first_authored earns w_first
     first_mass_n: int = 200     # for not_mass: creating commit touching > this many files earns no w_first
+
+
+V0 = Weights(breadth_k=0, line_scale=0.0, line_cap=0, decay_floor=0.0, decay_depth=0.0, first_rule="any")
+"""The v0 formula exactly as specified (initial_prompt.md); the regression baseline."""
 
 
 @dataclass(frozen=True)
@@ -43,7 +47,8 @@ class Evidence:
     author: Identity
     score: float
     raw_score: float
-    first_authored: bool
+    first_authored: bool  # fact: author of the file's first knowledge-bearing commit
+    first_credited: bool  # whether that earned w_first under the active first_rule
     commits: int
     coauthored_count: int
     lines_changed: int
@@ -103,8 +108,9 @@ def score_author(f: AuthorFacts, now: datetime, w: Weights = Weights(), others_s
         deliveries = f.commits + COAUTHOR_DELIVERY * f.coauthored_count
         lines = f.lines_changed
     erosion = f.others_commits_since if others_since is None else others_since
+    first_credited = _first_earns(f, w)
     raw = (
-        w.w_first * (1.0 if _first_earns(f, w) else 0.0)
+        w.w_first * (1.0 if first_credited else 0.0)
         + w.w_del * math.log1p(deliveries)
         + w.w_size * math.log1p(lines)
         - w.w_decay * math.log1p(erosion)
@@ -118,6 +124,7 @@ def score_author(f: AuthorFacts, now: datetime, w: Weights = Weights(), others_s
         score=score,
         raw_score=raw,
         first_authored=f.first_authored,
+        first_credited=first_credited,
         commits=f.commits,
         coauthored_count=f.coauthored_count,
         lines_changed=f.lines_changed,

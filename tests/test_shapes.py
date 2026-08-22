@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from memoir.mining import AuthorFacts, Identity, Touch, mine_file, walk
-from memoir.scoring import Weights, rank, score_author
+from memoir.scoring import V0, Weights, rank, score_author
 
 NOW = datetime(2026, 8, 21, tzinfo=timezone.utc)
 T0 = datetime(2026, 8, 1, tzinfo=timezone.utc)
@@ -29,10 +29,23 @@ def facts(ts, first=False, name="X"):
     )
 
 
-def test_defaults_reproduce_v0():
+def test_v0_weights_reproduce_the_spec_formula():
     f = facts(touches((10, 100, 300, True), (5, 1, 1, True), (1, 20, 2, False)), first=True)
     expected = 3.0 + math.log1p(2.5) + 0.5 * math.log1p(101)
-    assert score_author(f, now=T0, w=Weights()).raw_score == pytest.approx(expected)
+    assert score_author(f, now=T0, w=V0).raw_score == pytest.approx(expected)
+
+
+def test_defaults_are_breadth10_and_not_root():
+    w = Weights()
+    assert w.breadth_k == 10 and w.first_rule == "not_root" and w.line_cap == 300
+    assert V0.breadth_k == 0 and V0.first_rule == "any"
+
+
+def test_evidence_reports_whether_first_authorship_was_credited():
+    root = [Touch(date=T0, lines=10, breadth=5000, primary=True, binary=False, is_root=True)]
+    ev = score_author(facts(root, first=True), now=T0, w=Weights())
+    assert ev.first_authored is True and ev.first_credited is False
+    assert "first_credited" in ev.to_dict()
 
 
 def test_breadth_discount_scales_wide_commits():

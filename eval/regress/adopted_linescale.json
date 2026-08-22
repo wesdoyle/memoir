@@ -1,0 +1,3750 @@
+{
+ "audit": {
+  "elasticsearch:server/src/main/java/org/elasticsearch/cluster": {
+   "hl18": {
+    "bad": 77,
+    "bad_contested": 77,
+    "contested": 270,
+    "n": 387
+   },
+   "hl60": {
+    "bad": 121,
+    "bad_contested": 121,
+    "contested": 270,
+    "n": 387
+   },
+   "raw": {
+    "bad": 151,
+    "bad_contested": 151,
+    "contested": 270,
+    "n": 387
+   }
+  },
+  "elasticsearch:server/src/main/java/org/elasticsearch/index/engine": {
+   "hl18": {
+    "bad": 10,
+    "bad_contested": 10,
+    "contested": 37,
+    "n": 54
+   },
+   "hl60": {
+    "bad": 23,
+    "bad_contested": 23,
+    "contested": 37,
+    "n": 54
+   },
+   "raw": {
+    "bad": 27,
+    "bad_contested": 27,
+    "contested": 37,
+    "n": 54
+   }
+  },
+  "flink:flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint": {
+   "hl18": {
+    "bad": 13,
+    "bad_contested": 13,
+    "contested": 86,
+    "n": 146
+   },
+   "hl60": {
+    "bad": 24,
+    "bad_contested": 24,
+    "contested": 86,
+    "n": 146
+   },
+   "raw": {
+    "bad": 38,
+    "bad_contested": 38,
+    "contested": 86,
+    "n": 146
+   }
+  },
+  "flink:flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph": {
+   "hl18": {
+    "bad": 12,
+    "bad_contested": 12,
+    "contested": 49,
+    "n": 85
+   },
+   "hl60": {
+    "bad": 19,
+    "bad_contested": 19,
+    "contested": 49,
+    "n": 85
+   },
+   "raw": {
+    "bad": 21,
+    "bad_contested": 21,
+    "contested": 49,
+    "n": 85
+   }
+  },
+  "flink:flink-runtime/src/main/java/org/apache/flink/runtime/jobmaster": {
+   "hl18": {
+    "bad": 11,
+    "bad_contested": 11,
+    "contested": 47,
+    "n": 110
+   },
+   "hl60": {
+    "bad": 16,
+    "bad_contested": 16,
+    "contested": 47,
+    "n": 110
+   },
+   "raw": {
+    "bad": 20,
+    "bad_contested": 20,
+    "contested": 47,
+    "n": 110
+   }
+  },
+  "opencv:modules/core/src": {
+   "hl18": {
+    "bad": 11,
+    "bad_contested": 9,
+    "contested": 103,
+    "n": 191
+   },
+   "hl60": {
+    "bad": 24,
+    "bad_contested": 22,
+    "contested": 103,
+    "n": 191
+   },
+   "raw": {
+    "bad": 38,
+    "bad_contested": 36,
+    "contested": 103,
+    "n": 191
+   }
+  },
+  "opencv:modules/imgproc/src": {
+   "hl18": {
+    "bad": 10,
+    "bad_contested": 10,
+    "contested": 87,
+    "n": 139
+   },
+   "hl60": {
+    "bad": 25,
+    "bad_contested": 25,
+    "contested": 87,
+    "n": 139
+   },
+   "raw": {
+    "bad": 41,
+    "bad_contested": 41,
+    "contested": 87,
+    "n": 139
+   }
+  },
+  "valkey:src": {
+   "hl18": {
+    "bad": 152,
+    "bad_contested": 152,
+    "contested": 658,
+    "n": 738
+   },
+   "hl60": {
+    "bad": 213,
+    "bad_contested": 213,
+    "contested": 658,
+    "n": 738
+   },
+   "raw": {
+    "bad": 237,
+    "bad_contested": 237,
+    "contested": 658,
+    "n": 738
+   }
+  },
+  "vscode:src/vs/base/common": {
+   "hl18": {
+    "bad": 29,
+    "bad_contested": 28,
+    "contested": 105,
+    "n": 158
+   },
+   "hl60": {
+    "bad": 39,
+    "bad_contested": 38,
+    "contested": 105,
+    "n": 158
+   },
+   "raw": {
+    "bad": 47,
+    "bad_contested": 46,
+    "contested": 105,
+    "n": 158
+   }
+  },
+  "vscode:src/vs/editor/common": {
+   "hl18": {
+    "bad": 36,
+    "bad_contested": 34,
+    "contested": 171,
+    "n": 229
+   },
+   "hl60": {
+    "bad": 41,
+    "bad_contested": 39,
+    "contested": 171,
+    "n": 229
+   },
+   "raw": {
+    "bad": 44,
+    "bad_contested": 42,
+    "contested": 171,
+    "n": 229
+   }
+  }
+ },
+ "canaries": {
+  "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 0,
+  "Josh Soref in top-3 of valkey's 30 busiest src/*.c": 1,
+  "Ran Shidlansik (1,293-line commit) on valkey t_zset.c": 3,
+  "Shay Banon on ES IndexMetadata.java": 28,
+  "Shay Banon on ES InternalEngine.java": 24,
+  "Shay Banon on ES Node.java": 25,
+  "Shay Banon on ES SearchService.java": 22,
+  "Till Rohrmann on flink JobMaster.java": 4,
+  "antirez on valkey server.c": 19,
+  "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2103
+ },
+ "name": "adopted_linescale",
+ "now": "2026-08-21",
+ "overrides": {
+  "line_scale": 20
+ },
+ "regression": {
+  "Alex Dima on vscode textModel.ts": 1,
+  "David Turner on ES Node.java": 1,
+  "Johannes Rieken on vscode event.ts": 1,
+  "Madelyn Olson on valkey config.c": 2,
+  "Ryan Ernst on ES Node.java": 2,
+  "Vadim Pisarevsky on opencv matrix.cpp": 1
+ },
+ "roster": {
+  "files": 30,
+  "slots": 90,
+  "top1_listed": 23,
+  "top3_slots_listed": 57
+ },
+ "samples": {
+  "elasticsearch": {
+   "benchmarks/src/main/java/org/elasticsearch/benchmark/search/fetch/subphase/FetchSourcePhaseBenchmark.java": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett",
+     "Alan Woodward",
+     "Jim Ferenczi"
+    ]
+   },
+   "docs/changelog/153067.yaml": {
+    "top1": "Elliot Barlas",
+    "top3": [
+     "Elliot Barlas",
+     "Ankit Sethi"
+    ]
+   },
+   "docs/changelog/156060.yaml": {
+    "top1": "Andrei Stefan",
+    "top3": [
+     "Andrei Stefan"
+    ]
+   },
+   "docs/reference/elasticsearch-plugins/analysis-nori-number.md": {
+    "top1": "Colleen McGinnis",
+    "top3": [
+     "Colleen McGinnis",
+     "Istv\u00e1n Zolt\u00e1n Szab\u00f3",
+     "Li-Heng Yu"
+    ]
+   },
+   "docs/reference/elasticsearch/index-lifecycle-actions/ilm-delete.md": {
+    "top1": "Colleen McGinnis",
+    "top3": [
+     "Colleen McGinnis",
+     "Istv\u00e1n Zolt\u00e1n Szab\u00f3",
+     "Li-Heng Yu"
+    ]
+   },
+   "docs/reference/query-languages/esql/_snippets/generated/x-pack-esql/functions/description/median.md": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett"
+    ]
+   },
+   "docs/reference/query-languages/esql/_snippets/generated/x-pack-esql/functions/diagrams/st_buffer.md": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett"
+    ]
+   },
+   "docs/reference/query-languages/esql/images/generated/x-pack-esql/functions/st_npoints.svg": {
+    "top1": "Craig Taverner",
+    "top3": [
+     "Craig Taverner"
+    ]
+   },
+   "docs/reference/query-languages/esql/kibana/generated/x-pack-esql/definition/commands/lookup_join.json": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett"
+    ]
+   },
+   "docs/reference/query-languages/esql/kibana/generated/x-pack-esql/docs/functions/to_tdigest.md": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett"
+    ]
+   },
+   "docs/reference/query-languages/images/elasticsearch-reference-apps_microstrat_newdossier.png": {
+    "top1": "ketkee-aryamane",
+    "top3": [
+     "ketkee-aryamane"
+    ]
+   },
+   "docs/reference/query-languages/query-dsl/query-dsl-span-not-query.md": {
+    "top1": "Colleen McGinnis",
+    "top3": [
+     "Colleen McGinnis",
+     "Istv\u00e1n Zolt\u00e1n Szab\u00f3",
+     "Li-Heng Yu"
+    ]
+   },
+   "docs/src/yamlRestTest/java/org/elasticsearch/smoketest/DocsClientYamlTestSuiteIT.java": {
+    "top1": "Rene Groeschke",
+    "top3": [
+     "Rene Groeschke",
+     "Nik Everett",
+     "Lorenzo Dematt\u00e9"
+    ]
+   },
+   "libs/columnar/src/main/java/org/elasticsearch/columnar/FormatVersion.java": {
+    "top1": "Salvatore Campagna",
+    "top3": [
+     "Salvatore Campagna"
+    ]
+   },
+   "libs/entitlement/qa/entitlement-test-plugin/src/main/java/org/elasticsearch/entitlement/qa/test/NetworkAccessCheckActions.java": {
+    "top1": "Lorenzo Dematt\u00e9",
+    "top3": [
+     "Lorenzo Dematt\u00e9",
+     "Jack Conradson",
+     "Ryan Ernst"
+    ]
+   },
+   "libs/foreign-library/src/main/java/org/elasticsearch/foreign/Addressable.java": {
+    "top1": "Ryan Ernst",
+    "top3": [
+     "Ryan Ernst"
+    ]
+   },
+   "libs/geo/src/test/java/org/elasticsearch/geometry/simplify/GeometrySimplifierTests.java": {
+    "top1": "Craig Taverner",
+    "top3": [
+     "Craig Taverner",
+     "Mark Vieira"
+    ]
+   },
+   "libs/gpu-codec/src/main/java/org/elasticsearch/gpu/codec/DatasetUtils.java": {
+    "top1": "ChrisHegarty",
+    "top3": [
+     "ChrisHegarty",
+     "Lorenzo Dematt\u00e9",
+     "Mayya Sharipova"
+    ]
+   },
+   "libs/ssl-config/src/test/resources/certs/pem-utils/certificate_secp256r1.pem": {
+    "top1": "Ioannis Kakavas",
+    "top3": [
+     "Ioannis Kakavas"
+    ]
+   },
+   "modules/data-streams/src/yamlRestTest/resources/rest-api-spec/test/data_stream/180_simulate_existing_data_stream.yml": {
+    "top1": "Lee Hinman",
+    "top3": [
+     "Lee Hinman",
+     "Moritz Mack"
+    ]
+   },
+   "modules/lang-painless/src/main/java/org/elasticsearch/painless/api/LimitedCharSequence.java": {
+    "top1": "Stuart Tettemer",
+    "top3": [
+     "Stuart Tettemer",
+     "Mark Vieira"
+    ]
+   },
+   "modules/repository-s3/qa/deprecations/src/javaRestTest/java/org/elasticsearch/repositories/s3/RepositoryS3DeprecationsRestIT.java": {
+    "top1": "David Turner",
+    "top3": [
+     "David Turner"
+    ]
+   },
+   "modules/user-agent/src/test/java/org/elasticsearch/useragent/UserAgentParserImplTests.java": {
+    "top1": "eyalkoren",
+    "top3": [
+     "eyalkoren",
+     "Mikhail Berezovskiy"
+    ]
+   },
+   "plugins/discovery-azure-classic/licenses/azure-LICENSE.txt": {
+    "top1": "Clinton Gormley",
+    "top3": [
+     "Clinton Gormley",
+     "David Pilato"
+    ]
+   },
+   "plugins/discovery-ec2/licenses/joda-time-LICENSE.txt": {
+    "top1": "Ryan Ernst",
+    "top3": [
+     "Ryan Ernst"
+    ]
+   },
+   "qa/serverless-system-properties/src/test/java/org/elasticsearch/transport/ServerlessTransportHandshakeTests.java": {
+    "top1": "David Turner",
+    "top3": [
+     "David Turner",
+     "Ryan Ernst"
+    ]
+   },
+   "server/src/internalClusterTest/java/org/elasticsearch/action/search/SearchContextInvalidationIT.java": {
+    "top1": "Dimitris Rempapis",
+    "top3": [
+     "Dimitris Rempapis"
+    ]
+   },
+   "server/src/internalClusterTest/java/org/elasticsearch/search/scroll/DuelScrollIT.java": {
+    "top1": "Armin Braun",
+    "top3": [
+     "Armin Braun",
+     "David Turner",
+     "Ryan Ernst"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/action/ingest/DeletePipelineTransportAction.java": {
+    "top1": "Niels Bauman",
+    "top3": [
+     "Niels Bauman",
+     "Armin Braun",
+     "Martijn van Groningen"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/cluster/coordination/MasterHistory.java": {
+    "top1": "Keith Massey",
+    "top3": [
+     "Keith Massey",
+     "David Turner",
+     "Mark Vieira"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/cluster/routing/allocation/allocator/BalancingWeightsFactory.java": {
+    "top1": "Nick Tindall",
+    "top3": [
+     "Nick Tindall"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/cluster/service/PendingClusterTask.java": {
+    "top1": "Ievgen Degtiarenko",
+    "top3": [
+     "Ievgen Degtiarenko",
+     "Jordan Powers",
+     "Patrick Doyle"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/common/blobstore/support/BlobContainerUtils.java": {
+    "top1": "David Turner",
+    "top3": [
+     "David Turner",
+     "Nick Tindall",
+     "Pooya Salehi"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/common/lucene/uid/PerThreadIDVersionAndSeqNoLookup.java": {
+    "top1": "Joe Gallo",
+    "top3": [
+     "Joe Gallo",
+     "Jordan Powers",
+     "Martijn van Groningen"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/health/node/tracker/DiskHealthTracker.java": {
+    "top1": "Niels Bauman",
+    "top3": [
+     "Niels Bauman",
+     "Mark Vieira"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/index/codec/vectors/cluster/LloydKMeansLocal.java": {
+    "top1": "Mariano Tepper",
+    "top3": [
+     "Mariano Tepper",
+     "Simon Cooper",
+     "John Wagster"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/index/codec/vectors/diskbbq/CentroidAssignments.java": {
+    "top1": "Simon Cooper",
+    "top3": [
+     "Simon Cooper",
+     "Ignacio Vera",
+     "John Wagster"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/indices/IndexCreationException.java": {
+    "top1": "William Brafford",
+    "top3": [
+     "William Brafford",
+     "Mark Vieira",
+     "Shay Banon"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/indices/IndicesExpressionGrouper.java": {
+    "top1": "Ievgen Degtiarenko",
+    "top3": [
+     "Ievgen Degtiarenko",
+     "Michael Peterson",
+     "Stanislav Malyshev"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/search/aggregations/metrics/InternalStats.java": {
+    "top1": "Ignacio Vera",
+    "top3": [
+     "Ignacio Vera",
+     "Nik Everett",
+     "Ignacio Vera"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/search/diversification/mmr/MMRResultDiversification.java": {
+    "top1": "Mark J. Hoy",
+    "top3": [
+     "Mark J. Hoy",
+     "Ioana Tagirta",
+     "Lefteris Zervakis"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/search/runtime/IpScriptFieldRangeQuery.java": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett",
+     "Luca Cavanna",
+     "Alan Woodward"
+    ]
+   },
+   "server/src/main/java/org/elasticsearch/transport/TransportRequestHandler.java": {
+    "top1": "Shay Banon",
+    "top3": [
+     "Shay Banon",
+     "Ryan Ernst",
+     "Mark Vieira"
+    ]
+   },
+   "server/src/main/resources/transport/definitions/referable/esql_regex_match_with_case_insensitivity.csv": {
+    "top1": "Jack Conradson",
+    "top3": [
+     "Jack Conradson"
+    ]
+   },
+   "server/src/main/resources/transport/definitions/referable/esql_resolve_fields_response_created.csv": {
+    "top1": "Nik Everett",
+    "top3": [
+     "Nik Everett"
+    ]
+   },
+   "server/src/main/resources/transport/definitions/referable/esql_split_discovery_profile.csv": {
+    "top1": "Stanislav Malyshev",
+    "top3": [
+     "Stanislav Malyshev"
+    ]
+   },
+   "server/src/test/java/org/elasticsearch/action/search/CountOnlyQueryPhaseResultConsumerTests.java": {
+    "top1": "Benjamin Trent",
+    "top3": [
+     "Benjamin Trent",
+     "Eran Weiss",
+     "Armin Braun"
+    ]
+   },
+   "server/src/test/java/org/elasticsearch/cluster/metadata/DatasetMappingTests.java": {
+    "top1": "Oleg Lvovitch",
+    "top3": [
+     "Oleg Lvovitch",
+     "Dmitry Kubikov"
+    ]
+   },
+   "test/framework/src/main/java/org/elasticsearch/search/geo/GeoBoundingBoxQueryIntegTestCase.java": {
+    "top1": "Ignacio Vera",
+    "top3": [
+     "Ignacio Vera",
+     "David Turner",
+     "jchrys"
+    ]
+   },
+   "test/framework/src/test/java/org/elasticsearch/search/internal/ConcurrentSearchSingleNodeTests.java": {
+    "top1": "Ignacio Vera",
+    "top3": [
+     "Ignacio Vera",
+     "Chris Hegarty",
+     "Luca Cavanna"
+    ]
+   },
+   "x-pack/license-tools/src/test/java/org/elasticsearch/license/licensor/LicenseVerificationTests.java": {
+    "top1": "Armin Braun",
+    "top3": [
+     "Armin Braun",
+     "Jason Tedor",
+     "jaymode"
+    ]
+   },
+   "x-pack/plugin/core/src/main/java/org/elasticsearch/snapshots/sourceonly/SourceOnlySnapshotRepository.java": {
+    "top1": "Kostas Krikellas",
+    "top3": [
+     "Kostas Krikellas",
+     "Armin Braun",
+     "Yang Wang"
+    ]
+   },
+   "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ilm/WaitForActiveShardsStep.java": {
+    "top1": "Niels Bauman",
+    "top3": [
+     "Niels Bauman",
+     "Andrei Dan",
+     "James Baiera"
+    ]
+   },
+   "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ml/action/PutDataFrameAnalyticsAction.java": {
+    "top1": "Dimitris Athanasiou",
+    "top3": [
+     "Dimitris Athanasiou",
+     "Armin Braun",
+     "Benjamin Trent"
+    ]
+   },
+   "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ml/inference/trainedmodel/QuestionAnsweringConfig.java": {
+    "top1": "Benjamin Trent",
+    "top3": [
+     "Benjamin Trent",
+     "David Kyle",
+     "Jack Conradson"
+    ]
+   },
+   "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/security/action/rolemapping/DeleteRoleMappingResponse.java": {
+    "top1": "Armin Braun",
+    "top3": [
+     "Armin Braun",
+     "Tim Vernum",
+     "Ryan Ernst"
+    ]
+   },
+   "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/LocalStateCompositeXPackPlugin.java": {
+    "top1": "David Turner",
+    "top3": [
+     "David Turner",
+     "Alexey Ivanov",
+     "Simon Cooper"
+    ]
+   },
+   "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/ilm/ActionConfigStatsTests.java": {
+    "top1": "James Baiera",
+    "top3": [
+     "James Baiera",
+     "Przemko Robakowski",
+     "David Turner"
+    ]
+   },
+   "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/ilm/LifecycleExecutionStateTests.java": {
+    "top1": "Lee Hinman",
+    "top3": [
+     "Lee Hinman",
+     "Szymon Bialkowski",
+     "Luke Whiting"
+    ]
+   },
+   "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/ilm/OperationModeUpdateTaskTests.java": {
+    "top1": "Tim Vernum",
+    "top3": [
+     "Tim Vernum",
+     "Niels Bauman",
+     "Keith Massey"
+    ]
+   },
+   "x-pack/plugin/esql-datasource-compression-libs/licenses/snappy-java-NOTICE.txt": {
+    "top1": "Costin Leau",
+    "top3": [
+     "Costin Leau"
+    ]
+   },
+   "x-pack/plugin/esql-datasource-grpc/src/test/java/org/elasticsearch/xpack/esql/datasource/grpc/EmployeeFlightServerTests.java": {
+    "top1": "Costin Leau",
+    "top3": [
+     "Costin Leau"
+    ]
+   },
+   "x-pack/plugin/esql-datasource-iceberg/licenses/joda-time-NOTICE.txt": {
+    "top1": "Costin Leau",
+    "top3": [
+     "Costin Leau",
+     "Stanislav Malyshev",
+     "Bogdan Pintea"
+    ]
+   },
+   "x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/aggregation/AnyDoubleGroupingAggregatorFunctionTests.java": {
+    "top1": "Mouhcine Aitounejjar",
+    "top3": [
+     "Mouhcine Aitounejjar"
+    ]
+   },
+   "x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/operator/AsyncOperatorStatusTests.java": {
+    "top1": "Nhat Nguyen",
+    "top3": [
+     "Nhat Nguyen",
+     "Iv\u00e1n Cea Fontenla",
+     "Ievgen Degtiarenko"
+    ]
+   },
+   "x-pack/plugin/esql/qa/testFixtures/src/main/java/org/elasticsearch/xpack/esql/generator/command/source/RowGenerator.java": {
+    "top1": "Iv\u00e1n Cea Fontenla",
+    "top3": [
+     "Iv\u00e1n Cea Fontenla"
+    ]
+   },
+   "x-pack/plugin/esql/qa/testFixtures/src/main/resources/enrich/policy/enrich-policy-decades.json": {
+    "top1": "Craig Taverner",
+    "top3": [
+     "Craig Taverner",
+     "Neil Bhavsar"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/java/org/elasticsearch/xpack/esql/datasources/DatasetResolverTests.java": {
+    "top1": "Oleg Lvovitch",
+    "top3": [
+     "Oleg Lvovitch",
+     "Julian Kiryakov",
+     "Ryan Ernst"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/analysis/golden_tests/AnalyzerUnmappedGoldenTests/testForkKeepsSingleTypePartiallyUnmappedTextField/load/analysis.expected": {
+    "top1": "Andrei Stefan",
+    "top3": [
+     "Andrei Stefan"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/analysis/golden_tests/AnalyzerUnmappedGoldenTests/testNoTypeConflictKeywordAndUnmappedWhere/load/before_compact_multi_type_es_field/analysis.expected": {
+    "top1": "Mouhcine Aitounejjar",
+    "top3": [
+     "Mouhcine Aitounejjar",
+     "Alexander Spies"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/optimizer/golden_tests/LogicalPlanOptimizerInSubqueryGoldenTests/testInSubqueryInEvalAndReferencedInWhere/analysis.expected": {
+    "top1": "Fang Xing",
+    "top3": [
+     "Fang Xing"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/optimizer/golden_tests/LogicalPlanOptimizerInSubqueryGoldenTests/testInSubqueryInIsNull/logical_optimization.expected": {
+    "top1": "Fang Xing",
+    "top3": [
+     "Fang Xing"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/optimizer/promql/golden_tests/PromqlGoldenTests/testFirstOverTimeAllValueTypes/before_esql_sum_long_overflow_fix/physical_optimization.expected": {
+    "top1": "Ali Ghahramani",
+    "top3": [
+     "Ali Ghahramani",
+     "Dmitry Leontyev",
+     "Cursor"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/optimizer/rules/logical/golden_tests/PruneLiteralsInChangePointByGoldenTests/testMultipleFoldableGroupingsDegenerateToUngrouped/logical_optimization.expected": {
+    "top1": "Dariusz Wilkialis",
+    "top3": [
+     "Dariusz Wilkialis",
+     "Ali Ghahramani"
+    ]
+   },
+   "x-pack/plugin/esql/src/test/resources/org/elasticsearch/xpack/esql/optimizer/rules/physical/local/golden_tests/PushExpressionToFieldLoadGoldenTests/testLengthInEvalAfterManyRenames/local_reduce_planned_reduce_driver.expected": {
+    "top1": "Mark Tozzi",
+    "top3": [
+     "Mark Tozzi"
+    ]
+   },
+   "x-pack/plugin/inference/src/main/java/org/elasticsearch/xpack/inference/external/response/streaming/ServerSentEventProcessor.java": {
+    "top1": "Pat Whelan",
+    "top3": [
+     "Pat Whelan"
+    ]
+   },
+   "x-pack/plugin/inference/src/main/java/org/elasticsearch/xpack/inference/services/sagemaker/schema/SageMakerStoredTaskSchema.java": {
+    "top1": "Pat Whelan",
+    "top3": [
+     "Pat Whelan",
+     "Jack Conradson"
+    ]
+   },
+   "x-pack/plugin/inference/src/test/java/org/elasticsearch/xpack/inference/TaskTypeTests.java": {
+    "top1": "Max Hniebergall",
+    "top3": [
+     "Max Hniebergall",
+     "Donal Evans",
+     "Jonas Kunz"
+    ]
+   },
+   "x-pack/plugin/kql/src/main/antlr/KqlBaseLexer.tokens": {
+    "top1": "Aur\u00e9lien FOUCRET",
+    "top3": [
+     "Aur\u00e9lien FOUCRET"
+    ]
+   },
+   "x-pack/plugin/logsdb/src/main/java/org/elasticsearch/xpack/logsdb/patterntext/PatternTextSyntheticFieldLoaderLayer.java": {
+    "top1": "Parker Timmins",
+    "top3": [
+     "Parker Timmins"
+    ]
+   },
+   "x-pack/plugin/ml/qa/native-multi-node-tests/src/javaRestTest/java/org/elasticsearch/xpack/ml/integration/OverallBucketsIT.java": {
+    "top1": "Dimitris Athanasiou",
+    "top3": [
+     "Dimitris Athanasiou",
+     "David Kyle",
+     "Benjamin Trent"
+    ]
+   },
+   "x-pack/plugin/ml/src/main/java/org/elasticsearch/xpack/ml/process/BlackHoleResultIterator.java": {
+    "top1": "Dimitris Athanasiou",
+    "top3": [
+     "Dimitris Athanasiou"
+    ]
+   },
+   "x-pack/plugin/old-lucene-versions/src/main/java/org/elasticsearch/xpack/lucene/bwc/codecs/index/LegacySortedNumericDocValues.java": {
+    "top1": "Yannick Welsch",
+    "top3": [
+     "Yannick Welsch"
+    ]
+   },
+   "x-pack/plugin/ql/src/main/java/org/elasticsearch/xpack/ql/expression/Order.java": {
+    "top1": "Lukas Wegmann",
+    "top3": [
+     "Lukas Wegmann",
+     "Armin Braun",
+     "Costin Leau"
+    ]
+   },
+   "x-pack/plugin/ql/src/main/java/org/elasticsearch/xpack/ql/expression/gen/pipeline/MultiPipe.java": {
+    "top1": "Costin Leau",
+    "top3": [
+     "Costin Leau",
+     "Mark Vieira"
+    ]
+   },
+   "x-pack/plugin/ql/src/test/resources/mapping-multi-field-options.json": {
+    "top1": "Costin Leau",
+    "top3": [
+     "Costin Leau"
+    ]
+   },
+   "x-pack/plugin/rank-rrf/src/main/java/org/elasticsearch/xpack/rank/linear/LinearRetrieverComponent.java": {
+    "top1": "Panagiotis Bailis",
+    "top3": [
+     "Panagiotis Bailis",
+     "Mridula",
+     "Kathleen DeRusso"
+    ]
+   },
+   "x-pack/plugin/security/qa/secondary-auth-actions/src/main/java/org/elasticsearch/secondary/auth/actions/SecondaryAuthActionsPlugin.java": {
+    "top1": "Jake Landis",
+    "top3": [
+     "Jake Landis"
+    ]
+   },
+   "x-pack/plugin/security/src/internalClusterTest/java/org/elasticsearch/integration/SecurityCachePermissionTests.java": {
+    "top1": "Armin Braun",
+    "top3": [
+     "Armin Braun",
+     "jaymode",
+     "Alan Woodward"
+    ]
+   },
+   "x-pack/plugin/security/src/test/java/org/elasticsearch/xpack/security/rest/action/apikey/RestUpdateCrossClusterApiKeyActionTests.java": {
+    "top1": "Yang Wang",
+    "top3": [
+     "Yang Wang",
+     "Graeme Mjehovich",
+     "Ryan Ernst"
+    ]
+   },
+   "x-pack/plugin/sql/jdbc/src/main/java/org/elasticsearch/xpack/sql/jdbc/Cursor.java": {
+    "top1": "Lukas Wegmann",
+    "top3": [
+     "Lukas Wegmann",
+     "Costin Leau",
+     "Costin Leau"
+    ]
+   },
+   "x-pack/plugin/sql/sql-proto/src/main/java/org/elasticsearch/xpack/sql/proto/content/ParsedMediaType.java": {
+    "top1": "Costin Leau",
+    "top3": [
+     "Costin Leau",
+     "Armin Braun",
+     "Przemyslaw Gomulka"
+    ]
+   },
+   "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/stats/QueryMetric.java": {
+    "top1": "Andrei Stefan",
+    "top3": [
+     "Andrei Stefan",
+     "Mark Vieira",
+     "Costin Leau"
+    ]
+   },
+   "x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/expression/function/scalar/geo/GeoProcessorTests.java": {
+    "top1": "Igor Motov",
+    "top3": [
+     "Igor Motov",
+     "Ievgen Degtiarenko",
+     "Mark Vieira"
+    ]
+   },
+   "x-pack/plugin/src/yamlRestTest/resources/rest-api-spec/test/ml/job_groups.yml": {
+    "top1": "David Roberts",
+    "top3": [
+     "David Roberts",
+     "Dimitris Athanasiou",
+     "Luca Cavanna"
+    ]
+   },
+   "x-pack/plugin/stateless/src/test/java/org/elasticsearch/xpack/stateless/lucene/StatelessDirectoryFactory.java": {
+    "top1": "Chris Hegarty",
+    "top3": [
+     "Chris Hegarty",
+     "Lorenzo Dematt\u00e9",
+     "Eugene \u010cistiakovas"
+    ]
+   },
+   "x-pack/plugin/transform/src/main/java/org/elasticsearch/xpack/transform/rest/action/RestGetTransformStatsAction.java": {
+    "top1": "Pat Whelan",
+    "top3": [
+     "Pat Whelan",
+     "Hendrik Muhs",
+     "Przemys\u0142aw Witek"
+    ]
+   },
+   "x-pack/plugin/transform/src/main/java/org/elasticsearch/xpack/transform/transforms/common/SourceAccessDiagnostics.java": {
+    "top1": "Valeriy Khakhutskyy",
+    "top3": [
+     "Valeriy Khakhutskyy"
+    ]
+   },
+   "x-pack/plugin/watcher/src/internalClusterTest/java/org/elasticsearch/xpack/watcher/history/HistoryTemplateEmailMappingsTests.java": {
+    "top1": "Ryan Ernst",
+    "top3": [
+     "Ryan Ernst",
+     "Matteo Piergiovanni",
+     "Martijn van Groningen"
+    ]
+   },
+   "x-pack/test/idp-fixture/src/main/java/org/elasticsearch/test/fixtures/idp/HttpProxyTestContainer.java": {
+    "top1": "Rene Groeschke",
+    "top3": [
+     "Rene Groeschke",
+     "Richard Dennehy"
+    ]
+   }
+  },
+  "flink": {
+   "docs/content.zh/docs/dev/datastream/sources.md": {
+    "top1": "Hongshun Wang",
+    "top3": [
+     "Hongshun Wang",
+     "Martijn Visser",
+     "Kunni"
+    ]
+   },
+   "docs/content/release-notes/flink-1.10.md": {
+    "top1": "Gary Yao",
+    "top3": [
+     "Gary Yao",
+     "Seth Wiesman",
+     "martijnvisser"
+    ]
+   },
+   "docs/layouts/shortcodes/config_file_zh.html": {
+    "top1": "JunRuiLee",
+    "top3": [
+     "JunRuiLee",
+     "Rui Fan"
+    ]
+   },
+   "docs/layouts/shortcodes/generated/security_ssl_section.html": {
+    "top1": "balassai",
+    "top3": [
+     "balassai",
+     "Mate Czagany",
+     "ammar-master"
+    ]
+   },
+   "docs/static/fig/apache_superset.png": {
+    "top1": "Shengkai",
+    "top3": [
+     "Shengkai"
+    ]
+   },
+   "flink-clients/src/test/java/org/apache/flink/client/testjar/JobWithExternalDependency.java": {
+    "top1": "Robert Metzger",
+    "top3": [
+     "Robert Metzger",
+     "zentol",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-connectors/flink-connector-base/src/main/java/org/apache/flink/connector/base/table/sink/AsyncDynamicTableSinkBuilder.java": {
+    "top1": "Ahmed Hamdy",
+    "top3": [
+     "Ahmed Hamdy"
+    ]
+   },
+   "flink-core/src/main/java/org/apache/flink/api/common/operators/base/CoGroupOperatorBase.java": {
+    "top1": "Weijie Guo",
+    "top3": [
+     "Weijie Guo",
+     "Sergey Nuyanzin",
+     "Stephan Ewen"
+    ]
+   },
+   "flink-core/src/main/java/org/apache/flink/api/common/state/v2/ValueStateDescriptor.java": {
+    "top1": "Zakelly",
+    "top3": [
+     "Zakelly"
+    ]
+   },
+   "flink-core/src/main/java/org/apache/flink/api/java/typeutils/runtime/TupleSerializerSnapshot.java": {
+    "top1": "Igal Shilman",
+    "top3": [
+     "Igal Shilman",
+     "Hangxiang Yu",
+     "Tzu-Li (Gordon) Tai"
+    ]
+   },
+   "flink-core/src/main/java/org/apache/flink/configuration/ExternalResourceOptions.java": {
+    "top1": "Yangze Guo",
+    "top3": [
+     "Yangze Guo",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-core/src/main/java/org/apache/flink/types/parser/ShortParser.java": {
+    "top1": "\u91d1\u7af9",
+    "top3": [
+     "\u91d1\u7af9",
+     "StephanEwen",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-core/src/test/java/org/apache/flink/api/common/state/StateDescriptorTest.java": {
+    "top1": "gongzhongqiang",
+    "top3": [
+     "gongzhongqiang",
+     "Yun Tang",
+     "Weijie Guo"
+    ]
+   },
+   "flink-core/src/test/java/org/apache/flink/api/common/typeutils/ThreadContextClassLoader.java": {
+    "top1": "Tzu-Li (Gordon) Tai",
+    "top3": [
+     "Tzu-Li (Gordon) Tai",
+     "gongzhongqiang",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-core/src/test/java/org/apache/flink/api/common/typeutils/base/array/ShortPrimitiveArraySerializerTest.java": {
+    "top1": "Chesnay Schepler",
+    "top3": [
+     "Chesnay Schepler",
+     "StephanEwen",
+     "Robert Metzger"
+    ]
+   },
+   "flink-core/src/test/java/org/apache/flink/core/fs/RefCountedFileTest.java": {
+    "top1": "gongzhongqiang",
+    "top3": [
+     "gongzhongqiang",
+     "Roman Khachatryan",
+     "kkloudas"
+    ]
+   },
+   "flink-core/src/test/java/org/apache/flink/testutils/EntropyInjectingTestFileSystem.java": {
+    "top1": "Gary Yao",
+    "top3": [
+     "Gary Yao",
+     "Stefan Richter",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-core/src/test/java/org/apache/flink/testutils/serialization/types/ByteArrayType.java": {
+    "top1": "StephanEwen",
+    "top3": [
+     "StephanEwen",
+     "Stephan Ewen",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-core/src/test/resources/byte-serializer-1.15/test-data": {
+    "top1": "Yun Gao",
+    "top3": [
+     "Yun Gao"
+    ]
+   },
+   "flink-core/src/test/resources/float-value-serializer-2.2/test-data": {
+    "top1": "Hang Ruan",
+    "top3": [
+     "Hang Ruan"
+    ]
+   },
+   "flink-core/src/test/resources/pojo-serializer-identical-schema-2.1/test-data": {
+    "top1": "Ron",
+    "top3": [
+     "Ron",
+     "Ron Liu"
+    ]
+   },
+   "flink-core/src/test/resources/string-array-serializer-1.13/serializer-snapshot": {
+    "top1": "tsreaper",
+    "top3": [
+     "tsreaper"
+    ]
+   },
+   "flink-core/src/test/resources/value-serializer-2.3/test-data": {
+    "top1": "David Anderson",
+    "top3": [
+     "David Anderson"
+    ]
+   },
+   "flink-datastream/src/main/java/org/apache/flink/datastream/impl/extension/window/operators/TwoInputNonBroadcastWindowProcessOperator.java": {
+    "top1": "Xu Huang",
+    "top3": [
+     "Xu Huang"
+    ]
+   },
+   "flink-end-to-end-tests/flink-end-to-end-tests-common/src/test/java/org/apache/flink/tests/util/util/FileUtilsTest.java": {
+    "top1": "Mate Czagany",
+    "top3": [
+     "Mate Czagany",
+     "Chesnay Schepler",
+     "Yuepeng Pan"
+    ]
+   },
+   "flink-filesystems/flink-gs-fs-hadoop/src/test/java/org/apache/flink/fs/gs/writer/GSResumeRecoverableSerializerTest.java": {
+    "top1": "Joern Kottmann",
+    "top3": [
+     "Joern Kottmann",
+     "Galen Warren",
+     "Chesnay Schepler"
+    ]
+   },
+   "flink-filesystems/flink-s3-fs-presto/src/test/java/org/apache/flink/fs/s3presto/S5CmdOnPrestoS3FileSystemITCase.java": {
+    "top1": "Piotr Nowojski",
+    "top3": [
+     "Piotr Nowojski",
+     "Efrat Levitan"
+    ]
+   },
+   "flink-formats/flink-orc-nohive/src/main/java/org/apache/flink/orc/nohive/vector/OrcNoHiveTimestampVector.java": {
+    "top1": "JingsongLi",
+    "top3": [
+     "JingsongLi",
+     "Jark Wu",
+     "slinkydeveloper"
+    ]
+   },
+   "flink-formats/flink-protobuf/src/test/java/org/apache/flink/formats/protobuf/NoJavaPackageProtoToRowTest.java": {
+    "top1": "Zhanghao Chen",
+    "top3": [
+     "Zhanghao Chen",
+     "maosuhan"
+    ]
+   },
+   "flink-fs-tests/src/test/resources/monitoring-function-migration-test-1753953279050-flink2.1-snapshot": {
+    "top1": "Ron",
+    "top3": [
+     "Ron",
+     "Ron Liu"
+    ]
+   },
+   "flink-kubernetes/src/main/java/org/apache/flink/kubernetes/kubeclient/KubernetesJobManagerSpecification.java": {
+    "top1": "felixzheng",
+    "top3": [
+     "felixzheng",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-kubernetes/src/test/java/org/apache/flink/kubernetes/kubeclient/decorators/HadoopConfMountDecoratorTest.java": {
+    "top1": "felixzheng",
+    "top3": [
+     "felixzheng",
+     "Weijie Guo",
+     "wangyang0918"
+    ]
+   },
+   "flink-libraries/flink-cep/src/test/resources/cep-migration-single-pattern-afterwards-flink2.0-snapshot": {
+    "top1": "Zhanghao Chen",
+    "top3": [
+     "Zhanghao Chen"
+    ]
+   },
+   "flink-libraries/flink-state-processing-api/src/main/java/org/apache/flink/state/table/module/StateModule.java": {
+    "top1": "Gabor Somogyi",
+    "top3": [
+     "Gabor Somogyi"
+    ]
+   },
+   "flink-libraries/flink-state-processing-api/src/test/java/org/apache/flink/state/api/EmbeddedRocksDBStateBackendReaderKeyedStateITCase.java": {
+    "top1": "sjwiesman",
+    "top3": [
+     "sjwiesman",
+     "JunRuiLee",
+     "AlexYinHan"
+    ]
+   },
+   "flink-python/docs/reference/pyflink.datastream/functions.rst": {
+    "top1": "huangxingbo",
+    "top3": [
+     "huangxingbo",
+     "Dian Fu"
+    ]
+   },
+   "flink-python/src/test/java/org/apache/flink/table/runtime/typeutils/serializers/python/BigDecSerializerTest.java": {
+    "top1": "huangxingbo",
+    "top3": [
+     "huangxingbo",
+     "Chesnay Schepler",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-queryable-state/flink-queryable-state-runtime/src/test/java/org/apache/flink/queryablestate/network/KVStateRequestSerializerRocksDBTest.java": {
+    "top1": "fredia",
+    "top3": [
+     "fredia",
+     "Stephan Ewen",
+     "AlexYinHan"
+    ]
+   },
+   "flink-runtime-web/web-dashboard/src/app/components/checkpoint-badge/checkpoint-badge.component.html": {
+    "top1": "vthinkxie",
+    "top3": [
+     "vthinkxie",
+     "Ingo B\u00fcrk"
+    ]
+   },
+   "flink-runtime-web/web-dashboard/src/app/pages/application/application-detail/status/application-status.component.ts": {
+    "top1": "Yi Zhang",
+    "top3": [
+     "Yi Zhang",
+     "Purushottam Sinha"
+    ]
+   },
+   "flink-runtime-web/web-dashboard/src/app/pages/application/application.component.less": {
+    "top1": "Yi Zhang",
+    "top3": [
+     "Yi Zhang"
+    ]
+   },
+   "flink-runtime-web/web-dashboard/src/app/pages/application/modules/running-application/routes.ts": {
+    "top1": "Yi Zhang",
+    "top3": [
+     "Yi Zhang"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/CheckpointStatsSnapshot.java": {
+    "top1": "Roman Khachatryan",
+    "top3": [
+     "Roman Khachatryan",
+     "Chesnay Schepler",
+     "Ufuk Celebi"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/client/JobCancellationException.java": {
+    "top1": "Till Rohrmann",
+    "top3": [
+     "Till Rohrmann",
+     "Stephan Ewen",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/rest/messages/MessageHeaders.java": {
+    "top1": "Chesnay Schepler",
+    "top3": [
+     "Chesnay Schepler",
+     "Alexander Fedulov",
+     "Till Rohrmann"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/rest/messages/job/metrics/JobMetricsHeaders.java": {
+    "top1": "gyao",
+    "top3": [
+     "gyao",
+     "maxbelov",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/scheduler/InputsLocationsRetriever.java": {
+    "top1": "Zhu Zhu",
+    "top3": [
+     "Zhu Zhu",
+     "shuai-xu",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/state/SavepointKeyedStateHandle.java": {
+    "top1": "Dawid Wysakowicz",
+    "top3": [
+     "Dawid Wysakowicz"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/state/heap/HeapReducingState.java": {
+    "top1": "Zakelly",
+    "top3": [
+     "Zakelly",
+     "Hangxiang Yu",
+     "Aljoscha Krettek"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/state/v2/adaptor/ReducingStateAdaptor.java": {
+    "top1": "Zakelly",
+    "top3": [
+     "Zakelly",
+     "Yanfei Lei"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/TaskManagerRuntimeInfo.java": {
+    "top1": "Till Rohrmann",
+    "top3": [
+     "Till Rohrmann",
+     "Stephan Ewen",
+     "TsReaper"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/streaming/api/functions/source/FileProcessingMode.java": {
+    "top1": "kl0u",
+    "top3": [
+     "kl0u",
+     "Kunni",
+     "Greg Hogan"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/streaming/runtime/io/StreamMultipleInputProcessorFactory.java": {
+    "top1": "Rui Fan",
+    "top3": [
+     "Rui Fan",
+     "Dawid Wysakowicz",
+     "Xu Huang"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/streaming/runtime/operators/sink/InitContextInitializationContextAdapter.java": {
+    "top1": "Fabian Paul",
+    "top3": [
+     "Fabian Paul",
+     "Kunni"
+    ]
+   },
+   "flink-runtime/src/main/java/org/apache/flink/streaming/runtime/operators/sink/StatelessSinkWriterStateHandler.java": {
+    "top1": "Arvid Heise",
+    "top3": [
+     "Arvid Heise",
+     "pvary",
+     "Gyula Fora"
+    ]
+   },
+   "flink-runtime/src/test/java/org/apache/flink/runtime/rpc/DirectlyFailingFatalErrorHandler.java": {
+    "top1": "wangyang0918",
+    "top3": [
+     "wangyang0918",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-runtime/src/test/java/org/apache/flink/runtime/scheduler/adaptive/StateWithoutExecutionGraphTest.java": {
+    "top1": "1996fanrui",
+    "top3": [
+     "1996fanrui",
+     "Yuepeng Pan"
+    ]
+   },
+   "flink-runtime/src/test/java/org/apache/flink/runtime/scheduler/adaptivebatch/AdaptiveExecutionPlanSchedulingContextTest.java": {
+    "top1": "JunRuiLee",
+    "top3": [
+     "JunRuiLee"
+    ]
+   },
+   "flink-runtime/src/test/resources/stream-element-serializer-1.20/serializer-snapshot": {
+    "top1": "Weijie Guo",
+    "top3": [
+     "Weijie Guo",
+     "JunRuiLee"
+    ]
+   },
+   "flink-runtime/src/test/resources/ttl-serializer-1.19/serializer-snapshot": {
+    "top1": "lincoln lee",
+    "top3": [
+     "lincoln lee"
+    ]
+   },
+   "flink-state-backends/flink-statebackend-forst/src/main/java/org/apache/flink/state/forst/ForStPathContainer.java": {
+    "top1": "AlexYinHan",
+    "top3": [
+     "AlexYinHan"
+    ]
+   },
+   "flink-table/flink-table-api-java/src/main/java/org/apache/flink/table/operations/UnregisteredSinkModifyOperation.java": {
+    "top1": "Dawid Wysakowicz",
+    "top3": [
+     "Dawid Wysakowicz",
+     "xuyang",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-table/flink-table-common/src/main/java/org/apache/flink/table/types/inference/strategies/AndArgumentTypeStrategy.java": {
+    "top1": "Timo Walther",
+    "top3": [
+     "Timo Walther",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-table/flink-table-common/src/main/java/org/apache/flink/table/types/inference/strategies/RepeatingSequenceInputTypeStrategy.java": {
+    "top1": "Ingo B\u00fcrk",
+    "top3": [
+     "Ingo B\u00fcrk"
+    ]
+   },
+   "flink-table/flink-table-planner/src/main/java/org/apache/calcite/rel/rules/MultiJoin.java": {
+    "top1": "Gustavo de Morais",
+    "top3": [
+     "Gustavo de Morais"
+    ]
+   },
+   "flink-table/flink-table-planner/src/main/java/org/apache/calcite/sql/fun/SqlRowOperator.java": {
+    "top1": "Sergey Nuyanzin",
+    "top3": [
+     "Sergey Nuyanzin",
+     "Xuyang"
+    ]
+   },
+   "flink-table/flink-table-planner/src/main/java/org/apache/flink/table/planner/functions/sql/SqlTumbleTableFunction.java": {
+    "top1": "Hao Li",
+    "top3": [
+     "Hao Li",
+     "Jark Wu",
+     "Jing Zhang"
+    ]
+   },
+   "flink-table/flink-table-planner/src/main/java/org/apache/flink/table/planner/plan/nodes/exec/serde/ShuffleJsonDeserializer.java": {
+    "top1": "godfreyhe",
+    "top3": [
+     "godfreyhe",
+     "Timo Walther"
+    ]
+   },
+   "flink-table/flink-table-planner/src/main/scala/org/apache/flink/table/planner/plan/nodes/physical/batch/BatchPhysicalHashJoin.scala": {
+    "top1": "sunxia",
+    "top3": [
+     "sunxia",
+     "godfrey he",
+     "\u9f99\u4e09"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/java/org/apache/flink/table/planner/functions/aggfunctions/LastValueAggFunctionWithoutOrderTest.java": {
+    "top1": "godfreyhe",
+    "top3": [
+     "godfreyhe",
+     "Jiabao Sun",
+     "Timo Walther"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/java/org/apache/flink/table/planner/plan/batch/sql/MatchRecognizeTest.java": {
+    "top1": "SteNicholas",
+    "top3": [
+     "SteNicholas",
+     "Jiabao Sun"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/resources/explain/testExplainAlterMaterializedTable.out": {
+    "top1": "Ramin Gharib",
+    "top3": [
+     "Ramin Gharib"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/resources/org/apache/flink/table/planner/plan/batch/sql/DagOptimizationTest.xml": {
+    "top1": "Xuyang",
+    "top3": [
+     "Xuyang",
+     "Sergey Nuyanzin",
+     "godfrey he"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/resources/org/apache/flink/table/planner/plan/rules/physical/batch/RemoveRedundantLocalRankRuleTest.xml": {
+    "top1": "Sergey Nuyanzin",
+    "top3": [
+     "Sergey Nuyanzin",
+     "godfrey he",
+     "xuyang"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/resources/restore-tests/stream-exec-group-aggregate_1/group-aggregate-simple/savepoint/_metadata": {
+    "top1": "bvarghese1",
+    "top3": [
+     "bvarghese1"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/resources/restore-tests/stream-exec-union_1/union-all-two-sources/savepoint/_metadata": {
+    "top1": "bvarghese1",
+    "top3": [
+     "bvarghese1"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/scala/org/apache/flink/table/planner/plan/batch/sql/adaptive/AdaptiveJoinTest.scala": {
+    "top1": "sunxia",
+    "top3": [
+     "sunxia",
+     "noorall"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/scala/org/apache/flink/table/planner/plan/batch/sql/join/TemporalJoinTest.scala": {
+    "top1": "Jim Hughes",
+    "top3": [
+     "Jim Hughes",
+     "Jark Wu",
+     "Jark Wu"
+    ]
+   },
+   "flink-table/flink-table-planner/src/test/scala/org/apache/flink/table/planner/plan/rules/physical/stream/ExpandWindowTableFunctionTransposeRuleTest.scala": {
+    "top1": "Jark Wu",
+    "top3": [
+     "Jark Wu",
+     "Marios Trivyzas",
+     "Rufus Refactor"
+    ]
+   },
+   "flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/dataview/ListViewSpec.java": {
+    "top1": "slinkydeveloper",
+    "top3": [
+     "slinkydeveloper"
+    ]
+   },
+   "flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/functions/scalar/ArrayRemoveFunction.java": {
+    "top1": "Jacky Lau",
+    "top3": [
+     "Jacky Lau"
+    ]
+   },
+   "flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/operators/rank/AppendOnlyFirstNFunction.java": {
+    "top1": "lexluo09",
+    "top3": [
+     "lexluo09",
+     "Jun Zhang",
+     "Xuyang"
+    ]
+   },
+   "flink-table/flink-table-runtime/src/test/java/org/apache/flink/table/runtime/operators/join/String2HashJoinOperatorTest.java": {
+    "top1": "fengli",
+    "top3": [
+     "fengli",
+     "Jingsong Lee",
+     "Sergey Nuyanzin"
+    ]
+   },
+   "flink-table/flink-table-type-utils/src/main/java/org/apache/flink/table/data/conversion/DayTimeIntervalDurationConverter.java": {
+    "top1": "Timo Walther",
+    "top3": [
+     "Timo Walther",
+     "Matthias Pohl",
+     "TsReaper"
+    ]
+   },
+   "flink-test-utils-parent/flink-test-utils/src/main/java/org/apache/flink/streaming/util/TestStreamEnvironment.java": {
+    "top1": "Rui Fan",
+    "top3": [
+     "Rui Fan",
+     "Efrat Levitan",
+     "Roman Khachatryan"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink1.15-rocksdb-savepoint-native/3d4e2c1c-96af-4ccc-a375-6e4d0e7ab406": {
+    "top1": "Yun Gao",
+    "top3": [
+     "Yun Gao"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink1.16-rocksdb-checkpoint/203f6aa2-f654-4fe8-8c60-5d6a0bc4f6e7": {
+    "top1": "huangxingbo",
+    "top3": [
+     "huangxingbo"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink1.16-rocksdb-savepoint-native/112f324b-29dc-497a-873d-9c0f330c9077": {
+    "top1": "huangxingbo",
+    "top3": [
+     "huangxingbo"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink1.17-hashmap-savepoint-native/b8cdefd0-6780-486f-b14d-73aa765610f6": {
+    "top1": "Matthias Pohl",
+    "top3": [
+     "Matthias Pohl"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink1.19-rocksdb-checkpoint/35b549fd-88d6-4bcb-ac8c-701fe786d6d7": {
+    "top1": "lincoln lee",
+    "top3": [
+     "lincoln lee"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink2.0-rocksdb-savepoint/ac0886c5-ff19-47ff-bb7e-764d2bda4bc4": {
+    "top1": "Zhanghao Chen",
+    "top3": [
+     "Zhanghao Chen"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink2.2-hashmap-savepoint-native/f2ab4e85-3196-4b1a-8651-86acbcb4338c": {
+    "top1": "Hang Ruan",
+    "top3": [
+     "Hang Ruan"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink2.3-hashmap-checkpoint/35e533a3-7385-47d1-86a4-642f1e33ecaa": {
+    "top1": "David Anderson",
+    "top3": [
+     "David Anderson"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-broadcast-udf-migration-itcase-flink2.3-hashmap-savepoint-native/a5ddb891-c417-4496-a106-f98dda39c291": {
+    "top1": "David Anderson",
+    "top3": [
+     "David Anderson"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-udf-migration-itcase-flink1.17-rocksdb-checkpoint/7a5c3bbf-8a47-4ea2-b0d3-1bfc037cc173": {
+    "top1": "Matthias Pohl",
+    "top3": [
+     "Matthias Pohl"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-udf-migration-itcase-flink1.18-hashmap-checkpoint/b1bc95b3-4c8d-4c16-9523-a41450e9160e": {
+    "top1": "Sergey Nuyanzin",
+    "top3": [
+     "Sergey Nuyanzin"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-udf-migration-itcase-flink1.19-rocksdb-checkpoint/829d12d6-8dd7-4614-90d5-e0a9c9454312": {
+    "top1": "lincoln lee",
+    "top3": [
+     "lincoln lee"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-udf-migration-itcase-flink2.2-rocksdb-savepoint/6b859c7a-f656-4fc3-b747-8835b5e3b3a0": {
+    "top1": "Hang Ruan",
+    "top3": [
+     "Hang Ruan"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-udf-migration-itcase-flink2.3-hashmap-savepoint-native/ea039358-a684-455d-b8d8-098af219c0ea": {
+    "top1": "David Anderson",
+    "top3": [
+     "David Anderson"
+    ]
+   },
+   "flink-tests/src/test/resources/new-stateful-udf-migration-itcase-flink2.3-rocksdb-checkpoint/ae233392-97f4-44a4-ac68-6a04e8b61272": {
+    "top1": "David Anderson",
+    "top3": [
+     "David Anderson"
+    ]
+   }
+  },
+  "opencv": {
+   "3rdparty/clapack/src/dswap.c": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky",
+     "Alexander Alekhin"
+    ]
+   },
+   "3rdparty/harfbuzz/src/hb-cff2-interp-cs.hh": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky"
+    ]
+   },
+   "3rdparty/harfbuzz/src/hb-draw.hh": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky"
+    ]
+   },
+   "3rdparty/harfbuzz/src/hb-number.hh": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky"
+    ]
+   },
+   "3rdparty/harfbuzz/src/hb-ot-face.cc": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky"
+    ]
+   },
+   "3rdparty/harfbuzz/src/hb-raster-draw.cc": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky"
+    ]
+   },
+   "3rdparty/harfbuzz/src/hb-shaper-list.hh": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/simd/arm/neon-compat.h.in": {
+    "top1": "ocpalo",
+    "top3": [
+     "ocpalo",
+     "Suleyman TURKMEN"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/simd/mips64/jidctint-mmi.c": {
+    "top1": "ocpalo",
+    "top3": [
+     "ocpalo"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/simd/nasm/jsimdcfg.inc.h": {
+    "top1": "ocpalo",
+    "top3": [
+     "ocpalo",
+     "Suleyman TURKMEN"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/src/jcarith.c": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin",
+     "Juha Reunanen",
+     "ocpalo"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/src/jdmaster.c": {
+    "top1": "Suleyman TURKMEN",
+    "top3": [
+     "Suleyman TURKMEN",
+     "Alexander Smorkalov",
+     "Alexander Alekhin"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/src/jdsample.c": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Alexander Alekhin",
+     "Suleyman TURKMEN"
+    ]
+   },
+   "3rdparty/libjpeg-turbo/src/jsamplecomp.h": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Suleyman TURKMEN"
+    ]
+   },
+   "3rdparty/libpng/pngrtran.c": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Michael Klatis",
+     "Suleyman TURKMEN"
+    ]
+   },
+   "3rdparty/libpng/powerpc/powerpc_init.c": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Sayed Adel",
+     "Dmitry Kurtaev"
+    ]
+   },
+   "3rdparty/libpng/riscv/riscv_init.c": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov"
+    ]
+   },
+   "3rdparty/libwebp/sharpyuv/sharpyuv.h": {
+    "top1": "Vincent Rabaud",
+    "top3": [
+     "Vincent Rabaud",
+     "Alexander Smorkalov",
+     "Vincent Rabaud"
+    ]
+   },
+   "3rdparty/libwebp/src/enc/backward_references_enc.h": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Vincent Rabaud",
+     "Alexander Alekhin"
+    ]
+   },
+   "3rdparty/mlas/lib/x86_64/FgemmKernelSse2Common.h": {
+    "top1": "Abhishek Gola",
+    "top3": [
+     "Abhishek Gola"
+    ]
+   },
+   "3rdparty/protobuf/src/google/protobuf/inlined_string_field.h": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin"
+    ]
+   },
+   "3rdparty/protobuf/src/google/protobuf/port_def.inc": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin"
+    ]
+   },
+   "3rdparty/protobuf/src/google/protobuf/stubs/port.h": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin",
+     "Alexander Alekhin",
+     "oqtvs"
+    ]
+   },
+   "apps/interactive-calibration/rotationConverters.hpp": {
+    "top1": "Vladislav Sovrasov",
+    "top3": [
+     "Vladislav Sovrasov",
+     "Vladislav Sovrasov"
+    ]
+   },
+   "cmake/OpenCVDetectCXXCompiler.cmake": {
+    "top1": "Kumataro",
+    "top3": [
+     "Kumataro",
+     "Maksim Shabunin",
+     "Benjamin Buch"
+    ]
+   },
+   "cmake/checks/cpu_vsx.cpp": {
+    "top1": "Sayed Adel",
+    "top3": [
+     "Sayed Adel"
+    ]
+   },
+   "cmake/templates/opencv_modules.hpp.in": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin",
+     "Andrey Kamaev",
+     "Roman Donchenko"
+    ]
+   },
+   "doc/images/camshift_face.gif": {
+    "top1": "Congxiang Pan",
+    "top3": [
+     "Congxiang Pan",
+     "Maksim Shabunin"
+    ]
+   },
+   "doc/js_tutorials/js_assets/js_basic_ops_copymakeborder.html": {
+    "top1": "Congxiang Pan",
+    "top3": [
+     "Congxiang Pan",
+     "Ningxin Hu"
+    ]
+   },
+   "doc/js_tutorials/js_assets/js_filtering_GaussianBlur.html": {
+    "top1": "Congxiang Pan",
+    "top3": [
+     "Congxiang Pan",
+     "Ningxin Hu"
+    ]
+   },
+   "doc/js_tutorials/js_assets/js_morphological_ops_topHat.html": {
+    "top1": "Congxiang Pan",
+    "top3": [
+     "Congxiang Pan",
+     "Ningxin Hu"
+    ]
+   },
+   "doc/js_tutorials/js_core/js_some_data_structures/js_image_arithmetics.markdown": {
+    "top1": "Congxiang Pan",
+    "top3": [
+     "Congxiang Pan"
+    ]
+   },
+   "doc/js_tutorials/js_dnn/js_image_classification/js_image_classification.markdown": {
+    "top1": "Zhiming-Zeng",
+    "top3": [
+     "Zhiming-Zeng",
+     "Ningxin Hu"
+    ]
+   },
+   "doc/py_tutorials/py_core/images/speed.jpg": {
+    "top1": "abidrahmank",
+    "top3": [
+     "abidrahmank",
+     "Maksim Shabunin"
+    ]
+   },
+   "doc/py_tutorials/py_imgproc/py_morphological_ops/images/gradient.png": {
+    "top1": "abidrahmank",
+    "top3": [
+     "abidrahmank"
+    ]
+   },
+   "doc/py_tutorials/py_setup/py_setup_in_windows/images/Capture3.png": {
+    "top1": "abidrahmank",
+    "top3": [
+     "abidrahmank"
+    ]
+   },
+   "doc/tutorials/app/highgui_wayland_ubuntu.markdown": {
+    "top1": "Kumataro",
+    "top3": [
+     "Kumataro",
+     "Ayush Das"
+    ]
+   },
+   "doc/tutorials/app/images/Adding_Trackbars_Tutorial_Result_0.jpg": {
+    "top1": "Bernat Gabor",
+    "top3": [
+     "Bernat Gabor",
+     "Maksim Shabunin"
+    ]
+   },
+   "doc/tutorials/app/images/Adding_Trackbars_Tutorial_Result_1.jpg": {
+    "top1": "Bernat Gabor",
+    "top3": [
+     "Bernat Gabor",
+     "Maksim Shabunin"
+    ]
+   },
+   "doc/tutorials/core/mat_the_basic_image_container/images/MatBasicContainerOut8.png": {
+    "top1": "Bernat Gabor",
+    "top3": [
+     "Bernat Gabor",
+     "Alexander Shishkov"
+    ]
+   },
+   "doc/tutorials/dnn/dnn_yolo/images/yolo.jpg": {
+    "top1": "alessandro faria",
+    "top3": [
+     "alessandro faria"
+    ]
+   },
+   "doc/tutorials/introduction/linux_install/linux_install.markdown": {
+    "top1": "Alessandro de Oliveira Faria (A.K.A.CABELO)",
+    "top3": [
+     "Alessandro de Oliveira Faria (A.K.A.CABELO)",
+     "Maksim Shabunin",
+     "Maksim Shabunin"
+    ]
+   },
+   "doc/tutorials/introduction/windows_msys2_vscode/window_install_opencv.markdown": {
+    "top1": "rajmahadev422",
+    "top3": [
+     "rajmahadev422"
+    ]
+   },
+   "doc/tutorials/ios/hello/images/header_directive.png": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky",
+     "Maksim Shabunin"
+    ]
+   },
+   "docs_sphinx/_static/version.js": {
+    "top1": "omrope79",
+    "top3": [
+     "omrope79"
+    ]
+   },
+   "hal/carotene/include/carotene/types.hpp": {
+    "top1": "Sean McBride",
+    "top3": [
+     "Sean McBride",
+     "Elif Albuz"
+    ]
+   },
+   "hal/carotene/src/fast.cpp": {
+    "top1": "Elif Albuz",
+    "top3": [
+     "Elif Albuz"
+    ]
+   },
+   "hal/carotene/src/separable_filter.hpp": {
+    "top1": "Elif Albuz",
+    "top3": [
+     "Elif Albuz"
+    ]
+   },
+   "hal/ndsrvp/include/imgproc.hpp": {
+    "top1": "Junyan721113",
+    "top3": [
+     "Junyan721113"
+    ]
+   },
+   "hal/riscv-rvv/src/imgproc/sep_filter.cpp": {
+    "top1": "Yuantao Feng",
+    "top3": [
+     "Yuantao Feng"
+    ]
+   },
+   "modules/calib/doc/pics/fisheye_undistorted.jpg": {
+    "top1": "Ilya Krylov",
+    "top3": [
+     "Ilya Krylov",
+     "Vadim Pisarevsky"
+    ]
+   },
+   "modules/calib/doc/pics/hand-eye_figure.png": {
+    "top1": "catree",
+    "top3": [
+     "catree",
+     "Vadim Pisarevsky"
+    ]
+   },
+   "modules/core/misc/objc/common/Point3d.h": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne",
+     "Giles Payne",
+     "Alexander Alekhin"
+    ]
+   },
+   "modules/core/misc/objc/common/Size2f.h": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne",
+     "Alexander Alekhin",
+     "Giles Payne"
+    ]
+   },
+   "modules/core/misc/objc/common/Typealiases.swift": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne",
+     "Chris Ballinger"
+    ]
+   },
+   "modules/core/src/persistence.cpp": {
+    "top1": "Abhishek Gola",
+    "top3": [
+     "Abhishek Gola",
+     "Kumataro",
+     "Dmitry Kurtaev"
+    ]
+   },
+   "modules/core/src/utils/logtagmanager.hpp": {
+    "top1": "Ryan Wong",
+    "top3": [
+     "Ryan Wong",
+     "Francesco Petrogalli",
+     "Alexander Alekhin"
+    ]
+   },
+   "modules/core/test/test_ptr.cpp": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin",
+     "Alexander Alekhin",
+     "Maksim Shabunin"
+    ]
+   },
+   "modules/dnn/src/layers/resize_layer.cpp": {
+    "top1": "SamareshSingh",
+    "top3": [
+     "SamareshSingh",
+     "Anemptyship",
+     "Hanbin Bae"
+    ]
+   },
+   "modules/features/perf/perf_matcher.cpp": {
+    "top1": null,
+    "top3": []
+   },
+   "modules/flann/include/opencv2/flann/composite_index.h": {
+    "top1": "sight",
+    "top3": [
+     "sight",
+     "Kumataro",
+     "Alexander Alekhin"
+    ]
+   },
+   "modules/flann/include/opencv2/flann/dist.h": {
+    "top1": "Vincent Rabaud",
+    "top3": [
+     "Vincent Rabaud",
+     "Pierre-Emmanuel Viel",
+     "Kumataro"
+    ]
+   },
+   "modules/geometry/misc/objc/gen_dict.json": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov"
+    ]
+   },
+   "modules/geometry/src/usac/quality.cpp": {
+    "top1": "Maksym Ivashechkin",
+    "top3": [
+     "Maksym Ivashechkin",
+     "Maksym Ivashechkin",
+     "Ruan"
+    ]
+   },
+   "modules/imgcodecs/src/grfmt_bmp.hpp": {
+    "top1": "Kumataro",
+    "top3": [
+     "Kumataro",
+     "tantei3",
+     "Harvey"
+    ]
+   },
+   "modules/imgproc/doc/pics/delaunay_voronoi.png": {
+    "top1": "Elad Joseph",
+    "top3": [
+     "Elad Joseph"
+    ]
+   },
+   "modules/imgproc/doc/pics/polar_remap_doc.png": {
+    "top1": "PkLab.net",
+    "top3": [
+     "PkLab.net",
+     "Vadim Pisarevsky"
+    ]
+   },
+   "modules/imgproc/src/contours_new.cpp": {
+    "top1": "Maksim Shabunin",
+    "top3": [
+     "Maksim Shabunin",
+     "Rafael Mu\u00f1oz Salinas",
+     "Pierre Chatelier"
+    ]
+   },
+   "modules/imgproc/src/equalize_hist.simd.hpp": {
+    "top1": "Madan mohan Manokar",
+    "top3": [
+     "Madan mohan Manokar"
+    ]
+   },
+   "modules/imgproc/test/test_drawing.cpp": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky",
+     "WITHOUTNAMESES",
+     "Pierre Chatelier"
+    ]
+   },
+   "modules/java/test/android_test/src/org/opencv/test/OpenCVTestRunner.java": {
+    "top1": "alexlyulkov",
+    "top3": [
+     "alexlyulkov",
+     "Ahmed Ashour",
+     "Andrey Kamaev"
+    ]
+   },
+   "modules/js/src/.eslintrc.json": {
+    "top1": "Congxiang Pan",
+    "top3": [
+     "Congxiang Pan"
+    ]
+   },
+   "modules/objc/doc/pics/ios/ios-add-opencv-code.png": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne"
+    ]
+   },
+   "modules/objdetect/src/barcode_decoder/common/hybrid_binarizer.hpp": {
+    "top1": "Maksim Shabunin",
+    "top3": [
+     "Maksim Shabunin"
+    ]
+   },
+   "modules/photo/src/ccm/distance.cpp": {
+    "top1": "Gursimar Singh",
+    "top3": [
+     "Gursimar Singh"
+    ]
+   },
+   "modules/ptcloud/perf/perf_precomp.hpp": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov"
+    ]
+   },
+   "modules/ptcloud/src/viz3d/grid_ticks.hpp": {
+    "top1": "kirtijindal14",
+    "top3": [
+     "kirtijindal14"
+    ]
+   },
+   "modules/ts/include/opencv2/ts.hpp": {
+    "top1": "Maksim Shabunin",
+    "top3": [
+     "Maksim Shabunin",
+     "Vincent Rabaud",
+     "Yuantao Feng"
+    ]
+   },
+   "modules/ts/src/ocl_test.cpp": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Maksim Shabunin",
+     "Alexander Alekhin"
+    ]
+   },
+   "modules/video/misc/python/test/test_tracking.py": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "Wanli",
+     "Alexander Alekhin"
+    ]
+   },
+   "modules/videoio/cmake/detect_ximea.cmake": {
+    "top1": "Maksim Shabunin",
+    "top3": [
+     "Maksim Shabunin",
+     "Philippe FOUBERT",
+     "Alexander Alekhin"
+    ]
+   },
+   "modules/videoio/src/plugin_writer_api.hpp": {
+    "top1": "Alexander Alekhin",
+    "top3": [
+     "Alexander Alekhin"
+    ]
+   },
+   "platforms/android/ndk-18-api-level-21.config.py": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne"
+    ]
+   },
+   "platforms/linux/mips.toolchain.cmake": {
+    "top1": "mipsopen-fwu",
+    "top3": [
+     "mipsopen-fwu",
+     "Brian Wignall"
+    ]
+   },
+   "platforms/linux/riscv64-071-gcc.toolchain.cmake": {
+    "top1": "Maksim Shabunin",
+    "top3": [
+     "Maksim Shabunin",
+     "damonyu1989",
+     "Fang Sun"
+    ]
+   },
+   "samples/android/face-detection/res/values/strings.xml": {
+    "top1": "Andrey Kamaev",
+    "top3": [
+     "Andrey Kamaev",
+     "Alexander Smorkalov",
+     "hbristow"
+    ]
+   },
+   "samples/android/tutorial-2-mixedprocessing/res/values/strings.xml": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "hbristow"
+    ]
+   },
+   "samples/cpp/snippets/dft.cpp": {
+    "top1": "Gursimar Singh",
+    "top3": [
+     "Gursimar Singh"
+    ]
+   },
+   "samples/data/pic4.png": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky",
+     "Dmitriy Anisimov",
+     "hbristow"
+    ]
+   },
+   "samples/data/right05.jpg": {
+    "top1": "Vadim Pisarevsky",
+    "top3": [
+     "Vadim Pisarevsky",
+     "Dmitriy Anisimov",
+     "hbristow"
+    ]
+   },
+   "samples/data/text_motion.jpg": {
+    "top1": "Alexander Mordvintesv",
+    "top3": [
+     "Alexander Mordvintesv",
+     "Dmitriy Anisimov",
+     "hbristow"
+    ]
+   },
+   "samples/java/sbt/src/main/scala/ScalaDetectFaceDemo.scala": {
+    "top1": "WU Jia",
+    "top3": [
+     "WU Jia",
+     "Eric Christiansen",
+     "Dmitry Melnichenko"
+    ]
+   },
+   "samples/java/tutorial_code/build.xml": {
+    "top1": "tribta",
+    "top3": [
+     "tribta"
+    ]
+   },
+   "samples/python/tutorial_code/core/mat_operations/mat_operations.py": {
+    "top1": "catree",
+    "top3": [
+     "catree",
+     "Alexander Alekhin"
+    ]
+   },
+   "samples/swift/ios/ColorBlobDetection/ColorBlobDetection/Assets.xcassets/AppIcon.appiconset/29.png": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne"
+    ]
+   },
+   "samples/swift/ios/FaceDetection/FaceDetectionDynamic.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist": {
+    "top1": "Giles Payne",
+    "top3": [
+     "Giles Payne"
+    ]
+   },
+   "samples/winrt/ImageManipulations/AdvancedCapture.xaml.cpp": {
+    "top1": "Alexander Smorkalov",
+    "top3": [
+     "Alexander Smorkalov",
+     "luz.paz"
+    ]
+   },
+   "samples/winrt/ImageManipulations/MediaExtensions/OcvTransform/OcvTransform.vcxproj": {
+    "top1": "Maxim Kostin",
+    "top3": [
+     "Maxim Kostin",
+     "Alexander Smorkalov",
+     "Roman Donchenko"
+    ]
+   },
+   "samples/wp8/OcvImageManipulation/PhoneXamlDirect3DApp1/PhoneXamlDirect3DApp1/LocalizedStrings.cs": {
+    "top1": "Maxim Kostin",
+    "top3": [
+     "Maxim Kostin"
+    ]
+   },
+   "samples/wp8/OcvRotatingCube/PhoneXamlDirect3DApp1/PhoneXamlDirect3DApp1Comp/Direct3DInterop.h": {
+    "top1": "Maxim Kostin",
+    "top3": [
+     "Maxim Kostin"
+    ]
+   }
+  },
+  "valkey": {
+   ".github/instructions/core-engine.instructions.md": {
+    "top1": "Ping Xie",
+    "top3": [
+     "Ping Xie",
+     "Rain Valentine",
+     "Alina Liu"
+    ]
+   },
+   "LICENSES/MIT.txt": {
+    "top1": "Viktor S\u00f6derqvist",
+    "top3": [
+     "Viktor S\u00f6derqvist"
+    ]
+   },
+   "Makefile": {
+    "top1": "Yossi Gottlieb",
+    "top3": [
+     "Yossi Gottlieb",
+     "Mikel Olasagasti Uranga",
+     "Chayim I. Kirshen"
+    ]
+   },
+   "cmake/Modules/ValkeySetup.cmake": {
+    "top1": "eifrah-aws",
+    "top3": [
+     "eifrah-aws",
+     "zhenwei pi",
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/README.md": {
+    "top1": "Viktor S\u00f6derqvist",
+    "top3": [
+     "Viktor S\u00f6derqvist",
+     "Sarthak Aggarwal",
+     "Daniel Lemire"
+    ]
+   },
+   "deps/hdr_histogram/README.md": {
+    "top1": "filipe oliveira",
+    "top3": [
+     "filipe oliveira",
+     "yoav-steinberg",
+     "yoav-steinberg"
+    ]
+   },
+   "deps/hdr_histogram/hdr_tests.h": {
+    "top1": "yoav-steinberg",
+    "top3": [
+     "yoav-steinberg",
+     "filipe oliveira"
+    ]
+   },
+   "deps/jemalloc/include/jemalloc/internal/bin.h": {
+    "top1": "Yoav Steinberg",
+    "top3": [
+     "Yoav Steinberg",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/include/jemalloc/internal/eset.h": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/include/jemalloc/internal/extent.h": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/include/jemalloc/internal/jemalloc_internal_includes.h": {
+    "top1": "antirez",
+    "top3": [
+     "antirez",
+     "Yoav Steinberg"
+    ]
+   },
+   "deps/jemalloc/include/jemalloc/internal/mpsc_queue.h": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/include/jemalloc/internal/mutex_prof.h": {
+    "top1": "antirez",
+    "top3": [
+     "antirez",
+     "Yoav Steinberg"
+    ]
+   },
+   "deps/jemalloc/include/jemalloc/internal/peak_event.h": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/include/jemalloc/internal/prof_inlines.h": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/include/jemalloc/internal/prof_stats.h": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/include/jemalloc/internal/seq.h": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/include/jemalloc/jemalloc_protos.h.in": {
+    "top1": "Yoav Steinberg",
+    "top3": [
+     "Yoav Steinberg",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/scripts/linux/before_install.sh": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/src/jemalloc.c": {
+    "top1": "zvi-code",
+    "top3": [
+     "zvi-code",
+     "Oran Agra",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/src/pa_extra.c": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/src/prof_log.c": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/integration/cpp/infallible_new_true.cpp": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/integration/smallocx.sh": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/unit/SFMT.c": {
+    "top1": "Yoav Steinberg",
+    "top3": [
+     "Yoav Steinberg",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/test/unit/batch_alloc.c": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/unit/bitmap.c": {
+    "top1": "Yoav Steinberg",
+    "top3": [
+     "Yoav Steinberg",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/test/unit/counter.c": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/unit/emitter.c": {
+    "top1": "Yoav Steinberg",
+    "top3": [
+     "Yoav Steinberg",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/test/unit/hpa_background_thread.sh": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/unit/junk_free.sh": {
+    "top1": "antirez",
+    "top3": [
+     "antirez",
+     "Yoav Steinberg"
+    ]
+   },
+   "deps/jemalloc/test/unit/prof_hook.c": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/jemalloc/test/unit/stats.c": {
+    "top1": "Yoav Steinberg",
+    "top3": [
+     "Yoav Steinberg",
+     "antirez"
+    ]
+   },
+   "deps/jemalloc/test/unit/test_hooks.c": {
+    "top1": null,
+    "top3": []
+   },
+   "deps/libvalkey/.clang-format": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/libvalkey/.github/wordlist.txt": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/libvalkey/examples/async-libevent.c": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/libvalkey/examples/async-valkeymoduleapi.c": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/libvalkey/tests/scripts/moved-redirect-test.sh": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/libvalkey/tests/scripts/slots-not-served-test-async.sh": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/libvalkey/tests/ut_parse_cmd.c": {
+    "top1": "Bj\u00f6rn Svensson",
+    "top3": [
+     "Bj\u00f6rn Svensson"
+    ]
+   },
+   "deps/lua/doc/logo.gif": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "deps/lua/doc/readme.html": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "deps/lua/etc/lua.ico": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "deps/lua/src/fpconv.c": {
+    "top1": "Matt Stancliff",
+    "top3": [
+     "Matt Stancliff"
+    ]
+   },
+   "deps/lua/src/ldebug.h": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "deps/lua/src/lobject.c": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "deps/lua/src/lopcodes.h": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   },
+   "src/ae.h": {
+    "top1": "uriyage",
+    "top3": [
+     "uriyage",
+     "Shivshankar",
+     "antirez"
+    ]
+   },
+   "src/allocator_defrag.c": {
+    "top1": "zvi-code",
+    "top3": [
+     "zvi-code",
+     "Josh Soref",
+     "Alina Liu"
+    ]
+   },
+   "src/allocator_defrag.h": {
+    "top1": "zvi-code",
+    "top3": [
+     "zvi-code",
+     "Madelyn Olson",
+     "ranshid"
+    ]
+   },
+   "src/commands/blmove.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Adam Fowler",
+     "Daniil Kashapov"
+    ]
+   },
+   "src/commands/client-capa.json": {
+    "top1": "zhaozhao.zz",
+    "top3": [
+     "zhaozhao.zz",
+     "Gabi Ganam",
+     "Gabi Ganam"
+    ]
+   },
+   "src/commands/client-reply.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Gabi Ganam",
+     "Gabi Ganam"
+    ]
+   },
+   "src/commands/function-load.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Meir Shpilraien (Spielrein)",
+     "Daniil Kashapov"
+    ]
+   },
+   "src/commands/lindex.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Daniil Kashapov",
+     "Oran Agra"
+    ]
+   },
+   "src/commands/memory-stats.json": {
+    "top1": "Binbin",
+    "top3": [
+     "Binbin",
+     "guybe7",
+     "Chen Tianjie"
+    ]
+   },
+   "src/commands/msetex.json": {
+    "top1": "Binbin",
+    "top3": [
+     "Binbin"
+    ]
+   },
+   "src/commands/psetex.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Kyle J. Davis",
+     "Itamar Haber"
+    ]
+   },
+   "src/commands/script-debug.json": {
+    "top1": "Ricardo Dias",
+    "top3": [
+     "Ricardo Dias",
+     "guybe7",
+     "Daniil Kashapov"
+    ]
+   },
+   "src/commands/sentinel-monitor.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Wen Hui",
+     "Daniil Kashapov"
+    ]
+   },
+   "src/commands/sentinel-primaries.json": {
+    "top1": "Wen Hui",
+    "top3": [
+     "Wen Hui",
+     "Daniil Kashapov"
+    ]
+   },
+   "src/commands/slowlog-len.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Kyle J. Davis",
+     "zhaozhao.zz"
+    ]
+   },
+   "src/commands/smismember.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Daniil Kashapov",
+     "Oran Agra"
+    ]
+   },
+   "src/commands/xautoclaim.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Joseph Heck",
+     "Lucas Yang"
+    ]
+   },
+   "src/commands/xsetid.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Itamar Haber",
+     "knggk"
+    ]
+   },
+   "src/commands/zpopmax.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Daniil Kashapov",
+     "Oran Agra"
+    ]
+   },
+   "src/commands/zrem.json": {
+    "top1": "guybe7",
+    "top3": [
+     "guybe7",
+     "Daniil Kashapov",
+     "Itamar Haber"
+    ]
+   },
+   "src/connection.h": {
+    "top1": "zhenwei pi",
+    "top3": [
+     "zhenwei pi",
+     "Quanye Yang",
+     "cxljs"
+    ]
+   },
+   "src/fbtree.c": {
+    "top1": "Ran Shidlansik",
+    "top3": [
+     "Ran Shidlansik",
+     "Rain Valentine"
+    ]
+   },
+   "src/hashtable.c": {
+    "top1": "Viktor S\u00f6derqvist",
+    "top3": [
+     "Viktor S\u00f6derqvist",
+     "Rain Valentine",
+     "chzhoo"
+    ]
+   },
+   "src/listpack.c": {
+    "top1": "Viktor S\u00f6derqvist",
+    "top3": [
+     "Viktor S\u00f6derqvist",
+     "Josh Soref",
+     "jjuleslasarte"
+    ]
+   },
+   "src/lzf_c.c": {
+    "top1": "sundb",
+    "top3": [
+     "sundb",
+     "Ozan Tezcan",
+     "antirez"
+    ]
+   },
+   "src/modules/lua/script_lua.c": {
+    "top1": "Ricardo Dias",
+    "top3": [
+     "Ricardo Dias",
+     "Viktor S\u00f6derqvist",
+     "Stefan Wang"
+    ]
+   },
+   "src/mutexqueue.c": {
+    "top1": "Alina Liu",
+    "top3": [
+     "Alina Liu",
+     "Sarthak Aggarwal",
+     "Jim Brunner"
+    ]
+   },
+   "src/mutexqueue.h": {
+    "top1": "Alina Liu",
+    "top3": [
+     "Alina Liu",
+     "Sarthak Aggarwal",
+     "Jim Brunner"
+    ]
+   },
+   "src/ordered_index.h": {
+    "top1": "Ran Shidlansik",
+    "top3": [
+     "Ran Shidlansik",
+     "Rain Valentine"
+    ]
+   },
+   "src/script.h": {
+    "top1": "Ricardo Dias",
+    "top3": [
+     "Ricardo Dias",
+     "meir@redislabs.com",
+     "Daniil Kashapov"
+    ]
+   },
+   "src/t_hash.c": {
+    "top1": "Binbin",
+    "top3": [
+     "Binbin",
+     "Ran Shidlansik",
+     "Viktor S\u00f6derqvist"
+    ]
+   },
+   "src/trace/trace.h": {
+    "top1": "skyfirelee",
+    "top3": [
+     "skyfirelee",
+     "Binbin",
+     "zhenwei pi"
+    ]
+   },
+   "src/trace/trace_db.h": {
+    "top1": "skyfirelee",
+    "top3": [
+     "skyfirelee",
+     "Ran Shidlansik",
+     "zhenwei pi"
+    ]
+   },
+   "src/trace/trace_rdb.h": {
+    "top1": "skyfirelee",
+    "top3": [
+     "skyfirelee",
+     "Binbin",
+     "zhenwei pi"
+    ]
+   },
+   "src/unit/test_timeout.cpp": {
+    "top1": "Rain Valentine",
+    "top3": [
+     "Rain Valentine"
+    ]
+   },
+   "src/unit/wrappers.h": {
+    "top1": "Harry Lin",
+    "top3": [
+     "Harry Lin",
+     "cjx-zar",
+     "Akash Kumar"
+    ]
+   },
+   "src/ziplist.h": {
+    "top1": "Mason Hall",
+    "top3": [
+     "Mason Hall",
+     "Ping Xie",
+     "Oran Agra"
+    ]
+   },
+   "tests/integration/replication-multi-cmd.tcl": {
+    "top1": "Binbin",
+    "top3": [
+     "Binbin"
+    ]
+   },
+   "tests/integration/replication.tcl": {
+    "top1": "Binbin",
+    "top3": [
+     "Binbin",
+     "Sarthak Aggarwal",
+     "Taeknology"
+    ]
+   },
+   "tests/integration/valkey-check-rdb.tcl": {
+    "top1": "skyfirelee",
+    "top3": [
+     "skyfirelee",
+     "Sarthak Aggarwal",
+     "Viktor S\u00f6derqvist"
+    ]
+   },
+   "tests/modules/propagate.c": {
+    "top1": "Seungmin Lee",
+    "top3": [
+     "Seungmin Lee",
+     "KarthikSubbarao",
+     "Dmitry Polyakovsky"
+    ]
+   },
+   "tests/modules/unsupported_features.c": {
+    "top1": "Jacob Murphy",
+    "top3": [
+     "Jacob Murphy"
+    ]
+   },
+   "tests/sentinel/tests/18-stuck-failover.tcl": {
+    "top1": "Simon Baatz",
+    "top3": [
+     "Simon Baatz"
+    ]
+   },
+   "tests/support/stacktrace.tcl": {
+    "top1": "Viktor S\u00f6derqvist",
+    "top3": [
+     "Viktor S\u00f6derqvist"
+    ]
+   },
+   "tests/unit/client-eviction.tcl": {
+    "top1": "Quanye Yang",
+    "top3": [
+     "Quanye Yang",
+     "Dhruv Chauhan (chdh)",
+     "yoav-steinberg"
+    ]
+   },
+   "tests/unit/cluster/cluster-aux-field-validation.tcl": {
+    "top1": "eifrah-aws",
+    "top3": [
+     "eifrah-aws",
+     "Alisina Karimi"
+    ]
+   },
+   "tests/unit/cluster/cluster-response-tls.tcl": {
+    "top1": "Chen Tianjie",
+    "top3": [
+     "Chen Tianjie",
+     "Viktor S\u00f6derqvist",
+     "Shivshankar"
+    ]
+   },
+   "tests/unit/cluster/replica-migration-slow.tcl": {
+    "top1": "Jun Yeong Kim",
+    "top3": [
+     "Jun Yeong Kim",
+     "Binbin"
+    ]
+   },
+   "tests/unit/cluster/slot-stats.tcl": {
+    "top1": "Kyle Kim (kimkyle@)",
+    "top3": [
+     "Kyle Kim (kimkyle@)",
+     "Daniil Kashapov",
+     "Binbin"
+    ]
+   },
+   "tests/unit/moduleapi/redismodule_onload.tcl": {
+    "top1": "Roshan Khatri",
+    "top3": [
+     "Roshan Khatri"
+    ]
+   },
+   "tests/unit/tls.tcl": {
+    "top1": "Yang Zhao",
+    "top3": [
+     "Yang Zhao",
+     "Jacob Murphy",
+     "Yiwen Zhang"
+    ]
+   },
+   "utils/srandmember/README.md": {
+    "top1": "antirez",
+    "top3": [
+     "antirez"
+    ]
+   }
+  },
+  "vscode": {
+   ".github/workflows/pr-win32-test.yml": {
+    "top1": "Ladislau Szomoru",
+    "top3": [
+     "Ladislau Szomoru",
+     "Alexandru Dima",
+     "Giuseppe Cianci"
+    ]
+   },
+   "extensions/configuration-editing/package-lock.json": {
+    "top1": "Robo",
+    "top3": [
+     "Robo",
+     "Raymond Zhao",
+     "Jo\u00e3o Moreno"
+    ]
+   },
+   "extensions/copilot/.mocharc.js": {
+    "top1": "Dirk B\u00e4umer",
+    "top3": [
+     "Dirk B\u00e4umer"
+    ]
+   },
+   "extensions/copilot/script/setup/getEnv.mts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Raymond Zhao",
+     "SteVen Batten"
+    ]
+   },
+   "extensions/copilot/src/extension/byok/vscode-node/test/customEndpointProvider.spec.ts": {
+    "top1": "Vijay Upadya",
+    "top3": [
+     "Vijay Upadya",
+     "vritant24",
+     "Vritant Bhardwaj"
+    ]
+   },
+   "extensions/copilot/src/extension/chat/vscode-node/chatHookTelemetry.ts": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens"
+    ]
+   },
+   "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/diagnostics.tsx": {
+    "top1": "Dirk B\u00e4umer",
+    "top3": [
+     "Dirk B\u00e4umer"
+    ]
+   },
+   "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/suggestions/test/partialSuggestions.test.ts": {
+    "top1": "Dirk B\u00e4umer",
+    "top3": [
+     "Dirk B\u00e4umer",
+     "Benjamin Christopher Simmonds"
+    ]
+   },
+   "extensions/copilot/src/extension/intents/test/node/toolCallingLoopHooks.spec.ts": {
+    "top1": "Paul",
+    "top3": [
+     "Paul",
+     "guomaggie",
+     "Rob Lourens"
+    ]
+   },
+   "extensions/copilot/src/extension/prompts/node/agent/test/__snapshots__/agentPrompts-gpt-5.1/cache_BPs.spec.snap": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens",
+     "Bhavya U",
+     "Dmitriy Vasyura"
+    ]
+   },
+   "extensions/copilot/src/extension/prompts/node/panel/currentEditor.tsx": {
+    "top1": "Don Jayamanne",
+    "top3": [
+     "Don Jayamanne",
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/extension/prompts/node/test/fixtures/BasketService.selection.cs": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/extension/test/node/fixtures/pseudodiff/14-rob-one.diff": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/extension/tools/common/toolNames.ts": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens",
+     "Alex Ross",
+     "Kyle Cutler"
+    ]
+   },
+   "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p3/source/f2.ts": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/platform/chat/node/hookExecutor.ts": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens",
+     "Paul"
+    ]
+   },
+   "extensions/copilot/src/platform/configuration/vscode/configurationServiceImpl.ts": {
+    "top1": "Alexandru Dima",
+    "top3": [
+     "Alexandru Dima",
+     "Kyle Cutler",
+     "Matt Bierner"
+    ]
+   },
+   "extensions/copilot/src/platform/filesystem/common/fileSystemService.ts": {
+    "top1": "Don Jayamanne",
+    "top3": [
+     "Don Jayamanne",
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/platform/networking/test/node/fetcherFallback.spec.ts": {
+    "top1": "Christof Marti",
+    "top3": [
+     "Christof Marti",
+     "Alexandru Dima",
+     "Logan Ramos"
+    ]
+   },
+   "extensions/copilot/src/platform/notebook/test/node/fixtures/data_processing_after.ipynb": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/platform/notebook/test/node/fixtures/data_visualization_2_before.ipynb": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/src/platform/test/common/testCustomInstructionsService.ts": {
+    "top1": "Paul",
+    "top3": [
+     "Paul",
+     "Abhitej John",
+     "Martin Aeschlimann"
+    ]
+   },
+   "extensions/copilot/test/pipeline/alternativeAction/util.ts": {
+    "top1": "Ulugbek Abdullaev",
+    "top3": [
+     "Ulugbek Abdullaev"
+    ]
+   },
+   "extensions/copilot/test/simulation/fixtures/edit/markdown/explanation.md": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/test/simulation/fixtures/fixing/python/pyright_no_to_string_member.py": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/test/simulation/fixtures/fixing/python/pyright_object_not_subscriptable.py": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/copilot/test/simulation/fixtures/inlineEdits/1-point.ts/recording.w.json": {
+    "top1": "kieferrm",
+    "top3": [
+     "kieferrm"
+    ]
+   },
+   "extensions/emmet/package.nls.json": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Raymond Zhao",
+     "Raymond Zhao"
+    ]
+   },
+   "extensions/git/src/api/git.constants.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner"
+    ]
+   },
+   "extensions/github/.npmrc": {
+    "top1": "Robo",
+    "top3": [
+     "Robo",
+     "Matt Bierner"
+    ]
+   },
+   "extensions/github/src/typings/git.constants.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Christof Marti"
+    ]
+   },
+   "extensions/json-language-features/server/.npmignore": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Martin Aeschlimann",
+     "Robo"
+    ]
+   },
+   "extensions/terminal-suggest/src/completions/upstream/docker.ts": {
+    "top1": "Daniel Imms",
+    "top3": [
+     "Daniel Imms"
+    ]
+   },
+   "extensions/theme-modern-icons/fileicons/images/illustrator.svg": {
+    "top1": "Lee Murray",
+    "top3": [
+     "Lee Murray",
+     "mrleemurray"
+    ]
+   },
+   "extensions/typescript-language-features/web/src/serverHost.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Matt Bierner"
+    ]
+   },
+   "extensions/vscode-api-tests/src/singlefolder-tests/notebook.editor.test.ts": {
+    "top1": "Johannes",
+    "top3": [
+     "Johannes",
+     "Peng Lyu",
+     "Benjamin Pasero"
+    ]
+   },
+   "extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-checker.ts": {
+    "top1": "Alex Ross",
+    "top3": [
+     "Alex Ross"
+    ]
+   },
+   "extensions/vscode-colorize-tests/test/colorize-fixtures/test.hbs": {
+    "top1": "Jo\u00e3o Moreno",
+    "top3": [
+     "Jo\u00e3o Moreno"
+    ]
+   },
+   "extensions/vscode-colorize-tests/test/colorize-results/test_groovy.json": {
+    "top1": "Lee Murray",
+    "top3": [
+     "Lee Murray",
+     "mrleemurray",
+     "Lee Murray"
+    ]
+   },
+   "extensions/vscode-colorize-tests/test/colorize-results/test_r.json": {
+    "top1": "Lee Murray",
+    "top3": [
+     "Lee Murray",
+     "mrleemurray",
+     "Alex Ross"
+    ]
+   },
+   "extensions/vscode-colorize-tests/test/colorize-results/test_swift.json": {
+    "top1": "Lee Murray",
+    "top3": [
+     "Lee Murray",
+     "Raymond Zhao",
+     "David Dossett"
+    ]
+   },
+   "extensions/vscode-colorize-tests/test/colorize-tree-sitter-results/test-173224_sh.json": {
+    "top1": "Alex Ross",
+    "top3": [
+     "Alex Ross",
+     "Raymond Zhao"
+    ]
+   },
+   "extensions/vscode-colorize-tests/tsconfig.json": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Matt Bierner",
+     "Johannes Rieken"
+    ]
+   },
+   "resources/win32/sass.ico": {
+    "top1": "Benjamin Pasero",
+    "top3": [
+     "Benjamin Pasero",
+     "Miguel Solorio"
+    ]
+   },
+   "scripts/code-web.sh": {
+    "top1": "Benjamin Pasero",
+    "top3": [
+     "Benjamin Pasero",
+     "Matt Bierner",
+     "Martin Aeschlimann"
+    ]
+   },
+   "src/vs/base/browser/ui/findinput/findInput.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Bedirhan \u00c7ET\u0130N",
+     "Daniel Imms"
+    ]
+   },
+   "src/vs/base/browser/ui/grid/gridview.ts": {
+    "top1": "eli-w-king",
+    "top3": [
+     "eli-w-king",
+     "Jo\u00e3o Moreno",
+     "BeniBenj"
+    ]
+   },
+   "src/vs/base/test/common/lazy.test.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Benjamin Pasero",
+     "Alexandru Dima"
+    ]
+   },
+   "src/vs/base/test/common/linkedText.test.ts": {
+    "top1": "Joao Moreno",
+    "top3": [
+     "Joao Moreno",
+     "Matt Bierner",
+     "Connor Peet"
+    ]
+   },
+   "src/vs/base/test/node/__snapshots__/snapshot_cleans_up_old_snapshots.0.snap": {
+    "top1": "Connor Peet",
+    "top3": [
+     "Connor Peet"
+    ]
+   },
+   "src/vs/editor/contrib/dropOrPasteInto/browser/dropIntoEditorContribution.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Matt Bierner",
+     "Cristopher Claeys"
+    ]
+   },
+   "src/vs/editor/contrib/gotoSymbol/browser/peek/referencesWidget.css": {
+    "top1": "Benjamin Pasero",
+    "top3": [
+     "Benjamin Pasero",
+     "Johannes Rieken",
+     "Benjamin Pasero"
+    ]
+   },
+   "src/vs/editor/contrib/hover/browser/contentHoverWidgetWrapper.ts": {
+    "top1": "Aiday Marlen Kyzy",
+    "top3": [
+     "Aiday Marlen Kyzy",
+     "Ben Villalobos",
+     "Alexandru Dima"
+    ]
+   },
+   "src/vs/editor/contrib/inlineCompletions/browser/view/inlineEdits/inlineEditsView.ts": {
+    "top1": "Henning Dieterichs",
+    "top3": [
+     "Henning Dieterichs",
+     "benibenj",
+     "BeniBenj"
+    ]
+   },
+   "src/vs/editor/contrib/inlineCompletions/test/browser/getSecondaryEdits.test.ts": {
+    "top1": "Aiday Marlen Kyzy",
+    "top3": [
+     "Aiday Marlen Kyzy",
+     "Henning Dieterichs",
+     "Matt Bierner"
+    ]
+   },
+   "src/vs/editor/contrib/snippet/browser/snippetParser.ts": {
+    "top1": "Johannes Rieken",
+    "top3": [
+     "Johannes Rieken",
+     "Lucas Gomes Santana",
+     "Andreas Arvidsson"
+    ]
+   },
+   "src/vs/editor/test/common/model/linesTextBuffer/linesTextBuffer.test.ts": {
+    "top1": "Alexandru Dima",
+    "top3": [
+     "Alexandru Dima",
+     "Johannes",
+     "Benjamin Pasero"
+    ]
+   },
+   "src/vs/editor/test/common/viewLayout/__snapshots__/renderViewLine2_two-tokens.1.snap": {
+    "top1": "Alex Dima",
+    "top3": [
+     "Alex Dima"
+    ]
+   },
+   "src/vs/editor/test/common/viewLayout/__snapshots__/renderViewLine2_ws-2-tabs.0.html": {
+    "top1": "Alex Dima",
+    "top3": [
+     "Alex Dima"
+    ]
+   },
+   "src/vs/editor/test/common/viewLayout/__snapshots__/renderViewLine2_ws-all-middle.1.snap": {
+    "top1": "Alex Dima",
+    "top3": [
+     "Alex Dima"
+    ]
+   },
+   "src/vs/platform/actions/common/actions.contribution.ts": {
+    "top1": "Johannes",
+    "top3": [
+     "Johannes",
+     "Benjamin Pasero",
+     "Alexandru Dima"
+    ]
+   },
+   "src/vs/platform/agentHost/common/sessionDataService.ts": {
+    "top1": "Connor Peet",
+    "top3": [
+     "Connor Peet",
+     "Connor Peet",
+     "Ladislau Szomoru"
+    ]
+   },
+   "src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInterface.ts": {
+    "top1": "Giuseppe Cianci",
+    "top3": [
+     "Giuseppe Cianci"
+    ]
+   },
+   "src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareUpdateTargetsResponse.ts": {
+    "top1": "Giuseppe Cianci",
+    "top3": [
+     "Giuseppe Cianci"
+    ]
+   },
+   "src/vs/platform/agentHost/node/gitDiffContent.ts": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens",
+     "Don Jayamanne"
+    ]
+   },
+   "src/vs/platform/agentHost/test/node/e2e/captures/codex-server-tool-addcomment-converts-a-one-based-input-range-to-the-zero-based-annotations-range.yaml": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens"
+    ]
+   },
+   "src/vs/platform/agentHost/test/node/e2e/captures/copilotcli-plugin-posttooluse-hook-runs-after-an-mcp-tool-result.yaml": {
+    "top1": "roblourens",
+    "top3": [
+     "roblourens"
+    ]
+   },
+   "src/vs/platform/agentHost/test/node/e2e/providers/__snapshots__/Agent_Host_E2E___Codex_lists_workspace_entries.traffic.ahp.yaml": {
+    "top1": "Rob Lourens",
+    "top3": [
+     "Rob Lourens"
+    ]
+   },
+   "src/vs/platform/files/test/node/fixtures/executable/executable": {
+    "top1": null,
+    "top3": []
+   },
+   "src/vs/platform/localTranscription/test/node/foundryLocalRuntime.test.ts": {
+    "top1": "Megan Rogge",
+    "top3": [
+     "Megan Rogge"
+    ]
+   },
+   "src/vs/platform/policy/common/fileManagedSettingsService.ts": {
+    "top1": "Josh Spicer",
+    "top3": [
+     "Josh Spicer"
+    ]
+   },
+   "src/vs/platform/policy/test/node/nativeManagedSettingsService.test.ts": {
+    "top1": "joshspicer",
+    "top3": [
+     "joshspicer"
+    ]
+   },
+   "src/vs/platform/sandbox/electron-browser/sandboxHelperService.ts": {
+    "top1": "dileepyavan",
+    "top3": [
+     "dileepyavan"
+    ]
+   },
+   "src/vs/platform/userData/common/fileUserDataProvider.ts": {
+    "top1": "Sandeep Somavarapu",
+    "top3": [
+     "Sandeep Somavarapu",
+     "Peng Lyu",
+     "Benjamin Pasero"
+    ]
+   },
+   "src/vs/sessions/common/theme.ts": {
+    "top1": "mrleemurray",
+    "top3": [
+     "mrleemurray",
+     "Sandeep Somavarapu",
+     "Lee Murray"
+    ]
+   },
+   "src/vs/sessions/contrib/agentFeedback/browser/media/agentFeedbackEditorInput.css": {
+    "top1": "BeniBenj",
+    "top3": [
+     "BeniBenj",
+     "Benjamin Christopher Simmonds",
+     "Hawk Ticehurst"
+    ]
+   },
+   "src/vs/sessions/contrib/agentFeedback/test/browser/feedbackInputWidget.test.ts": {
+    "top1": "Connor Peet",
+    "top3": [
+     "Connor Peet",
+     "Benjamin Christopher Simmonds"
+    ]
+   },
+   "src/vs/sessions/contrib/aiCustomizationTreeView/browser/media/aiCustomizationTreeView.css": {
+    "top1": "Benjamin Pasero",
+    "top3": [
+     "Benjamin Pasero",
+     "Josh Spicer",
+     "Lee Murray"
+    ]
+   },
+   "src/vs/sessions/contrib/terminal/test/browser/agentHostSessionTaskRunner.test.ts": {
+    "top1": "Connor Peet",
+    "top3": [
+     "Connor Peet",
+     "Sandeep Somavarapu",
+     "Connor Peet"
+    ]
+   },
+   "src/vs/sessions/test/electron-browser/vscodeActions.test.ts": {
+    "top1": "Benjamin Christopher Simmonds",
+    "top3": [
+     "Benjamin Christopher Simmonds",
+     "roblourens",
+     "Dmitriy Vasyura"
+    ]
+   },
+   "src/vs/workbench/api/browser/mainThreadManagedSockets.ts": {
+    "top1": "Alexandru Dima",
+    "top3": [
+     "Alexandru Dima",
+     "Connor Peet",
+     "Connor Peet"
+    ]
+   },
+   "src/vs/workbench/contrib/chat/browser/accessibility/chatResponseAccessibleView.ts": {
+    "top1": "Megan Rogge",
+    "top3": [
+     "Megan Rogge",
+     "Osvaldo Ortega",
+     "Connor Peet"
+    ]
+   },
+   "src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSdkSetupNotification.ts": {
+    "top1": "TylerLeonhardt",
+    "top3": [
+     "TylerLeonhardt",
+     "Claude Opus 5"
+    ]
+   },
+   "src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/media/agentHostChatInputPicker.css": {
+    "top1": "Don Jayamanne",
+    "top3": [
+     "Don Jayamanne",
+     "Rob Lourens",
+     "Justin Chen"
+    ]
+   },
+   "src/vs/workbench/contrib/chat/browser/chatStatus/media/chatStatus.css": {
+    "top1": "Logan Ramos",
+    "top3": [
+     "Logan Ramos",
+     "Benjamin Pasero",
+     "Paul"
+    ]
+   },
+   "src/vs/workbench/contrib/chat/test/browser/aiCustomization/aiCustomizationWelcomePagePromptLaunchers.test.ts": {
+    "top1": "Paul",
+    "top3": [
+     "Paul"
+    ]
+   },
+   "src/vs/workbench/contrib/chat/test/browser/widget/chatPetWidget.test.ts": {
+    "top1": "Justin Chen",
+    "top3": [
+     "Justin Chen",
+     "Ulugbek Abdullaev",
+     "justschen"
+    ]
+   },
+   "src/vs/workbench/contrib/codeEditor/browser/find/simpleFindWidget.css": {
+    "top1": "Jean Pierre",
+    "top3": [
+     "Jean Pierre",
+     "Benjamin Pasero",
+     "tisilent"
+    ]
+   },
+   "src/vs/workbench/contrib/codeEditor/browser/toggleMultiCursorModifier.ts": {
+    "top1": "Alexandru Dima",
+    "top3": [
+     "Alexandru Dima",
+     "Benjamin Pasero",
+     "Johannes Rieken"
+    ]
+   },
+   "src/vs/workbench/contrib/debug/browser/debugStatus.ts": {
+    "top1": "isidor",
+    "top3": [
+     "isidor",
+     "John Murray",
+     "Benjamin Pasero"
+    ]
+   },
+   "src/vs/workbench/contrib/search/browser/searchChatContext.ts": {
+    "top1": "Johannes Rieken",
+    "top3": [
+     "Johannes Rieken",
+     "Dmitriy Vasyura",
+     "Rob Lourens"
+    ]
+   },
+   "src/vs/workbench/contrib/terminal/common/scripts/psreadline/Microsoft.PowerShell.Pager.dll": {
+    "top1": "Megan Rogge",
+    "top3": [
+     "Megan Rogge"
+    ]
+   },
+   "src/vs/workbench/contrib/terminalContrib/chatAgentTools/test/electron-browser/commandLineCdPrefixRewriter.test.ts": {
+    "top1": "Daniel Imms",
+    "top3": [
+     "Daniel Imms"
+    ]
+   },
+   "src/vs/workbench/contrib/testing/browser/testingDecorations.ts": {
+    "top1": "Connor Peet",
+    "top3": [
+     "Connor Peet",
+     "Connor Peet",
+     "Maruthan G"
+    ]
+   },
+   "src/vs/workbench/services/tunnel/electron-browser/tunnelService.ts": {
+    "top1": "Alexandru Dima",
+    "top3": [
+     "Alexandru Dima",
+     "Alex Ross",
+     "Jean Pierre"
+    ]
+   },
+   "src/vs/workbench/services/workingCopy/common/workingCopyBackupTracker.ts": {
+    "top1": "Benjamin Pasero",
+    "top3": [
+     "Benjamin Pasero",
+     "Benjamin Pasero",
+     "Benjamin Pasero"
+    ]
+   },
+   "src/vs/workbench/test/browser/componentFixtures/sessions/aiCustomizationManagementEditor.fixture.ts": {
+    "top1": "Henning Dieterichs",
+    "top3": [
+     "Henning Dieterichs",
+     "Connor Peet",
+     "Paul"
+    ]
+   },
+   "src/vscode-dts/vscode.proposed.notebookReplDocument.d.ts": {
+    "top1": "Aaron Munger",
+    "top3": [
+     "Aaron Munger"
+    ]
+   },
+   "src/vscode-dts/vscode.proposed.scmSelectedProvider.d.ts": {
+    "top1": "Johannes Rieken",
+    "top3": [
+     "Johannes Rieken"
+    ]
+   },
+   "test/smoke/src/areas/task/task-quick-pick.test.ts": {
+    "top1": "Matt Bierner",
+    "top3": [
+     "Matt Bierner",
+     "Megan Rogge",
+     "Alex Ross"
+    ]
+   }
+  }
+ },
+ "seed": 42
+}
