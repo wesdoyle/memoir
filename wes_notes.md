@@ -16,3 +16,12 @@
 - Reviewed code; agent suggested finer-detailed heuristics based on recency, files "revived" by recent changes (i.e. recent change with large gap between previous). This is potentially interesting, as it adds new epistemic dimensions to the classifier, but there is no need to add complexity at this time; more important to test drive the tool in a variety of contexts.
 - Dispatched an additional agent to make a bugfix pass; caught edge cases in bot name filtering regex, and lists.recent bug allowing two distinct users with the same display name to collapse; small perf improvement
 - Decided to remove `--live` mode as it's vestigial now that we build an index; decide to show user warning if index doesn't exist and to auto build prior to search
+- Several ideas here I'm considering exploring after playing with the tooling: 
+  - An "inverted" index of person -> files the person knows about 
+    - possibly rolled up by directory; files list will be extremely noisy
+    - useful for onboarding / networking
+    - "themes" seems potentially interesting here ... can we tokenize and tf-idf / bm25 a repo efficiently?
+  - VS Code plugin; collapsible view in the Explorer sidebar, shell out to CLI whenever the user switches the active text editor. 
+    - Interesting, but there is possibly more to learn sooner from using the tooling without spending time wiring it into a plugin.
+    - Though, "putting a name to the code" through browsing could be a useful experience to test
+  - Integration with tooling the codebase connects to _outside of git_ is useful. GH issues + PRs.
