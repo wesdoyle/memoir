@@ -26,9 +26,9 @@ Decisions
 - Dates are author dates (UTC). `active_span` and decay are in months (days/30.4375). `rank()` takes an injectable `now`; defaults to wall clock.
 - Evidence record keeps the spec keys plus `raw_score`, `months_since_last_touch`, `others_commits_since` so the formula's terms are inspectable.
 
-Learnings
-- The spec formula can go negative: Dave (1 co-authored commit, 3 later commits by others) scores -0.12 on core.py. Not changed; flag for the gate (floor at 0? show as-is?).
-- A pure rename commit is a delivery with 0 lines (Q3 case). Bob did his own rename so it is harmless in the fixture; on real repos a mass-rename by a non-author will earn `log(2)` per file.
+Gate decisions (Wes)
+- `raw` is clamped at 0 before decay. The formula could go negative (Dave: 1 co-authored commit, 3 later commits by others -> -0.12 on core.py).
+- Content-free commits (`added == deleted == 0`, not binary: pure renames, mode changes) carry no knowledge: excluded from deliveries, touches, `first_authored`, and others-since counts. Path lineage is still followed. Smaller than a reduced weight; revisit if real repos show renames that do carry knowledge (e.g. module restructuring by the owner). `Commit.is_noop` marks them; `raw_score` still visible in evidence.
 
 Open questions — evidence so far
 - Q3: bots and merges are filtered; lint sweeps and renames are not — they count as deliveries, relying on `first_authored` + delivery count + size to outweigh them. Fixture confirms at default weights (Alice 1.87 vs Carol 0.77).

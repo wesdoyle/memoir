@@ -42,12 +42,18 @@ class Commit:
     coauthors: list[Identity]
     added: int
     deleted: int
+    binary: bool  # numstat reported "-" (no line counts)
     is_merge: bool
     path: str  # path of the file as of this commit (differs across renames)
 
     @property
     def is_bot(self) -> bool:
         return self.author.is_bot
+
+    @property
+    def is_noop(self) -> bool:
+        """No content change (pure rename, mode change). Carries no knowledge."""
+        return self.added == 0 and self.deleted == 0 and not self.binary
 
 
 @dataclass
@@ -74,13 +80,13 @@ class AuthorFacts:
 class FileHistory:
     path: str
     paths: list[str]  # all historical paths, current first
-    commits: list[Commit]  # newest first; excludes merges, includes bots
-    authors: list[AuthorFacts]  # excludes bots
+    commits: list[Commit]  # newest first; excludes merges, includes bots and no-ops
+    authors: list[AuthorFacts]  # excludes bots; no-op commits contribute nothing
     last_commit: Commit | None  # newest non-merge commit, bots included
 
     @property
     def human_commits(self) -> list[Commit]:
-        return [c for c in self.commits if not c.is_bot]
+        return [c for c in self.commits if not c.is_bot and not c.is_noop]
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -111,9 +117,11 @@ def _parse_log(repo: Path, path: str) -> list[Commit]:
         sha, name, email, ts, parents, body_and_stat = parts
         body, stat_lines = _split_body_and_numstat(body_and_stat)
         added = deleted = 0
+        binary = False
         cur_path = path
         for line in stat_lines:
             a, d, p = line.split("\t", 2)
+            binary = binary or a == "-"
             added += int(a) if a != "-" else 0
             deleted += int(d) if d != "-" else 0
             cur_path = _numstat_path(p)
@@ -127,6 +135,7 @@ def _parse_log(repo: Path, path: str) -> list[Commit]:
                 coauthors=coauthors,
                 added=added,
                 deleted=deleted,
+                binary=binary,
                 is_merge=len(parents.split()) > 1,
                 path=cur_path,
             )
@@ -164,7 +173,7 @@ def mine_file(repo: str | Path, path: str) -> FileHistory:
     repo = Path(repo)
     all_commits = _parse_log(repo, path)
     commits = [c for c in all_commits if not c.is_merge]  # newest first
-    human = [c for c in commits if not c.is_bot]
+    human = [c for c in commits if not c.is_bot and not c.is_noop]
     oldest = human[-1] if human else None
 
     facts: dict[str, AuthorFacts] = {}

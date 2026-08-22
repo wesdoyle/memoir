@@ -63,3 +63,8 @@ def test_renamed_file_retains_creator_as_top_expert(fixture_repo):
 def test_ranking_is_deterministic(fixture_repo):
     h = mine_file(fixture_repo, "src/core.py")
     assert [e.to_dict() for e in rank(h, now=NOW)] == [e.to_dict() for e in rank(h, now=NOW)]
+
+
+def test_score_is_clamped_at_zero():
+    f = facts(coauthored_count=1, others_commits_since=3)  # decay term exceeds half delivery
+    assert score_author(f, now=NOW, w=W).score == 0.0

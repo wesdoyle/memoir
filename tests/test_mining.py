@@ -18,7 +18,7 @@ def test_rename_history_is_followed(fixture_repo):
     assert "src/util.py" in h.paths
     bob = by_name(h)["Bob Smith"]
     assert bob.first_authored is True
-    assert bob.commits == 3  # create, alias edit, pure rename
+    assert bob.commits == 2  # create, alias edit (rename is a no-op)
 
 
 def test_mailmap_merges_alias_identity(fixture_repo):
@@ -52,3 +52,13 @@ def test_first_authored_and_lines(fixture_repo):
     assert a["Carol Chen"].first_authored is False
     assert a["Carol Chen"].lines_changed == 30
     assert a["Alice Adams"].lines_changed == 26 + 6 + 6 + 3 + 3
+
+
+def test_pure_rename_carries_no_knowledge(fixture_repo):
+    h = mine_file(fixture_repo, "src/helpers.py")
+    bob = by_name(h)["Bob Smith"]
+    assert bob.commits == 2  # create + alias edit; the rename commit is not a delivery
+    assert bob.last_touch.date().isoformat() == "2023-05-20"
+    assert "src/util.py" in h.paths  # path lineage still tracked
+    rename = next(c for c in h.commits if c.path == "src/helpers.py" and c.added == 0 and c.deleted == 0)
+    assert rename.is_noop is True

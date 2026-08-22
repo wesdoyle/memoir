@@ -4,7 +4,7 @@
         + w_del   * log(1 + deliveries)        # commits + 0.5 * coauthored
         + w_size  * log(1 + lines_changed)
         - w_decay * log(1 + others_commits_since_authors_last)
-    score = raw * 0.5 ** (months_since_last_touch / HALF_LIFE_MONTHS)
+    score = max(0, raw) * 0.5 ** (months_since_last_touch / HALF_LIFE_MONTHS)
 
 Variant of the degree-of-knowledge shape (Fritz et al., ICSE 2010); not their calibration.
 """
@@ -63,7 +63,7 @@ def score_author(f: AuthorFacts, now: datetime, w: Weights = Weights()) -> Evide
         - w.w_decay * math.log1p(f.others_commits_since)
     )
     months = max(0.0, months_between(f.last_touch, now))
-    score = raw * 0.5 ** (months / w.half_life_months)
+    score = max(0.0, raw) * 0.5 ** (months / w.half_life_months)
     return Evidence(
         author=f.author,
         score=score,
