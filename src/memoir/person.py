@@ -16,7 +16,6 @@ from datetime import datetime, timezone
 
 from memoir.index import Index
 from memoir.mining import Identity
-from memoir.scoring import rank
 
 TOP = 3
 VENDORED = re.compile(r"(^|/)(3rdparty|third_party|thirdparty|deps|vendor|external|extern|node_modules)(/|$)", re.I)
@@ -104,28 +103,13 @@ def person_report(ix: Index, keys: set[str], now: str | datetime | None = None, 
     candidates = [p for p in ix.files_touched_by(keys) if p in existing_set]
     per: dict[str, dict] = {}
     for p in candidates:
-        rc = rr = None; sc = raw = 0.0; name = None; n_auth = None; commits = None; last = None
-        if use_live:
-            r = rank(ix.history(p), now=when, w=ix.rank_weights)
-            by_raw = sorted(r, key=lambda e: (-e.raw_score, e.author.name))
-            rc = next((i for i, e in enumerate(r, 1) if e.author.key in keys), None)
-            rr = next((i for i, e in enumerate(by_raw, 1) if e.author.key in keys), None)
-            ev = next((e for e in r if e.author.key in keys), None)
-            if ev is None:
-                continue
-            sc, raw, name, commits, last, n_auth = ev.score, ev.raw_score, ev.author.name, ev.commits, ev.last_touch, len(r)
-        else:
-            rows = [x for x in ix.ranks_for(p) if x[0] in keys]
-            if not rows:
-                continue  # P is not in the top-5 of either list: a record, but not strength
-            # split identities can each hold a row on the same file; take the strongest (the .mailmap fix is the real one)
-            x = max(rows, key=lambda x: (x[4], x[6]))
-            rc, sc, rr, raw, name = x[3], x[4], x[5], x[6], x[1]
-            n_auth = ix.con.execute(
-                "SELECT COUNT(DISTINCT LOWER(c.email)) FROM file_lineage l JOIN commits c ON c.pos=l.pos WHERE l.path=? AND c.merge=0",
-                (p,)).fetchone()[0]
-        per[p] = {"path": p, "rank_cur": rc, "score": sc, "rank_raw": rr, "raw": raw, "name": name,
-                  "commits": commits, "last_touch": last, "authors": n_auth}
+        rows = [x for x in ix.file_ranks(p, when, live=use_live) if x[0] in keys]
+        if not rows:
+            continue  # P is not in the top-5 of either list: a record, but not strength
+        # split identities can each hold a row on the same file; take the strongest (the .mailmap fix is the real one)
+        x = max(rows, key=lambda x: (x[4], x[6]))
+        per[p] = {"path": p, "rank_cur": x[3], "score": x[4], "rank_raw": x[5], "raw": x[6], "name": x[1],
+                  "authors": ix.authors_of(p)}
 
     def strong_cur(v): return v["rank_cur"] is not None and v["rank_cur"] <= TOP
     def strong_raw(v): return v["rank_raw"] is not None and v["rank_raw"] <= TOP

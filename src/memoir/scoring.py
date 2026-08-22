@@ -29,17 +29,13 @@ class Weights:
     w_size: float = 0.5
     w_decay: float = 0.7
     half_life_months: float = 18.0
-    # --- shapes; V0 below has them all off. Defaults adopted at the P6 gate: breadth_k=10, line_cap=300, first_rule=not_root ---
+    # --- shapes adopted at the P6 gate (eval/proposals.md); V0 below has them off ---
     breadth_k: int = 10         # >0: a commit touching B files is worth min(1, breadth_k/B) of a commit (credit, lines, erosion)
-    line_scale: float = 0.0     # >0: delivery credit per commit = 1 - exp(-lines/line_scale) (small commits earn less)
     line_cap: int = 300         # >0: lines per commit are capped here before the size term (size saturates)
-    decay_floor: float = 0.0    # in [0,1): decay multiplier = floor + (1-floor) * 0.5^(t/HL); knowledge fades to a floor
-    decay_depth: float = 0.0    # >0: HL_eff = HL * (1 + decay_depth * log1p(deliveries)); deep history fades slower
-    first_rule: str = "not_root"  # any | not_root | not_mass | needs_followup: when first_authored earns w_first
-    first_mass_n: int = 200     # for not_mass: creating commit touching > this many files earns no w_first
+    first_rule: str = "not_root"  # any | not_root: a root-commit (bulk import) creation earns no w_first
 
 
-V0 = Weights(breadth_k=0, line_scale=0.0, line_cap=0, decay_floor=0.0, decay_depth=0.0, first_rule="any")
+V0 = Weights(breadth_k=0, line_cap=0, first_rule="any")
 """The v0 formula exactly as specified (initial_prompt.md); the regression baseline."""
 
 
@@ -75,11 +71,8 @@ def breadth_weight(breadth: int | None, w: Weights) -> float:
 
 
 def _credit(t, w: Weights) -> float:
-    """Delivery credit for one touch: breadth-discounted, optionally size-shaped, co-authors at 0.5."""
+    """Delivery credit for one touch: breadth-discounted, co-authors at 0.5."""
     c = breadth_weight(t.breadth, w)
-    if w.line_scale > 0:
-        lines = t.lines if not (t.binary and t.lines == 0) else w.line_scale
-        c *= 1.0 - math.exp(-lines / w.line_scale)
     return c if t.primary else COAUTHOR_DELIVERY * c
 
 
@@ -92,16 +85,11 @@ def _first_earns(f: AuthorFacts, w: Weights) -> bool:
         return True
     if w.first_rule == "not_root":
         return not creating.is_root
-    if w.first_rule == "not_mass":
-        return creating.breadth is None or creating.breadth <= w.first_mass_n
-    if w.first_rule == "needs_followup":
-        return len(prim) >= 2
     raise ValueError(f"unknown first_rule {w.first_rule!r}")
 
 
 def score_author(f: AuthorFacts, now: datetime, w: Weights = Weights(), others_since: float | None = None) -> Evidence:
-    shaped = w.breadth_k or w.line_scale > 0 or w.line_cap
-    if shaped and f.touches:
+    if (w.breadth_k or w.line_cap) and f.touches:
         deliveries = sum(_credit(t, w) for t in f.touches)
         lines = sum(breadth_weight(t.breadth, w) * (min(t.lines, w.line_cap) if w.line_cap else t.lines)
                     for t in f.touches if t.primary)
@@ -117,9 +105,7 @@ def score_author(f: AuthorFacts, now: datetime, w: Weights = Weights(), others_s
         - w.w_decay * math.log1p(erosion)
     )
     months = max(0.0, months_between(f.last_touch, now))
-    hl = w.half_life_months * (1.0 + w.decay_depth * math.log1p(deliveries)) if w.decay_depth > 0 else w.half_life_months
-    mult = w.decay_floor + (1.0 - w.decay_floor) * 0.5 ** (months / hl)
-    score = max(0.0, raw) * mult
+    score = max(0.0, raw) * 0.5 ** (months / w.half_life_months)
     return Evidence(
         author=f.author,
         score=score,

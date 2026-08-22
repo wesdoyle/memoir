@@ -151,3 +151,10 @@ Decisions
 - Direction (2026-08-22): `topic` as a word lookup is the transpose of person's themes and epistemically weaker (prescriptive: the user's word must exist in the path vocabulary; a near-miss gives a confident wrong answer). The valuable primitive is expertise over a *file set*; built as `memoir experts` with selectors dir / glob / match (token, --prefix) / --files (diff, grep -l, stdin), ANDed. Mass = Σ score/rank x log1p(authors) over top-3 files; identities sharing a full name merged; <3 files flagged as a file question; match words bypass the theme stop list. 0.1 s (valkey) to 0.8 s (ES, 2,513 files).
 - Outputs: valkey cluster -> Binbin 69 files, Viktor, Harkrishn Patro; built_it adds antirez. ES security -> Tim Vernum, Slobodan Adamović, Nikolaj Volgushev; auth (prefix) -> the same team, exact `auth` -> license files (the sample makes that visible). vscode terminal -> Daniel Imms 80%, Megan Rogge 42%.
 
+## P11 — cleanup (2026-08-22); `person` merged into main
+
+- `Weights` pruned to the adopted shapes: `breadth_k`, `line_cap`, `first_rule` in {any, not_root}. `line_scale`, `decay_floor`, `decay_depth`, `not_mass`/`needs_followup` removed from code; their measured runs stay in eval/regress/ and eval/proposals.md as history. `V0 = Weights(breadth_k=0, line_cap=0, first_rule="any")`.
+- Index schema v5: `file_stat(path, authors)` materialized with the ranks; `Index.file_ranks(path, now, live)` is the one code path (materialized or live) used by person and experts; `Index.authors_of()` replaces the per-file join. `history()` fetches commits in chunks of 500 (older SQLite caps bound variables at 999; server.c has 1,726).
+- `Source.__init__` double-open removed. Unused imports removed (experts `re`, replay `Counter`); replay's `linescale` answer set dropped.
+- Next: Wes tests manually on new repos. First run on a repo builds the index (seconds to ~2 min); expect `memoir: no index yet; building ...` on stderr.
+

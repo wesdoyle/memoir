@@ -11,7 +11,6 @@ and check whether the responder is in the top-k. Answer sets:
   adopted     current defaults (breadth_k=10, line_cap=300, not_root)
   hl60        adopted with half_life 60
   raw         adopted without decay ("built_it")
-  linescale   adopted + line_scale=20 (the pending flag)
   recency3    the last 3 distinct human authors before the event (the cheapest competitor)
   last        the last human author before the event (git log -1)
   mostcommits the 3 authors with the most commits before the event
@@ -26,7 +25,6 @@ from __future__ import annotations
 import random
 import re
 import sys
-from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -44,7 +42,6 @@ ANSWERS = {
     "adopted": Weights(),
     "hl60": Weights(half_life_months=60),
     "raw": Weights(half_life_months=1e9),
-    "linescale": Weights(line_scale=20),
 }
 
 

@@ -1,12 +1,13 @@
 """On-disk index: the single-walk output persisted in SQLite and queried per file.
 
-Layout (schema v4):
+Layout (schema v5):
   meta(key, value)          head, pathspec, schema, built_at, rank_now, rank_weights
   commits(pos, sha, name, email, ts, merge, coauthors, breadth, parents)   pos: smaller = newer (negative after updates)
   files(path, pos, added, deleted, binary, renamed_from)                  raw (commit, path) records
   file_lineage(path, pos)   for every file at HEAD: the commits in its history (renames followed)
   file_rank(path, key, name, email, rank_cur, score, rank_raw, raw)      top-5 of each list per HEAD file,
-                            computed at rank_now with rank_weights; `person`/`audit` read these
+                            computed at rank_now with rank_weights; `person`/`experts` read these
+  file_stat(path, authors)  number of distinct human authors in the file's history (contestedness)
 
 Facts and scores are derived at query time from these rows (same code path as live
 mining), so weights and `now` stay tunable without rebuilding. Stdlib sqlite3 only.
@@ -31,7 +32,7 @@ from memoir.mining import (
 )
 from memoir.scoring import Weights, rank
 
-SCHEMA = 4
+SCHEMA = 5
 RANK_TOP = 5
 RANK_STALE_DAYS = 30  # decay moves slowly (HL 18 months); recompute all ranks when rank_now is older than this
 NEWEST = -(1 << 62)  # "older than nothing": pos is an ordering key (smaller = newer) and may be negative
@@ -88,7 +89,8 @@ def _materialize(con: sqlite3.Connection, repo: Path, paths: list[str], now: dat
         con.executemany("DELETE FROM file_lineage WHERE path=?", [(p,) for p in paths])
     if ranks:
         con.executemany("DELETE FROM file_rank WHERE path=?", [(p,) for p in paths])
-    lrows, rrows = [], []
+        con.executemany("DELETE FROM file_stat WHERE path=?", [(p,) for p in paths])
+    lrows, rrows, srows = [], [], []
     for p in paths:
         lin = ix.lineage(p)
         if lineage:
@@ -96,6 +98,7 @@ def _materialize(con: sqlite3.Connection, repo: Path, paths: list[str], now: dat
         if ranks:
             h = ix.history(p) if lin else None
             if h and h.authors:
+                srows.append((p, len(h.authors)))
                 r = rank(h, now=now, w=w)
                 by_raw = sorted(r, key=lambda e: (-e.raw_score, e.author.name, e.author.email))
                 cur = {e.author.key: (i, e) for i, e in enumerate(r[:RANK_TOP], 1)}
@@ -109,6 +112,7 @@ def _materialize(con: sqlite3.Connection, repo: Path, paths: list[str], now: dat
             con.executemany("INSERT INTO file_lineage VALUES (?,?)", lrows); lrows = []
     con.executemany("INSERT INTO file_lineage VALUES (?,?)", lrows)
     con.executemany("INSERT INTO file_rank VALUES (?,?,?,?,?,?,?,?)", rrows)
+    con.executemany("INSERT OR REPLACE INTO file_stat VALUES (?,?)", srows)
 
 
 def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = None,
@@ -134,6 +138,7 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
             CREATE TABLE file_lineage(path TEXT, pos INTEGER);
             CREATE TABLE file_rank(path TEXT, key TEXT, name TEXT, email TEXT, rank_cur INTEGER,
                                    score REAL, rank_raw INTEGER, raw REAL);
+            CREATE TABLE file_stat(path TEXT PRIMARY KEY, authors INTEGER);
             """
         )
         n = _ingest(con, repo, pathspec, "HEAD", 0)
@@ -208,6 +213,7 @@ def update_index(repo: str | Path, db_path: str | Path, now: datetime | None = N
         gone = [p for (p,) in con.execute("SELECT DISTINCT path FROM file_lineage") if p not in head_set]
         con.executemany("DELETE FROM file_lineage WHERE path=?", [(p,) for p in gone])
         con.executemany("DELETE FROM file_rank WHERE path=?", [(p,) for p in gone])
+        con.executemany("DELETE FROM file_stat WHERE path=?", [(p,) for p in gone])
         known = {p for (p,) in con.execute("SELECT DISTINCT path FROM file_lineage")}
         redo = sorted((touched & head_set) | (head_set - known))  # touched, plus brand-new or renamed-to paths
         _materialize(con, repo, redo, now, w)
@@ -268,9 +274,29 @@ class Index:
 
     # -- materialized queries
     def ranks_for(self, path: str) -> list[tuple]:
-        """[(key, name, email, rank_cur|None, score, rank_raw|None, raw)] for a HEAD path."""
+        """[(key, name, email, rank_cur|None, score, rank_raw|None, raw)] for a HEAD path, as materialized."""
         return self.con.execute(
             "SELECT key, name, email, rank_cur, score, rank_raw, raw FROM file_rank WHERE path=?", (path,)).fetchall()
+
+    def authors_of(self, path: str) -> int:
+        row = self.con.execute("SELECT authors FROM file_stat WHERE path=?", (path,)).fetchone()
+        return row[0] if row else 0
+
+    def file_ranks(self, path: str, now: datetime, live: bool = False, top: int = RANK_TOP) -> list[tuple]:
+        """Top-`top` rows of each list for a file, in ranks_for() shape. Materialized unless `live`
+        (then recomputed at `now` with the index's weights) — one code path for person/experts."""
+        if not live:
+            return self.ranks_for(path)
+        r = rank(self.history(path), now=now, w=self.rank_weights)
+        by_raw = sorted(r, key=lambda e: (-e.raw_score, e.author.name, e.author.email))
+        cur = {e.author.key: (i, e) for i, e in enumerate(r[:top], 1)}
+        rawr = {e.author.key: (i, e) for i, e in enumerate(by_raw[:top], 1)}
+        rows = []
+        for key in cur.keys() | rawr.keys():
+            e = (cur.get(key) or rawr.get(key))[1]
+            rows.append((key, e.author.name, e.author.email, cur[key][0] if key in cur else None, e.score,
+                         rawr[key][0] if key in rawr else None, e.raw_score))
+        return rows
 
     def files_touched_by(self, keys: set[str]) -> list[str]:
         """HEAD paths whose lineage contains a commit by any of these identity keys (author or co-author)."""
@@ -324,11 +350,14 @@ class Index:
         if not lin:
             return _history_from_commits(path, [])
         positions = [l[1] for l in lin]
-        rows = self.con.execute(
-            f"SELECT pos, sha, name, email, ts, merge, coauthors, breadth, parents FROM commits WHERE pos IN ({','.join('?' * len(positions))})",
-            positions,
-        ).fetchall()
-        by_pos = {r[0]: r for r in rows}
+        by_pos = {}
+        for i in range(0, len(positions), 500):  # chunked: older SQLite builds cap bound variables at 999
+            chunk = positions[i:i + 500]
+            for r in self.con.execute(
+                f"SELECT pos, sha, name, email, ts, merge, coauthors, breadth, parents FROM commits WHERE pos IN ({','.join('?' * len(chunk))})",
+                chunk,
+            ):
+                by_pos[r[0]] = r
         commits = []
         for p, pos, added, deleted, binary, _ in lin:
             _, sha, name, email, ts, merge, coauthors, breadth, parents = by_pos[pos]

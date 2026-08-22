@@ -50,9 +50,10 @@ class Source:
                 reason, action = f"index covers only {ix.pathspec}", "build"
             elif not ix.is_fresh(root):
                 reason, action = f"index is stale (at {ix.head[:10]}, HEAD differs)", "update"
-            ix.close()
             if action is None:
-                self.index = ix if False else open_index(self.db)
+                self.index = ix
+            else:
+                ix.close()
         if action == "build":
             print(f"memoir: {reason}; building index for {root} ...", file=sys.stderr, flush=True)
             build_index(root, self.db)

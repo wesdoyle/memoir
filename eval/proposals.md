@@ -160,6 +160,8 @@ Caveat on the criterion itself: fix replay is recency-biased by construction (pe
 What this does to the thesis: the strong form ("memoir's ranking beats last-touch") holds at k=3 against `git log -1` on all five repos, and against the 3-most-recent-humans baseline on two of five. The honest statement today is: **memoir is a cheap, deterministic, well-behaved recency-plus-depth signal that is never worse than the naive baselines and sometimes better, with the useful property that it can say when it disagrees with recency (`lists.recent`, `flags`)** — not yet a demonstrated large improvement over the cheapest competitor on the one proxy we can run offline.
 
 
+Post-gate cleanup (2026-08-22): the rejected flags (`line_scale`, `decay_floor`, `decay_depth`, `first_rule` values `not_mass`/`needs_followup`) were removed from `Weights`; the runs above remain reproducible from the committed `eval/regress/*.json` but the flags would have to be re-added to re-run them.
+
 ## Summary for the gate
 
 | proposal | recommendation | evidence |

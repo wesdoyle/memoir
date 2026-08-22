@@ -12,13 +12,11 @@ from __future__ import annotations
 
 import fnmatch
 import math
-import re
 from collections import defaultdict
 from datetime import datetime, timezone
 
 from memoir.index import Index
 from memoir.person import VENDORED, _norm_name, _tokens
-from memoir.scoring import rank
 
 TOP = 3
 TINY = 3
@@ -62,27 +60,14 @@ def experts_report(ix: Index, paths: list[str], n: int = 10, now: str | datetime
     when = now or datetime.now(tz=timezone.utc)
     live = not ix.ranks_fresh(when)
     # identity merge for the report: identities sharing a normalized multi-token name collapse
-    groups: dict[str, str] = {}
     def gid(key: str, name: str) -> str:
         nm = _norm_name(name)
         return f"name:{nm}" if len(nm.split()) >= 2 else key
     cur = defaultdict(lambda: {"mass": 0.0, "files": 0, "keys": set(), "name": None, "best": None})
     built = defaultdict(lambda: {"mass": 0.0, "files": 0, "keys": set(), "name": None, "best": None})
     for p in paths:
-        n_auth = ix.con.execute(
-            "SELECT COUNT(DISTINCT LOWER(c.email)) FROM file_lineage l JOIN commits c ON c.pos=l.pos WHERE l.path=? AND c.merge=0",
-            (p,)).fetchone()[0]
-        w = math.log1p(n_auth or 1)
-        if live:
-            r = rank(ix.history(p), now=when, w=ix.rank_weights)
-            by_raw = sorted(r, key=lambda e: (-e.raw_score, e.author.name))
-            rows = [(e.author.key, e.author.name, e.author.email,
-                     next((i for i, x in enumerate(r, 1) if x.author.key == e.author.key), None), e.score,
-                     next((i for i, x in enumerate(by_raw, 1) if x.author.key == e.author.key), None), e.raw_score)
-                    for e in r[:5] + [x for x in by_raw[:5] if x not in r[:5]]]
-        else:
-            rows = ix.ranks_for(p)
-        for key, name, email, rc, sc, rr, raw in rows:
+        w = math.log1p(ix.authors_of(p) or 1)
+        for key, name, email, rc, sc, rr, raw in ix.file_ranks(p, when, live=live):
             g = gid(key, name)
             if rc is not None and rc <= TOP:
                 a = cur[g]; a["mass"] += sc * w / rc; a["files"] += 1; a["keys"].add(email); a["name"] = a["name"] or name
