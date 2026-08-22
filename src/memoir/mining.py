@@ -14,6 +14,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 BOT_RE = re.compile(r"dependabot|renovate|\[bot\]|actions@github", re.I)
+# Emails that many distinct people share (SVN imports, misconfigured git). Keying on
+# them would merge unrelated authors, so such identities key on name instead.
+PLACEHOLDER_EMAIL_RE = re.compile(r"^$|^[^@]*$|@[^.]*$|\(none\)|localhost|^no@email$|unknown", re.I)
 COAUTHOR_RE = re.compile(r"^Co-authored-by:\s*(.+?)\s*<([^>]+)>\s*$", re.I | re.M)
 
 _REC = "\x1e"  # record separator between commits
@@ -27,6 +30,8 @@ class Identity:
 
     @property
     def key(self) -> str:
+        if PLACEHOLDER_EMAIL_RE.search(self.email):
+            return "name:" + self.name.lower()
         return self.email.lower()
 
     @property
