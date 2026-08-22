@@ -2,7 +2,7 @@
 
 Layout (schema v3):
   meta(key, value)                      head sha, pathspec, schema, built_at
-  commits(pos, sha, name, email, ts, merge, coauthors, breadth, parents)   pos 0 = newest
+  commits(pos, sha, name, email, ts, merge, coauthors, breadth, parents)   pos: smaller = newer (negative after updates)
   files(path, pos, added, deleted, binary, renamed_from)
 
 Facts and scores are derived at query time from these rows (same code path as live
@@ -27,6 +27,7 @@ from memoir.mining import (
 )
 
 SCHEMA = 3
+NEWEST = -(1 << 62)  # "older than nothing": pos is an ordering key (smaller = newer) and may be negative
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -37,6 +38,34 @@ def default_index_path(repo: str | Path) -> Path:
     """<git-dir>/memoir/index.sqlite — inside .git, never in the worktree or a diff."""
     git_dir = Path(_git(Path(repo), "rev-parse", "--absolute-git-dir").strip())
     return git_dir / "memoir" / "index.sqlite"
+
+
+def _ingest(con: sqlite3.Connection, repo: Path, pathspec: str | None, revisions: str, first_pos: int) -> int:
+    """Stream a walk into the open connection. Positions run first_pos, first_pos+1, ... in log order
+    (newest first); `pos` is an ordering key only — smaller is newer. Returns the number of commits."""
+    raw_coauthors: set[Identity] = set()
+    crows, frows = [], []
+    pending: list[tuple[int, list[Identity]]] = []
+    for meta, recs in iter_walk(repo, pathspec, revisions):
+        pos = first_pos + len(crows)
+        crows.append((pos, meta.sha, meta.author.name, meta.author.email,
+                      int(meta.date.timestamp()), int(meta.is_merge), None, meta.breadth, meta.parents))
+        if meta.coauthors:
+            pending.append((pos, meta.coauthors))
+            raw_coauthors.update(meta.coauthors)
+        for path, r in recs:
+            frows.append((path, pos, r.added, r.deleted, int(r.binary), r.renamed_from))
+        if len(frows) >= 50_000:
+            con.executemany("INSERT INTO files VALUES (?,?,?,?,?,?)", frows)
+            frows = []
+    con.executemany("INSERT INTO files VALUES (?,?,?,?,?,?)", frows)
+    con.executemany("INSERT INTO commits VALUES (?,?,?,?,?,?,?,?,?)", crows)
+    mm = _check_mailmap(repo, raw_coauthors)
+    con.executemany(
+        "UPDATE commits SET coauthors=? WHERE pos=?",
+        [(json.dumps([[mm.get(i, i).name, mm.get(i, i).email] for i in cos]), pos) for pos, cos in pending],
+    )
+    return len(crows)
 
 
 def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = None) -> Path:
@@ -59,40 +88,60 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
                                binary INTEGER, renamed_from TEXT);
             """
         )
-        raw_coauthors: set[Identity] = set()
-        crows, frows = [], []
-        pending: list[tuple[int, list[Identity]]] = []
-        for meta, recs in iter_walk(repo, pathspec):
-            pos = len(crows)
-            crows.append((pos, meta.sha, meta.author.name, meta.author.email,
-                          int(meta.date.timestamp()), int(meta.is_merge), None, meta.breadth, meta.parents))
-            if meta.coauthors:
-                pending.append((pos, meta.coauthors))
-                raw_coauthors.update(meta.coauthors)
-            for path, r in recs:
-                frows.append((path, pos, r.added, r.deleted, int(r.binary), r.renamed_from))
-            if len(frows) >= 50_000:
-                con.executemany("INSERT INTO files VALUES (?,?,?,?,?,?)", frows)
-                frows = []
-        con.executemany("INSERT INTO files VALUES (?,?,?,?,?,?)", frows)
-        con.executemany("INSERT INTO commits VALUES (?,?,?,?,?,?,?,?,?)", crows)
-        mm = _check_mailmap(repo, raw_coauthors)
-        con.executemany(
-            "UPDATE commits SET coauthors=? WHERE pos=?",
-            [(json.dumps([[mm.get(i, i).name, mm.get(i, i).email] for i in cos]), pos) for pos, cos in pending],
-        )
+        n = _ingest(con, repo, pathspec, "HEAD", 0)
         con.execute("CREATE INDEX files_path ON files(path, pos)")
+        con.execute("CREATE INDEX commits_sha ON commits(sha)")
         con.executemany(
             "INSERT INTO meta VALUES (?,?)",
             [("head", head), ("pathspec", pathspec or ""), ("schema", str(SCHEMA)),
              ("built_at", datetime.now(tz=timezone.utc).isoformat(timespec="seconds")),
-             ("commits", str(len(crows)))],
+             ("commits", str(n))],
         )
         con.commit()
     finally:
         con.close()
     tmp.replace(db_path)
     return db_path
+
+
+def update_index(repo: str | Path, db_path: str | Path) -> str:
+    """Bring the index at db_path up to HEAD. Returns "fresh" (nothing to do), "incremental"
+    (only old_head..HEAD was walked and prepended with positions below the current minimum), or
+    "rebuilt" (no usable index, schema changed, or HEAD is not a descendant of the indexed head —
+    e.g. after a rebase/amend — so the whole history was walked again)."""
+    repo, db_path = Path(repo), Path(db_path)
+    head = _git(repo, "rev-parse", "HEAD").strip()
+    if not db_path.exists():
+        build_index(repo, db_path)
+        return "rebuilt"
+    con = sqlite3.connect(db_path)
+    try:
+        meta = dict(con.execute("SELECT key, value FROM meta"))
+        old = meta.get("head")
+        if meta.get("schema") != str(SCHEMA) or not old:
+            con.close()
+            build_index(repo, db_path, meta.get("pathspec") or None)
+            return "rebuilt"
+        if old == head:
+            return "fresh"
+        ok = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", old, head]).returncode == 0
+        if not ok:
+            con.close()
+            build_index(repo, db_path, meta.get("pathspec") or None)
+            return "rebuilt"
+        (min_pos,) = con.execute("SELECT MIN(pos) FROM commits").fetchone()
+        n_new = int(_git(repo, "rev-list", "--count", f"{old}..{head}"))
+        con.execute("PRAGMA journal_mode=OFF")
+        con.execute("PRAGMA synchronous=OFF")
+        n = _ingest(con, repo, meta.get("pathspec") or None, f"{old}..{head}", (min_pos or 0) - n_new)
+        con.execute("UPDATE meta SET value=? WHERE key='head'", (head,))
+        con.execute("UPDATE meta SET value=? WHERE key='commits'", (str(int(meta.get("commits", "0")) + n),))
+        con.execute("INSERT OR REPLACE INTO meta VALUES ('updated_at', ?)",
+                    (datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),))
+        con.commit()
+        return "incremental"
+    finally:
+        con.close()
 
 
 class Index:
@@ -128,6 +177,7 @@ class Index:
 
     # -- queries
     def pos_of(self, sha: str) -> int | None:
+        """Ordering key of a commit: smaller is newer; not contiguous after incremental updates."""
         row = self.con.execute("SELECT pos FROM commits WHERE sha=?", (sha,)).fetchone()
         return row[0] if row else None
 
@@ -142,7 +192,7 @@ class Index:
         (pos 0 is HEAD), i.e. the file's history as it was just before commit `before`."""
         out = []
         cur: str | None = path
-        after = -1 if before is None else before
+        after = NEWEST if before is None else before
         seen = set()
         while cur is not None and (cur, after) not in seen:
             seen.add((cur, after))

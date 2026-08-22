@@ -328,13 +328,14 @@ class RepoWalk:
         return _history_from_commits(path, [c for c in commits if not c.is_merge])
 
 
-def iter_walk(repo: str | Path, pathspec: str | None = None) -> Iterator[tuple[CommitMeta, list[tuple[str, FileRec]]]]:
+def iter_walk(repo: str | Path, pathspec: str | None = None, revisions: str = "HEAD") -> Iterator[tuple[CommitMeta, list[tuple[str, FileRec]]]]:
     """Stream (commit, [(path, record)]) newest first from one git log process.
 
+    `revisions` is passed to git log (e.g. "HEAD" or "old..HEAD" for an incremental update).
     Co-author identities are raw here (not mailmapped); `walk()` resolves them in one batch.
     """
     fmt = _REC + _UNIT.join(["%H", "%aN", "%aE", "%at", "%P", "%B"])
-    cmd = ["git", "-C", str(repo), "log", "--numstat", "-M", f"--format={fmt}"]
+    cmd = ["git", "-C", str(repo), "log", "--numstat", "-M", f"--format={fmt}", revisions]
     if pathspec:
         cmd += ["--", pathspec]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)

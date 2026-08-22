@@ -123,3 +123,10 @@ Decisions
 - Erosion was O(authors x touches) per file (server.c: 550k ops, 168 ms per rank()); now a sorted prefix-sum, 2.0 ms, identical results (equality test vs the naive sum).
 - regress `diff_fixes.md` vs `adopted`: no movement anywhere.
 
+## P3 (done) — MCP, and incremental index
+
+- `memoir mcp [--repo]` serves exactly three tools over stdio via fastmcp: `who_knows(path, n)` (~120-145 tokens on real files; emails are most of it), `expertise_evidence(path, author)` (substring match on name/email, full record + rank), `blame_divergence(path, n)` (last committer vs top-n with a one-sentence explanation: bot / no-op / sweep / rank). Shared logic moved from cli.py to `api.py` (`Source`, `answer`, `lists_and_flags`, `dormancy`); the spec layout gains that one file.
+- Tests use fastmcp's in-memory `Client(server)`; no subprocess.
+- Incremental index (direction 2026-08-22): `update_index()` walks only `old_head..HEAD` and prepends the new commits with positions below the current minimum (`pos` is an ordering key, smaller = newer, negative after updates; lineage and `before=` only compare). If HEAD is not a descendant of the indexed commit (rebase/amend) or the schema changed, it rebuilds. `Source` updates when stale, builds when missing or not covering. Correctness test: index at fixture HEAD~6, update to tip, every file identical to a full rebuild (the rename, merge, co-author, bot, and sweep all cross the boundary); amend -> "rebuilt". Cost: 0.13 s (30 commits, valkey), 0.39 s (300, valkey), 0.34 s (300, flink) vs 7-25 s full.
+- Caveat: log order within the new batch is by commit date, as in a full walk, but the batch sits above all older rows; a branch renaming a file while mainline kept editing the old name, merged later, can order differently than a full rebuild. Mailmap edits do not re-resolve old rows (rebuild with `memoir index` if needed).
+

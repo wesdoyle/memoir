@@ -137,3 +137,16 @@ Not the rename limit: `git log` emitted no "rename detection was skipped" warnin
 ### Against the §5 proposals
 
 1 (one walk) and 2 (persisted index) are done; 3 (parallel per-file loop) and 4 (`--follow`-free per-file path) are superseded for any repo worth indexing; 5 (parse cost) is visible only in build time and is <10% of it. Next cost centre is the build itself (one full walk per HEAD); incremental update (`old_head..HEAD`, re-resolving lineage for touched paths) is the obvious follow-on, and cold CLI startup (~80 ms) is now the floor for single `who` calls.
+
+## 7. Incremental index update (2026-08-22)
+
+`update_index()` walks only `old_head..HEAD` and prepends the new commits (positions below the current minimum; `pos` is an ordering key). Measured by building at `HEAD~N`, then updating to the tip (no-checkout clones, HEAD moved with `update-ref`):
+
+| repo | full build at HEAD~N | N new commits | incremental update | speedup |
+|---|---|---|---|---|
+| valkey | 7.3 s | 30 | 0.13 s | 56× |
+| valkey | 6.9 s | 300 | 0.39 s | 18× |
+| flink | 25.0 s | 300 | 0.34 s | 74× |
+
+Update cost is proportional to the new commits plus a constant (~0.1 s: `merge-base --is-ancestor`, `rev-list --count`, one `check-mailmap`), not to repository size. The result is identical to a full rebuild on every fixture file (test), including a rename, a merge, a co-author and a sweep crossing the update boundary. A HEAD that is not a descendant of the indexed commit (rebase, amend) falls back to a full rebuild.
+

@@ -54,7 +54,15 @@ $ uv run memoir index            # or: memoir index src   (limit to a directory)
 indexed 14019 commits at 1a2b3c4d5e in 6.9 s -> .git/memoir/index.sqlite (3.7 MB)
 ```
 
-One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`. `who` and `audit` always read from it: if it is missing, stale (`HEAD` moved) or does not cover the path, they rebuild it first and say so on stderr (`memoir: index is stale ...; building index for <repo> ...` — seconds on most repositories, ~80 s on a 160k-commit one). `memoir index` builds it explicitly, optionally scoped to a directory; `--path` chooses another location.
+One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`. `who` and `audit` always read from it: if it is missing they build it (seconds on most repositories, ~80 s on a 160k-commit one); if `HEAD` has moved they update it incrementally — only the new commits are walked, a fraction of a second — and say so on stderr; a rebased or amended `HEAD` triggers a full rebuild. `memoir index` builds it explicitly, optionally scoped to a directory; `--path` chooses another location.
+
+**For agents (MCP)**
+
+```sh
+$ uv run memoir mcp --repo /path/to/repo      # stdio server; three tools
+```
+
+`who_knows(path, n=3)` → compact ranked answer (`current`, `recent`, `built_it` when it differs, trust flags); `expertise_evidence(path, author)` → the full evidence record and rank for one person; `blame_divergence(path, n=3)` → whether the last committer holds the knowledge, with a one-sentence explanation. Paths are relative to the repository root; the index is built or updated on demand.
 
 ## How it scores (v0)
 

@@ -11,7 +11,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from memoir.index import Index, build_index, default_index_path, open_index
+from memoir.index import Index, build_index, default_index_path, open_index, update_index
 from memoir.mining import FileHistory
 from memoir.scoring import Evidence, Weights, divergence, months_between, rank
 
@@ -40,22 +40,27 @@ class Source:
         self.root = root
         self.db = default_index_path(root)
         self.index: Index | None = None
-        reason = None
+        reason = action = None
         if not self.db.exists():
-            reason = "no index yet"
+            reason, action = "no index yet", "build"
         else:
             ix = open_index(self.db)
-            if not ix.is_fresh(root):
-                reason = f"index is stale (built at {ix.head[:10]}, HEAD differs)"
-            elif need is not None and not ix.covers(need):
-                reason = f"index covers only {ix.pathspec}"
-            if reason:
-                ix.close()
-            else:
-                self.index = ix
-        if reason:
+            if need is not None and not ix.covers(need):
+                reason, action = f"index covers only {ix.pathspec}", "build"
+            elif not ix.is_fresh(root):
+                reason, action = f"index is stale (at {ix.head[:10]}, HEAD differs)", "update"
+            ix.close()
+            if action is None:
+                self.index = ix if False else open_index(self.db)
+        if action == "build":
             print(f"memoir: {reason}; building index for {root} ...", file=sys.stderr, flush=True)
             build_index(root, self.db)
+        elif action == "update":
+            print(f"memoir: {reason}; updating index for {root} ...", file=sys.stderr, flush=True)
+            how = update_index(root, self.db)
+            if how == "rebuilt":
+                print("memoir: HEAD is not a descendant of the indexed commit; rebuilt from scratch", file=sys.stderr, flush=True)
+        if self.index is None:
             self.index = open_index(self.db)
         self.name = "index"
 
