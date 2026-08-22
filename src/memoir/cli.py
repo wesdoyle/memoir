@@ -49,7 +49,11 @@ def _fmt_expert(i: int, e: Evidence) -> str:
     bits.append(f"last {e.last_touch} ({e.months_since_last_touch:.0f} mo ago)")
     if e.others_commits_since:
         bits.append(f"{e.others_commits_since} by others since")
-    return f"{i}. {e.author.name} <{e.author.email}>  score {e.score:.2f}  " + " · ".join(bits)
+    return f"{i}. {e.author.name} <{e.author.email}>  score {e.score:.2f} (raw {e.raw_score:.2f})  " + " · ".join(bits)
+
+
+def _by_raw(ranked: list[Evidence]) -> list[Evidence]:
+    return sorted(ranked, key=lambda e: (-e.raw_score, e.author.name, e.author.email))
 
 
 def _who(root: Path, rel: str, n: int, now: datetime | None) -> tuple[FileHistory, list[Evidence], dict]:
@@ -71,6 +75,7 @@ def who(
     h, ranked, div = _who(root, rel, n, _parse_now(now))
     if as_json:
         typer.echo(json.dumps({"path": rel, "paths": h.paths, "experts": [e.to_dict() for e in ranked[:n]],
+                               "by_raw_score": [e.to_dict() for e in _by_raw(ranked)[:n]],
                                "last_commit": div["last_commit"], "diverges": div["diverges"]}, indent=2))
         return
     if not ranked:
@@ -80,6 +85,10 @@ def who(
                + (f", formerly {', '.join(h.paths[1:])}" if len(h.paths) > 1 else ""))
     for i, e in enumerate(ranked[:n], 1):
         typer.echo("  " + _fmt_expert(i, e))
+    raw_top = _by_raw(ranked)[:n]
+    if {e.author.key for e in raw_top} != {e.author.key for e in ranked[:n]}:
+        typer.echo("  by raw score (before time decay): "
+                   + " · ".join(f"{e.author.name} {e.raw_score:.2f} (last {e.last_touch})" for e in raw_top))
     lc = div["last_commit"]
     tag = "bot" if div["last_is_bot"] else (f"rank {div['rank_of_last']}" if div["rank_of_last"] else "no expertise record")
     typer.echo(f"  last commit: {lc['author']['name']} {lc['date']} ({tag})"

@@ -66,3 +66,21 @@ def test_audit_reports_divergence_among_contested_files(fixture_repo):
     # core.py (3 authors), helpers.py (3), README (2), .mailmap (1): none has >1 author... except all but .mailmap
     out = run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21")
     assert "contested" in out and "3/3" in out  # files with >1 author: core, helpers, README; all diverge at top-1
+
+
+def test_who_shows_raw_alongside_decayed(fixture_repo):
+    out = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2026-08-21")
+    first = [l for l in out.splitlines() if l.strip().startswith("1.")][0]
+    assert "score 1.87" in first and "raw 6.21" in first
+
+
+def test_who_lists_raw_top_when_it_differs(fixture_repo):
+    # helpers.py: decayed top-1 is Bob; with -n 1 the raw top-1 is also Bob -> no extra line.
+    out = run("who", "src/helpers.py", "--repo", str(fixture_repo), "-n", "1", "--now", "2026-08-21")
+    assert "by raw score" not in out
+    # core.py with -n 1 far in the future: Carol's recent sweep decays slower than Alice... use a
+    # hand-built case instead: 'now' far enough that ordering flips is not available in the fixture,
+    # so assert the JSON carries raw_score and raw_rank for agents/humans to compare.
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--now", "2026-08-21"))
+    assert data["experts"][0]["raw_score"] > data["experts"][0]["score"]
+    assert [e["author"]["name"] for e in data["by_raw_score"][:2]] == ["Alice Adams", "Carol Chen"]
