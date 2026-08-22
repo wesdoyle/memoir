@@ -35,3 +35,16 @@ def test_walk_can_be_scoped_to_a_pathspec(fixture_repo):
 def test_walk_records_head(fixture_repo):
     head = subprocess.run(["git", "-C", str(fixture_repo), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     assert walk(fixture_repo).head == head
+
+
+def test_walk_records_commit_breadth(fixture_repo):
+    w = walk(fixture_repo)
+    h = w.history("src/core.py")
+    by_author = {c.author.name: c for c in h.commits}
+    assert by_author["Carol Chen"].breadth == 3  # the sweep touched core.py, helpers.py, README.md
+    assert by_author["Alice Adams"].breadth in (1, 4)  # c01 touched 4 files; later core-only commits 1
+
+
+def test_live_mining_has_unknown_breadth(fixture_repo):
+    h = mine_file(fixture_repo, "src/core.py")
+    assert all(c.breadth is None for c in h.commits)

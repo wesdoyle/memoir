@@ -54,6 +54,7 @@ class Commit:
     binary: bool  # numstat reported "-" (no line counts)
     is_merge: bool
     path: str  # path of the file as of this commit (differs across renames)
+    breadth: int | None = None  # files touched by the commit; None when unknown (per-file --follow mining)
 
     @property
     def is_bot(self) -> bool:
@@ -258,6 +259,7 @@ class CommitMeta:
     date: datetime
     coauthors: list[Identity]
     is_merge: bool
+    breadth: int = 0  # number of (path) records in this commit
 
 
 @dataclass(frozen=True)
@@ -303,7 +305,7 @@ class RepoWalk:
             m = self.commits[r.pos]
             commits.append(Commit(sha=m.sha, author=m.author, date=m.date, coauthors=m.coauthors,
                                   added=r.added, deleted=r.deleted, binary=r.binary,
-                                  is_merge=m.is_merge, path=p))
+                                  is_merge=m.is_merge, path=p, breadth=m.breadth))
         return _history_from_commits(path, [c for c in commits if not c.is_merge])
 
 
@@ -355,6 +357,7 @@ def _parse_walk_record(rec: str, pos: int) -> tuple[CommitMeta, list[tuple[str, 
         old, new = _numstat_paths(p)
         recs.append((new, FileRec(pos=pos, added=int(a) if a != "-" else 0, deleted=int(d) if d != "-" else 0,
                                   binary=a == "-", renamed_from=old)))
+    meta.breadth = len(recs)
     return meta, recs
 
 

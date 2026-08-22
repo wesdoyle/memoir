@@ -52,3 +52,11 @@ def test_index_is_rebuilt_in_place(fixture_repo, tmp_path):
     build_index(fixture_repo, db)  # second build must not duplicate rows
     with open_index(db) as ix:
         assert len(ix.history("src/core.py").commits) == 6
+
+
+def test_index_stores_breadth(fixture_repo, tmp_path):
+    db = tmp_path / "idx.sqlite"
+    build_index(fixture_repo, db)
+    with open_index(db) as ix:
+        h = ix.history("src/core.py")
+        assert {c.author.name: c.breadth for c in h.commits}["Carol Chen"] == 3
