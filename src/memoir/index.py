@@ -1,9 +1,12 @@
 """On-disk index: the single-walk output persisted in SQLite and queried per file.
 
-Layout (schema v3):
-  meta(key, value)                      head sha, pathspec, schema, built_at
+Layout (schema v4):
+  meta(key, value)          head, pathspec, schema, built_at, rank_now, rank_weights
   commits(pos, sha, name, email, ts, merge, coauthors, breadth, parents)   pos: smaller = newer (negative after updates)
-  files(path, pos, added, deleted, binary, renamed_from)
+  files(path, pos, added, deleted, binary, renamed_from)                  raw (commit, path) records
+  file_lineage(path, pos)   for every file at HEAD: the commits in its history (renames followed)
+  file_rank(path, key, name, email, rank_cur, score, rank_raw, raw)      top-5 of each list per HEAD file,
+                            computed at rank_now with rank_weights; `person`/`audit` read these
 
 Facts and scores are derived at query time from these rows (same code path as live
 mining), so weights and `now` stay tunable without rebuilding. Stdlib sqlite3 only.
@@ -14,7 +17,8 @@ from __future__ import annotations
 import json
 import sqlite3
 import subprocess
-from datetime import datetime, timezone
+from dataclasses import asdict
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from memoir.mining import (
@@ -25,8 +29,11 @@ from memoir.mining import (
     _history_from_commits,
     iter_walk,
 )
+from memoir.scoring import Weights, rank
 
-SCHEMA = 3
+SCHEMA = 4
+RANK_TOP = 5
+RANK_STALE_DAYS = 30  # decay moves slowly (HL 18 months); recompute all ranks when rank_now is older than this
 NEWEST = -(1 << 62)  # "older than nothing": pos is an ordering key (smaller = newer) and may be negative
 
 
@@ -68,9 +75,47 @@ def _ingest(con: sqlite3.Connection, repo: Path, pathspec: str | None, revisions
     return len(crows)
 
 
-def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = None) -> Path:
+def _head_files(repo: Path, pathspec: str | None) -> list[str]:
+    args = ["ls-tree", "-r", "--name-only", "-z", "HEAD"] + (["--", pathspec] if pathspec else [])
+    return [f for f in _git(repo, *args).split("\0") if f]
+
+
+def _materialize(con: sqlite3.Connection, repo: Path, paths: list[str], now: datetime, w: Weights,
+                 lineage: bool = True, ranks: bool = True) -> None:
+    """(Re)compute file_lineage and/or file_rank rows for the given HEAD paths."""
+    ix = Index(con)
+    if lineage:
+        con.executemany("DELETE FROM file_lineage WHERE path=?", [(p,) for p in paths])
+    if ranks:
+        con.executemany("DELETE FROM file_rank WHERE path=?", [(p,) for p in paths])
+    lrows, rrows = [], []
+    for p in paths:
+        lin = ix.lineage(p)
+        if lineage:
+            lrows += [(p, pos) for _, pos, *_ in lin]
+        if ranks:
+            h = ix.history(p) if lin else None
+            if h and h.authors:
+                r = rank(h, now=now, w=w)
+                by_raw = sorted(r, key=lambda e: (-e.raw_score, e.author.name, e.author.email))
+                cur = {e.author.key: (i, e) for i, e in enumerate(r[:RANK_TOP], 1)}
+                rawr = {e.author.key: (i, e) for i, e in enumerate(by_raw[:RANK_TOP], 1)}
+                for key in cur.keys() | rawr.keys():
+                    e = (cur.get(key) or rawr.get(key))[1]
+                    rrows.append((p, key, e.author.name, e.author.email,
+                                  cur[key][0] if key in cur else None, e.score,
+                                  rawr[key][0] if key in rawr else None, e.raw_score))
+        if len(lrows) > 50_000:
+            con.executemany("INSERT INTO file_lineage VALUES (?,?)", lrows); lrows = []
+    con.executemany("INSERT INTO file_lineage VALUES (?,?)", lrows)
+    con.executemany("INSERT INTO file_rank VALUES (?,?,?,?,?,?,?,?)", rrows)
+
+
+def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = None,
+                now: datetime | None = None, w: Weights = Weights()) -> Path:
     """Walk the repository once and (re)write the index at db_path. Returns db_path."""
     repo, db_path = Path(repo), Path(db_path)
+    now = now or datetime.now(tz=timezone.utc)
     db_path.parent.mkdir(parents=True, exist_ok=True)
     tmp = db_path.with_suffix(".tmp")
     if tmp.exists():
@@ -86,6 +131,9 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
                                  ts INTEGER, merge INTEGER, coauthors TEXT, breadth INTEGER, parents INTEGER);
             CREATE TABLE files(path TEXT, pos INTEGER, added INTEGER, deleted INTEGER,
                                binary INTEGER, renamed_from TEXT);
+            CREATE TABLE file_lineage(path TEXT, pos INTEGER);
+            CREATE TABLE file_rank(path TEXT, key TEXT, name TEXT, email TEXT, rank_cur INTEGER,
+                                   score REAL, rank_raw INTEGER, raw REAL);
             """
         )
         n = _ingest(con, repo, pathspec, "HEAD", 0)
@@ -95,8 +143,15 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
             "INSERT INTO meta VALUES (?,?)",
             [("head", head), ("pathspec", pathspec or ""), ("schema", str(SCHEMA)),
              ("built_at", datetime.now(tz=timezone.utc).isoformat(timespec="seconds")),
-             ("commits", str(n))],
+             ("commits", str(n)),
+             ("rank_now", now.isoformat(timespec="seconds")), ("rank_weights", json.dumps(asdict(w))),
+             ("repo_name", repo.resolve().name)],
         )
+        _materialize(con, repo, _head_files(repo, pathspec), now, w)
+        con.execute("CREATE INDEX file_lineage_path ON file_lineage(path)")
+        con.execute("CREATE INDEX file_lineage_pos ON file_lineage(pos)")
+        con.execute("CREATE INDEX file_rank_path ON file_rank(path)")
+        con.execute("CREATE INDEX file_rank_key ON file_rank(key)")
         con.commit()
     finally:
         con.close()
@@ -104,36 +159,61 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
     return db_path
 
 
-def update_index(repo: str | Path, db_path: str | Path) -> str:
-    """Bring the index at db_path up to HEAD. Returns "fresh" (nothing to do), "incremental"
-    (only old_head..HEAD was walked and prepended with positions below the current minimum), or
+def update_index(repo: str | Path, db_path: str | Path, now: datetime | None = None) -> str:
+    """Bring the index at db_path up to HEAD (and its materialized ranks up to `now`). Returns
+    "fresh" (nothing to do), "reranked" (HEAD unchanged but rank_now was stale: all ranks recomputed),
+    "incremental" (only old_head..HEAD was walked and prepended with positions below the current
+    minimum; lineage and ranks recomputed for the touched paths, all ranks if rank_now was stale), or
     "rebuilt" (no usable index, schema changed, or HEAD is not a descendant of the indexed head —
     e.g. after a rebase/amend — so the whole history was walked again)."""
     repo, db_path = Path(repo), Path(db_path)
+    now = now or datetime.now(tz=timezone.utc)
     head = _git(repo, "rev-parse", "HEAD").strip()
     if not db_path.exists():
-        build_index(repo, db_path)
+        build_index(repo, db_path, now=now)
         return "rebuilt"
     con = sqlite3.connect(db_path)
     try:
         meta = dict(con.execute("SELECT key, value FROM meta"))
         old = meta.get("head")
+        pathspec = meta.get("pathspec") or None
         if meta.get("schema") != str(SCHEMA) or not old:
             con.close()
-            build_index(repo, db_path, meta.get("pathspec") or None)
+            build_index(repo, db_path, pathspec, now=now)
             return "rebuilt"
-        if old == head:
+        w = Weights(**json.loads(meta["rank_weights"]))
+        stale = not Index(con).ranks_fresh(now)
+        if old == head and not stale:
             return "fresh"
+        con.execute("PRAGMA journal_mode=OFF")
+        con.execute("PRAGMA synchronous=OFF")
+        if old == head:
+            _materialize(con, repo, _head_files(repo, pathspec), now, w, lineage=False, ranks=True)
+            con.execute("UPDATE meta SET value=? WHERE key='rank_now'", (now.isoformat(timespec="seconds"),))
+            con.commit()
+            return "reranked"
         ok = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", old, head]).returncode == 0
         if not ok:
             con.close()
-            build_index(repo, db_path, meta.get("pathspec") or None)
+            build_index(repo, db_path, pathspec, now=now)
             return "rebuilt"
         (min_pos,) = con.execute("SELECT MIN(pos) FROM commits").fetchone()
         n_new = int(_git(repo, "rev-list", "--count", f"{old}..{head}"))
-        con.execute("PRAGMA journal_mode=OFF")
-        con.execute("PRAGMA synchronous=OFF")
-        n = _ingest(con, repo, meta.get("pathspec") or None, f"{old}..{head}", (min_pos or 0) - n_new)
+        first = (min_pos or 0) - n_new
+        n = _ingest(con, repo, pathspec, f"{old}..{head}", first)
+        # maintain materialization: paths at HEAD only; touched paths get new lineage + ranks
+        head_files = _head_files(repo, pathspec)
+        head_set = set(head_files)
+        touched = {p for (p,) in con.execute("SELECT DISTINCT path FROM files WHERE pos < ?", (first + n,))}
+        gone = [p for (p,) in con.execute("SELECT DISTINCT path FROM file_lineage") if p not in head_set]
+        con.executemany("DELETE FROM file_lineage WHERE path=?", [(p,) for p in gone])
+        con.executemany("DELETE FROM file_rank WHERE path=?", [(p,) for p in gone])
+        known = {p for (p,) in con.execute("SELECT DISTINCT path FROM file_lineage")}
+        redo = sorted((touched & head_set) | (head_set - known))  # touched, plus brand-new or renamed-to paths
+        _materialize(con, repo, redo, now, w)
+        if stale:
+            _materialize(con, repo, head_files, now, w, lineage=False, ranks=True)
+            con.execute("UPDATE meta SET value=? WHERE key='rank_now'", (now.isoformat(timespec="seconds"),))
         con.execute("UPDATE meta SET value=? WHERE key='head'", (head,))
         con.execute("UPDATE meta SET value=? WHERE key='commits'", (str(int(meta.get("commits", "0")) + n),))
         con.execute("INSERT OR REPLACE INTO meta VALUES ('updated_at', ?)",
@@ -174,6 +254,40 @@ class Index:
     def covers(self, path: str) -> bool:
         ps = self.pathspec
         return ps is None or path == ps or path.startswith(ps.rstrip("/") + "/")
+
+    @property
+    def rank_now(self) -> datetime:
+        return datetime.fromisoformat(self.meta["rank_now"])
+
+    @property
+    def rank_weights(self) -> Weights:
+        return Weights(**json.loads(self.meta["rank_weights"]))
+
+    def ranks_fresh(self, now: datetime, days: int = RANK_STALE_DAYS) -> bool:
+        return abs(now - self.rank_now) <= timedelta(days=days)
+
+    # -- materialized queries
+    def ranks_for(self, path: str) -> list[tuple]:
+        """[(key, name, email, rank_cur|None, score, rank_raw|None, raw)] for a HEAD path."""
+        return self.con.execute(
+            "SELECT key, name, email, rank_cur, score, rank_raw, raw FROM file_rank WHERE path=?", (path,)).fetchall()
+
+    def files_touched_by(self, keys: set[str]) -> list[str]:
+        """HEAD paths whose lineage contains a commit by any of these identity keys (author or co-author)."""
+        emails = [k for k in keys if not k.startswith("name:")]
+        names = [k[5:] for k in keys if k.startswith("name:")]
+        cond, args = [], []
+        if emails:
+            cond.append(f"LOWER(c.email) IN ({','.join('?' * len(emails))})"); args += emails
+        if names:
+            cond.append(f"LOWER(c.name) IN ({','.join('?' * len(names))})"); args += names
+        for e in emails:
+            cond.append("c.coauthors LIKE ?"); args.append(f"%{e}%")
+        if not cond:
+            return []
+        rows = self.con.execute(
+            f"SELECT DISTINCT l.path FROM file_lineage l JOIN commits c ON c.pos=l.pos WHERE {' OR '.join(cond)}", args)
+        return sorted(p for (p,) in rows)
 
     # -- queries
     def pos_of(self, sha: str) -> int | None:

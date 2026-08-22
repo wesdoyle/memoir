@@ -1,8 +1,10 @@
-"""MCP agent surface: exactly three tools, mirroring a resolution ladder.
+"""MCP agent surface: four tools — a resolution ladder for a file, plus the reverse question.
 
   who_knows(path, n=3)              compact ranked answer (~100 tokens)
   expertise_evidence(path, author)  full evidence record for one author
   blame_divergence(path, n=3)       last committer vs memoir top-n, explained
+  person_profile(query, n=5)        what a person knows: themes, top files, directories (current / built_it)
+  experts_for_files(...)            who has the most expertise across a set of files (diff, dir, glob, topic)
 
 Run: `memoir mcp [--repo PATH]` (stdio). The repository is fixed at server start; paths are
 relative to its root. The on-disk index is built or refreshed on demand, like the CLI.
@@ -16,6 +18,8 @@ from pathlib import Path
 from fastmcp import FastMCP
 
 from memoir.api import Source, answer, by_raw, lists_and_flags
+from memoir.experts import experts_report, select_files
+from memoir.person import person_report, resolve_person
 from memoir.scoring import Evidence
 
 
@@ -34,7 +38,8 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
     mcp = FastMCP("memoir", instructions=(
         "memoir ranks the people most likely to hold the mental model of a file, from git history. "
         "Start with who_knows; call expertise_evidence to justify or compare a name; call blame_divergence "
-        "when the last committer (git blame/log) may be misleading. Scores: `score` is time-decayed "
+        "when the last committer (git blame/log) may be misleading; call person_profile before pulling "
+        "someone in, to see what they know (themes, files, directories). Scores: `score` is time-decayed "
         "(who is current), `raw` is undecayed (who built it)."))
 
     def _answer(path: str, n: int):
@@ -106,6 +111,52 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
                        + (f"memoir top-{n}: {top}." if top else "memoir has no ranking."))
         return {"path": path, "last_commit": last, "last_is_bot": div["last_is_bot"], "rank_of_last": r,
                 "diverges": div["diverges"], "top": [_compact(e) for e in ranked[:n]], "explanation": explanation}
+
+    @mcp.tool
+    def person_profile(query: str, n: int = 5) -> dict:
+        """What does this person know? `query` is a name or email (exact email wins; otherwise substring;
+        split identities sharing an email or a full name are merged and reported in `person.note`).
+        Returns summary counts, `themes` (path-token TF-IDF), `top_files` and `directories` for both
+        `current` (decayed: can answer today) and `built_it` (undecayed: deepest knowledge), each trimmed
+        to n. If the query matches several different people, returns ambiguous=true with candidates."""
+        src = Source(root)
+        try:
+            keys, note = resolve_person(src.index, query)
+            if not keys:
+                cands = []
+                if note and note.startswith("ambiguous"):
+                    cands = [c.strip() for c in note[len("ambiguous: "):].split(";") if c.strip()]
+                return {"query": query, "ambiguous": bool(cands), "candidates": cands, "person": None,
+                        "note": None if cands else note}
+            rep = person_report(src.index, keys, now=when, n_top=n)
+        finally:
+            src.close()
+        rep["person"]["note"] = note
+        rep["directories"] = rep["directories"][:n]
+        for d in rep["directories"]:
+            d["representative"] = d["representative"][:3]
+        rep["query"] = query
+        rep["ambiguous"] = False
+        return rep
+
+    @mcp.tool
+    def experts_for_files(paths: list[str] | None = None, dir: str | None = None, glob: str | None = None,
+                          match: str | None = None, prefix: bool = False, n: int = 5) -> dict:
+        """Who has the most expertise across a set of files — e.g. the files of a change you are about to make
+        or review. Select by explicit `paths` (relative to the repo root), a `dir`, a `glob`, and/or `match`
+        (space-separated path-token words, any matches; `prefix` matches stems). Selectors are ANDed.
+        Returns the selection (count, sample), and `current` / `built_it` lists of people with how many of
+        the files they are top-3 on, an expertise mass, and their best file. A selection under 3 files is a
+        file question: use who_knows."""
+        src = Source(root)
+        try:
+            sel, desc = select_files(src.index, dir=dir, glob=glob, match=match.split() if match else None,
+                                     prefix=prefix, files=paths)
+            rep = experts_report(src.index, sel, n=n, now=when)
+        finally:
+            src.close()
+        rep["selection"]["selector"] = desc
+        return rep
 
     return mcp
 

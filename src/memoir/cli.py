@@ -159,3 +159,80 @@ def mcp(
 
     root = _toplevel(repo or Path.cwd())
     make_server(root).run()
+
+
+@app.command()
+def identities(
+    repo: Path | None = typer.Option(None, "--repo"),
+) -> None:
+    """Suggest .mailmap lines for split identities (same name / noreply / spellings). Nothing is written."""
+    from memoir.identities import format_mailmap, suggest_mailmap
+
+    root, _ = _resolve(".", repo)
+    src = Source(root)
+    try:
+        typer.echo(format_mailmap(suggest_mailmap(src.index)))
+    finally:
+        src.close()
+
+
+@app.command()
+def person(
+    who: str = typer.Argument(..., help="Name or email (substring; exact email wins)"),
+    repo: Path | None = typer.Option(None, "--repo"),
+    as_json: bool = typer.Option(False, "--json"),
+    now: str | None = typer.Option(None, "--now", help="Reference date YYYY-MM-DD; ranks are recomputed live if it is outside the index's window"),
+    include_vendored: bool = typer.Option(False, "--include-vendored", help="Count vendored trees (deps/, 3rdparty/, vendor/ ...)"),
+    top: int = typer.Option(8, "--top", help="Files to list per answer"),
+) -> None:
+    """What does this person know: top files, directories and themes, for `current` and `built_it`."""
+    from memoir.person import format_person, person_report, resolve_person
+
+    root, _ = _resolve(".", repo)
+    src = Source(root)
+    try:
+        keys, note = resolve_person(src.index, who)
+        if not keys:
+            typer.echo(f"memoir: {note}", err=True)
+            raise typer.Exit(code=1)
+        rep = person_report(src.index, keys, now=_parse_now(now), n_top=top, include_vendored=include_vendored)
+    finally:
+        src.close()
+    if note:
+        rep["person"]["note"] = note
+    typer.echo(json.dumps(rep, indent=2) if as_json else format_person(rep, who, note))
+
+
+@app.command()
+def experts(
+    dir: str | None = typer.Option(None, "--dir", help="Files under this directory"),
+    glob: str | None = typer.Option(None, "--glob", help="Files matching this glob (full path or file name)"),
+    match: list[str] = typer.Option([], "--match", help="Path-token word (repeatable; any word matches)"),
+    prefix: bool = typer.Option(False, "--prefix", help="Match token prefixes (auth -> authc, authz ...)"),
+    files: str | None = typer.Option(None, "--files", help="File list: a path, or - for stdin (one per line; e.g. a diff's files)"),
+    repo: Path | None = typer.Option(None, "--repo"),
+    top: int = typer.Option(10, "--top"),
+    as_json: bool = typer.Option(False, "--json"),
+    now: str | None = typer.Option(None, "--now"),
+    include_vendored: bool = typer.Option(False, "--include-vendored"),
+) -> None:
+    """Who has the most expertise across a set of files (a directory, a glob, a topic word, or a file list)."""
+    import sys
+    from memoir.experts import experts_report, format_experts, select_files
+
+    root, _ = _resolve(".", repo)
+    listed = None
+    if files is not None:
+        listed = (sys.stdin.read() if files == "-" else Path(files).read_text()).splitlines()
+    src = Source(root)
+    try:
+        paths, desc = select_files(src.index, dir=dir, glob=glob, match=list(match) or None, prefix=prefix,
+                                   files=listed, include_vendored=include_vendored)
+        if not paths:
+            typer.echo(f"memoir: no files selected ({desc})", err=True)
+            raise typer.Exit(code=1)
+        rep = experts_report(src.index, paths, n=top, now=_parse_now(now))
+    finally:
+        src.close()
+    rep["selection"]["selector"] = desc
+    typer.echo(json.dumps(rep, indent=2) if as_json else format_experts(rep, desc))

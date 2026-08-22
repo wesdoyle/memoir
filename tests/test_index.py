@@ -146,3 +146,73 @@ def test_update_after_new_commits_credits_them(fixture_repo, tmp_path):
     with open_index(db) as ix:
         h = ix.history("src/core.py")
         assert h.last_commit.author.name == "Zed" and len(h.commits) == 7
+
+
+# ---- schema v4: materialized lineage and per-file ranks ----------------------------------
+
+def test_build_materializes_lineage_and_ranks_matching_live_rank(fixture_repo, tmp_path):
+    from datetime import datetime, timezone
+    from memoir.scoring import rank
+    now = datetime(2026, 8, 21, tzinfo=timezone.utc)
+    db = tmp_path / "m.sqlite"
+    build_index(fixture_repo, db, now=now)
+    with open_index(db) as ix:
+        assert ix.meta["rank_now"].startswith("2026-08-21")
+        for path in tracked(fixture_repo):
+            h = ix.history(path)
+            live = rank(h, now=now)
+            rows = ix.ranks_for(path)  # [(key, name, email, rank_cur, score, rank_raw, raw)]
+            cur = [r for r in rows if r[3] is not None]
+            assert [r[1] for r in sorted(cur, key=lambda r: r[3])][:5] == [e.author.name for e in live[:5]], path
+            lin = {pos for (pos,) in ix.con.execute("SELECT pos FROM file_lineage WHERE path=?", (path,))}
+            assert lin == {ix.pos_of(c.sha) for c in h.commits}, path
+        # helpers.py lineage includes its pre-rename history (util.py commits)
+        assert len({pos for (pos,) in ix.con.execute("SELECT pos FROM file_lineage WHERE path='src/helpers.py'")}) == 5  # create, alias edit, rename, dave, sweep
+
+
+def test_files_touched_by_uses_lineage_not_current_names(fixture_repo, tmp_path):
+    db = tmp_path / "m2.sqlite"
+    build_index(fixture_repo, db)
+    with open_index(db) as ix:
+        # Bob committed only to src/util.py (pre-rename); the file is src/helpers.py at HEAD
+        assert "src/helpers.py" in ix.files_touched_by({"bob@example.com"})
+        assert "src/util.py" not in ix.files_touched_by({"bob@example.com"})
+
+
+def test_incremental_update_maintains_materialization(fixture_repo, tmp_path):
+    from datetime import datetime, timezone
+    from memoir.index import update_index
+    now = datetime(2026, 8, 21, tzinfo=timezone.utc)
+    clone = tmp_path / "c4"
+    subprocess.run(["git", "clone", "-q", str(fixture_repo), str(clone)], check=True)
+    tip = _git(clone, "rev-parse", "HEAD").strip()
+    _git(clone, "checkout", "-q", "HEAD~6")
+    db = tmp_path / "inc4.sqlite"
+    build_index(clone, db, now=now)
+    _git(clone, "checkout", "-q", tip)
+    assert update_index(clone, db, now=now) == "incremental"
+    full = tmp_path / "full4.sqlite"
+    build_index(clone, full, now=now)
+    with open_index(db) as inc, open_index(full) as ref:
+        for path in tracked(clone):
+            assert sorted(inc.ranks_for(path), key=lambda r: r[0]) == sorted(ref.ranks_for(path), key=lambda r: r[0]), path
+            a = {pos for (pos,) in inc.con.execute("SELECT pos FROM file_lineage WHERE path=?", (path,))}
+            b = {pos for (pos,) in ref.con.execute("SELECT pos FROM file_lineage WHERE path=?", (path,))}
+            # positions differ between the two builds; compare by sha
+            sa = {inc.con.execute("SELECT sha FROM commits WHERE pos=?", (p,)).fetchone()[0] for p in a}
+            sb = {ref.con.execute("SELECT sha FROM commits WHERE pos=?", (p,)).fetchone()[0] for p in b}
+            assert sa == sb, path
+        assert "src/util.py" not in {p for (p,) in inc.con.execute("SELECT DISTINCT path FROM file_lineage")}
+
+
+def test_ranks_are_recomputed_when_now_is_stale(fixture_repo, tmp_path):
+    from datetime import datetime, timezone
+    from memoir.index import update_index
+    db = tmp_path / "m5.sqlite"
+    build_index(fixture_repo, db, now=datetime(2024, 2, 1, tzinfo=timezone.utc))
+    with open_index(db) as ix:
+        assert not ix.ranks_fresh(datetime(2026, 8, 21, tzinfo=timezone.utc))
+        assert ix.ranks_fresh(datetime(2024, 2, 20, tzinfo=timezone.utc))
+    assert update_index(fixture_repo, db, now=datetime(2026, 8, 21, tzinfo=timezone.utc)) == "reranked"
+    with open_index(db) as ix:
+        assert ix.meta["rank_now"].startswith("2026-08-21")
