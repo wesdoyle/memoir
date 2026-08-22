@@ -9,9 +9,8 @@ from pathlib import Path
 
 import typer
 
-from memoir.index import Index, build_index, default_index_path, open_index
-from memoir.mining import FileHistory
-from memoir.scoring import Evidence, Weights, divergence, rank
+from memoir.api import DORMANT_MONTHS, Source, answer, by_raw, dormancy, fmt_expert, lists_and_flags
+from memoir.index import build_index, default_index_path, open_index
 
 app = typer.Typer(no_args_is_help=True, help="Find who most likely holds the mental model of a file.")
 
@@ -39,119 +38,6 @@ def _parse_now(now: str | None) -> datetime | None:
     return datetime.fromisoformat(now).replace(tzinfo=timezone.utc) if now else None
 
 
-def _fmt_expert(i: int, e: Evidence) -> str:
-    bits = []
-    if e.first_authored:
-        bits.append("created")
-    bits.append(f"{e.commits} commit{'s' if e.commits != 1 else ''}")
-    if e.coauthored_count:
-        bits.append(f"{e.coauthored_count} co-authored")
-    bits.append(f"{e.lines_changed} lines")
-    bits.append(f"last {e.last_touch} ({e.months_since_last_touch:.0f} mo ago)")
-    if e.others_commits_since:
-        bits.append(f"{e.others_commits_since:g} by others since")
-    return f"{i}. {e.author.name} <{e.author.email}>  score {e.score:.2f} (raw {e.raw_score:.2f})  " + " · ".join(bits)
-
-
-def _by_raw(ranked: list[Evidence]) -> list[Evidence]:
-    return sorted(ranked, key=lambda e: (-e.raw_score, e.author.name, e.author.email))
-
-
-class _Source:
-    """The on-disk index for a repository; built or refreshed on demand with a one-line notice."""
-
-    def __init__(self, root: Path, need: str | None = None):
-        self.root = root
-        self.db = default_index_path(root)
-        self.index: Index | None = None
-        reason = None
-        if not self.db.exists():
-            reason = "no index yet"
-        else:
-            ix = open_index(self.db)
-            if not ix.is_fresh(root):
-                reason = f"index is stale (built at {ix.head[:10]}, HEAD differs)"
-            elif need is not None and not ix.covers(need):
-                reason = f"index covers only {ix.pathspec}"
-            if reason:
-                ix.close()
-            else:
-                self.index = ix
-        if reason:
-            typer.echo(f"memoir: {reason}; building index for {root} ...", err=True)
-            build_index(root, self.db)
-            self.index = open_index(self.db)
-        self.name = "index"
-
-    def history(self, rel: str) -> FileHistory:
-        assert self.index is not None
-        return self.index.history(rel)
-
-    @property
-    def head(self) -> str:
-        assert self.index is not None
-        return self.index.head
-
-    def close(self) -> None:
-        if self.index is not None:
-            self.index.close()
-
-
-DORMANT_MONTHS = 36.0  # 2 half-lives: every decayed score is below a quarter of its raw value
-
-
-def _dormancy(h: FileHistory, now: datetime | None) -> tuple[bool, float]:
-    """(dormant, months since the last knowledge-bearing human touch)."""
-    from memoir.scoring import months_between
-    now = now or datetime.now(tz=timezone.utc)
-    if not h.authors:
-        return False, 0.0
-    idle = min(months_between(a.last_touch, now) for a in h.authors)
-    return idle > DORMANT_MONTHS, idle
-
-
-SWEEP_BREADTH = 50  # a last commit touching more files than this is flagged as a sweep
-STABILITY_HALF_LIVES = {"12": 12.0, "18": 18.0, "36": 36.0, "inf": 1e9}
-
-
-def _lists_and_flags(h: FileHistory, ranked: list[Evidence], n: int, now: datetime | None) -> tuple[dict, dict]:
-    """Proposal 5: labeled answers, each with the decay regime that fits its question, plus trust flags."""
-    recent, seen = [], set()
-    for a in sorted(h.authors, key=lambda a: a.last_touch, reverse=True):
-        if a.author.key not in seen:
-            seen.add(a.author.key)
-            recent.append({"name": a.name, "email": a.email})
-        if len(recent) >= n:
-            break
-    top1_by_hl = {k: (r[0].author.name if (r := rank(h, now=now, w=Weights(half_life_months=hl))) else None)
-                  for k, hl in STABILITY_HALF_LIVES.items()}
-    dormant, idle = _dormancy(h, now)
-    last = h.last_commit
-    flags = {
-        "dormant": dormant,
-        "dormant_months": round(idle, 1),
-        "last_touch_is_sweep": bool(last and last.breadth is not None and last.breadth > SWEEP_BREADTH),
-        "last_touch_breadth": last.breadth if last else None,
-        "stability": {"top1_by_half_life": top1_by_hl, "top1_stable": len(set(top1_by_hl.values())) == 1},
-    }
-    lists = {
-        "current": [e.to_dict() for e in ranked[:n]],          # decayed: can answer today
-        "built_it": [e.to_dict() for e in _by_raw(ranked)[:n]],  # raw: deepest accumulated knowledge
-        "recent": recent,                                      # pure recency baseline: what blame/log says
-    }
-    return lists, flags
-
-
-def _who(src: _Source, rel: str, n: int, now: datetime | None) -> tuple[FileHistory, list[Evidence], dict]:
-    """Rank; on a dormant file the decayed order is noise, so rank by raw score instead."""
-    h = src.history(rel)
-    ranked = rank(h, now=now)
-    dormant, _ = _dormancy(h, now)
-    if dormant:
-        ranked = _by_raw(ranked)
-    return h, ranked, divergence(h, ranked, n)
-
-
 @app.command()
 def who(
     path: str = typer.Argument(..., help="File path (relative to cwd, or to --repo if given)"),
@@ -162,13 +48,13 @@ def who(
 ) -> None:
     """Ranked experts for a file, with one-line evidence each."""
     root, rel = _resolve(path, repo)
-    src = _Source(root, need=rel)
+    src = Source(root, need=rel)
     when = _parse_now(now)
-    h, ranked, div = _who(src, rel, n, when)
-    dormant, idle = _dormancy(h, when)
+    h, ranked, div = answer(src, rel, n, when)
+    dormant, idle = dormancy(h, when)
     src.close()
     if as_json:
-        lists, flags = _lists_and_flags(h, ranked, n, when)
+        lists, flags = lists_and_flags(h, ranked, n, when)
         typer.echo(json.dumps({"path": rel, "paths": h.paths, "experts": [e.to_dict() for e in ranked[:n]],
                                "by_raw_score": lists["built_it"],
                                "ranked_by": "raw_score" if dormant else "score",
@@ -186,8 +72,8 @@ def who(
         typer.echo(f"  dormant: no knowledge-bearing change for {idle:.0f} months (> {DORMANT_MONTHS:.0f}); "
                    f"decayed scores are all near zero, so this list is ordered by raw score (who built it)")
     for i, e in enumerate(ranked[:n], 1):
-        typer.echo("  " + _fmt_expert(i, e))
-    raw_top = _by_raw(ranked)[:n]
+        typer.echo("  " + fmt_expert(i, e))
+    raw_top = by_raw(ranked)[:n]
     if not dormant and {e.author.key for e in raw_top} != {e.author.key for e in ranked[:n]}:
         typer.echo("  by raw score (before time decay): "
                    + " · ".join(f"{e.author.name} {e.raw_score:.2f} (last {e.last_touch})" for e in raw_top))
@@ -207,7 +93,7 @@ def audit(
 ) -> None:
     """Headline stat: % of files whose last committer is NOT in memoir's top-n (how often blame lies)."""
     root, rel = _resolve(directory, repo)
-    src = _Source(root, need=rel if rel != "." else None)
+    src = Source(root, need=rel if rel != "." else None)
     files = subprocess.run(  # ls-tree (not ls-files): works on --no-checkout clones
         ["git", "-C", str(root), "ls-tree", "-r", "--name-only", "-z", "HEAD", "--", rel],
         capture_output=True, text=True, check=True,
@@ -216,7 +102,7 @@ def audit(
     when = _parse_now(now)
     bot_last, empty, cases = 0, 0, []
     for f in files:
-        h, ranked, div = _who(src, f, top, when)
+        h, ranked, div = answer(src, f, top, when)
         if div["last_commit"] is None or not ranked:
             empty += 1
             continue
@@ -262,3 +148,14 @@ def index(
         size = db.stat().st_size / 1e6
         typer.echo(f"indexed {ix.meta['commits']} commits" + (f" under {pathspec}" if pathspec else "")
                    + f" at {ix.head[:10]} in {dt:.1f} s -> {db} ({size:.1f} MB)")
+
+
+@app.command()
+def mcp(
+    repo: Path | None = typer.Option(None, "--repo", help="Repository root (default: the current directory's repository)"),
+) -> None:
+    """Serve the three MCP tools (who_knows, expertise_evidence, blame_divergence) over stdio."""
+    from memoir.mcp_server import make_server
+
+    root = _toplevel(repo or Path.cwd())
+    make_server(root).run()
