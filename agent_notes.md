@@ -95,3 +95,13 @@ Decisions
 - Walk vs `--follow` differ on 5/100 seeded valkey files, all explained and all in the walk's favour or neutral: `--follow` follows *copies* (source still exists: sentinel-masters -> sentinel-primaries, hsetex -> msetex, client-setname -> client-capa), one false rename chain (propagate.c <- ... <- zmalloc.h), and a rename-away counted as a 114-line deletion (Makefile). Not adding `-C` (copies) for now.
 - Benchmarks: `bench.py build|query|equiv`, seeded 100-file samples, mean/median/p95/stdev/min/max; results in eval/perf.md §6.
 
+## P6 — measurement harness and scoring proposals (eval/proposals.md)
+
+- `eval/regress.py run <name> [--set k=v]` / `diff <a> <b>`: audit on the 10 P4 dirs at HL18/HL60/raw, seeded 100-file rank-shift (who entered/left top-3), canaries, regression set, Valkey roster overlap. 7 s per run from the indexes. Baseline saved before any change; re-run after the facts restructure and identical.
+- Facts now carry per-touch records (`AuthorFacts.touches`: date, lines, breadth, primary, binary, is_root); index schema v3 adds breadth and parents. Every shape is a `Weights` flag, default off: `breadth_k`, `line_scale`, `line_cap`, `decay_floor`, `decay_depth`, `first_rule`/`first_mass_n`. Per-file `--follow` mining has no breadth, so the discount applies only through the index.
+- Findings: breadth discount is the effective sweep fix (Soref 10->4, sweep accounts leave top-3, roster up, audit stat becomes meaningful); line shapes are a smaller overlapping win; decay floor/depth bring founders back but lower roster overlap (current vs built-it is two questions -> two lists); `not_root` fixes the importer case at 6% of files with no canary moves; `not_mass` penalizes Shay Banon's own bulk commits.
+- The regression set caught its own weakness: Madelyn Olson's #1 on config.c is held by 0.3 over Binbin (28 commits) on 1,573 lines in 3 commits; breadth and cap both flip it. Reported, not tuned around.
+- Dormancy (>36 months idle): `who` says so and orders by raw. Not a score change.
+- Subtree merges (valkey deps/jemalloc) leave files with no non-merge history: 16/100 sampled valkey files have no ranking. Known limitation (merges excluded by constraint).
+- No defaults changed; recommendations and the replay design are in proposals.md for the gate.
+

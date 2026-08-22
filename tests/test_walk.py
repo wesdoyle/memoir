@@ -5,6 +5,12 @@ import subprocess
 from memoir.mining import mine_file, walk
 
 
+def _norm(authors):
+    """Per-file --follow mining cannot know commit breadth; compare facts with it blanked."""
+    from dataclasses import replace
+    return [replace(a, touches=[replace(t, breadth=None) for t in a.touches]) for a in authors]
+
+
 def tracked(repo):
     return subprocess.run(["git", "-C", str(repo), "ls-tree", "-r", "--name-only", "HEAD"],
                           capture_output=True, text=True, check=True).stdout.split()
@@ -16,7 +22,7 @@ def test_walk_matches_per_file_mining_on_every_fixture_file(fixture_repo):
         a, b = mine_file(fixture_repo, path), w.history(path)
         assert b.paths == a.paths, path
         assert [c.sha for c in b.commits] == [c.sha for c in a.commits], path
-        assert b.authors == a.authors, path
+        assert _norm(b.authors) == _norm(a.authors), path
         assert b.last_commit.sha == a.last_commit.sha, path
 
 

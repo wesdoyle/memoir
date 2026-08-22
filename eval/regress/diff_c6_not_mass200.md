@@ -1,0 +1,59 @@
+# regress diff: baseline -> c6_not_mass200
+
+overrides: `none` -> `{'first_rule': 'not_mass'}`
+
+## audit: divergence before -> after (all files · contested)
+
+| directory | HL18 | HL60 | raw |
+|---|---|---|---|
+| elasticsearch:server/src/main/java/org/elasticsearch/cluster | 20→20/387 · 20→20/270 | 55→55/387 · 55→55/270 | 103→102/387 · 103→102/270 |
+| elasticsearch:server/src/main/java/org/elasticsearch/index/engine | 3→3/54 · 3→3/37 | 6→6/54 · 6→6/37 | 11→11/54 · 11→11/37 |
+| flink:flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint | 1→1/146 · 1→1/86 | 15→15/146 · 15→15/86 | 32→32/146 · 32→32/86 |
+| flink:flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph | 0→0/85 · 0→0/49 | 7→7/85 · 7→7/49 | 14→14/85 · 14→14/49 |
+| flink:flink-runtime/src/main/java/org/apache/flink/runtime/jobmaster | 0→0/110 · 0→0/47 | 5→5/110 · 5→5/47 | 12→12/110 · 12→12/47 |
+| opencv:modules/core/src | 5→5/191 · 3→3/103 | 12→12/191 · 10→10/103 | 38→36/191 · 36→34/103 |
+| opencv:modules/imgproc/src | 4→4/139 · 4→4/87 | 13→13/139 · 13→13/87 | 45→45/139 · 45→45/87 |
+| valkey:src | 26→26/738 · 26→26/658 | 66→64/738 · 66→64/658 | 97→96/738 · 97→96/658 |
+| vscode:src/vs/base/common | 12→12/158 · 11→11/105 | 25→25/158 · 24→24/105 | 45→41/158 · 44→40/105 |
+| vscode:src/vs/editor/common | 7→7/229 · 5→5/171 | 15→15/229 · 13→13/171 | 34→28/229 · 32→26/171 |
+
+## canaries (regression tests, not targets)
+
+| case | before | after | moved |
+|---|---|---|---|
+| Erich Gamma earns first_authored credit in vscode audited dirs (of 393) | 82 | 0 | **yes** |
+| Josh Soref in top-3 of valkey's 30 busiest src/*.c | 10 | 10 |  |
+| Ran Shidlansik (1,293-line commit) on valkey t_zset.c | 2 | 2 |  |
+| Shay Banon on ES IndexMetadata.java | 33 | 35 | **yes** |
+| Shay Banon on ES InternalEngine.java | 32 | 33 | **yes** |
+| Shay Banon on ES Node.java | 38 | 42 | **yes** |
+| Shay Banon on ES SearchService.java | 34 | 34 |  |
+| Till Rohrmann on flink JobMaster.java | 6 | 6 |  |
+| antirez on valkey server.c | 25 | 25 |  |
+| files in the 10 P4 dirs whose creator earns first_authored credit (of 2244) | 2244 | 1699 | **yes** |
+
+## regression set (must not move)
+
+| case | before | after | moved |
+|---|---|---|---|
+| Alex Dima on vscode textModel.ts | 1 | 1 |  |
+| David Turner on ES Node.java | 1 | 1 |  |
+| Johannes Rieken on vscode event.ts | 1 | 1 |  |
+| Madelyn Olson on valkey config.c | 1 | 1 |  |
+| Ryan Ernst on ES Node.java | 2 | 2 |  |
+| Vadim Pisarevsky on opencv matrix.cpp | 1 | 1 |  |
+
+## valkey MAINTAINERS overlap
+
+top-1 listed 21→21/30 · top-3 slots 58→58/90
+
+## rank shift on seeded samples
+
+| repo | top-1 changed | top-3 set changed | entered top-3 (most) | left top-3 (most) |
+|---|---|---|---|---|
+| elasticsearch | 0/100 | 1/100 | Mark Vieira ×1 | Dimitris Athanasiou ×1 |
+| flink | 2/100 | 1/100 | Fabian Hueske ×1 | StephanEwen ×1 |
+| opencv | 2/100 | 0/100 | – | – |
+| valkey | 10/100 | 1/100 | Jacob Murphy ×1 | guybe7 ×1 |
+| vscode | 3/100 | 2/100 | Justin Chen ×1, Kyle Cutler ×1 | kieferrm ×2 |
+

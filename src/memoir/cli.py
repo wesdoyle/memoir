@@ -87,9 +87,26 @@ class _Source:
             self.index.close()
 
 
+DORMANT_MONTHS = 36.0  # 2 half-lives: every decayed score is below a quarter of its raw value
+
+
+def _dormancy(h: FileHistory, now: datetime | None) -> tuple[bool, float]:
+    """(dormant, months since the last knowledge-bearing human touch)."""
+    from memoir.scoring import months_between
+    now = now or datetime.now(tz=timezone.utc)
+    if not h.authors:
+        return False, 0.0
+    idle = min(months_between(a.last_touch, now) for a in h.authors)
+    return idle > DORMANT_MONTHS, idle
+
+
 def _who(src: _Source, rel: str, n: int, now: datetime | None) -> tuple[FileHistory, list[Evidence], dict]:
+    """Rank; on a dormant file the decayed order is noise, so rank by raw score instead."""
     h = src.history(rel)
     ranked = rank(h, now=now)
+    dormant, _ = _dormancy(h, now)
+    if dormant:
+        ranked = _by_raw(ranked)
     return h, ranked, divergence(h, ranked, n)
 
 
@@ -105,11 +122,15 @@ def who(
     """Ranked experts for a file, with one-line evidence each."""
     root, rel = _resolve(path, repo)
     src = _Source(root, live)
-    h, ranked, div = _who(src, rel, n, _parse_now(now))
+    when = _parse_now(now)
+    h, ranked, div = _who(src, rel, n, when)
+    dormant, idle = _dormancy(h, when)
     src.close()
     if as_json:
         typer.echo(json.dumps({"path": rel, "paths": h.paths, "experts": [e.to_dict() for e in ranked[:n]],
                                "by_raw_score": [e.to_dict() for e in _by_raw(ranked)[:n]],
+                               "ranked_by": "raw_score" if dormant else "score",
+                               "dormant": dormant, "dormant_months": round(idle, 1),
                                "last_commit": div["last_commit"], "diverges": div["diverges"],
                                "source": src.name}, indent=2))
         return
@@ -118,10 +139,13 @@ def who(
         return
     typer.echo(f"{rel} — {len(h.human_commits)} knowledge-bearing commits, {len(ranked)} author{'s' if len(ranked) != 1 else ''}"
                + (f", formerly {', '.join(h.paths[1:])}" if len(h.paths) > 1 else ""))
+    if dormant:
+        typer.echo(f"  dormant: no knowledge-bearing change for {idle:.0f} months (> {DORMANT_MONTHS:.0f}); "
+                   f"decayed scores are all near zero, so this list is ordered by raw score (who built it)")
     for i, e in enumerate(ranked[:n], 1):
         typer.echo("  " + _fmt_expert(i, e))
     raw_top = _by_raw(ranked)[:n]
-    if {e.author.key for e in raw_top} != {e.author.key for e in ranked[:n]}:
+    if not dormant and {e.author.key for e in raw_top} != {e.author.key for e in ranked[:n]}:
         typer.echo("  by raw score (before time decay): "
                    + " · ".join(f"{e.author.name} {e.raw_score:.2f} (last {e.last_touch})" for e in raw_top))
     lc = div["last_commit"]

@@ -14,8 +14,8 @@
     "n": 387
    },
    "raw": {
-    "bad": 103,
-    "bad_contested": 103,
+    "bad": 102,
+    "bad_contested": 102,
     "contested": 270,
     "n": 387
    }
@@ -114,8 +114,8 @@
     "n": 191
    },
    "raw": {
-    "bad": 38,
-    "bad_contested": 36,
+    "bad": 36,
+    "bad_contested": 34,
     "contested": 103,
     "n": 191
    }
@@ -148,14 +148,14 @@
     "n": 738
    },
    "hl60": {
-    "bad": 66,
-    "bad_contested": 66,
+    "bad": 64,
+    "bad_contested": 64,
     "contested": 658,
     "n": 738
    },
    "raw": {
-    "bad": 97,
-    "bad_contested": 97,
+    "bad": 96,
+    "bad_contested": 96,
     "contested": 658,
     "n": 738
    }
@@ -174,8 +174,8 @@
     "n": 158
    },
    "raw": {
-    "bad": 45,
-    "bad_contested": 44,
+    "bad": 41,
+    "bad_contested": 40,
     "contested": 105,
     "n": 158
    }
@@ -194,28 +194,30 @@
     "n": 229
    },
    "raw": {
-    "bad": 34,
-    "bad_contested": 32,
+    "bad": 28,
+    "bad_contested": 26,
     "contested": 171,
     "n": 229
    }
   }
  },
  "canaries": {
-  "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 82,
+  "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 0,
   "Josh Soref in top-3 of valkey's 30 busiest src/*.c": 10,
   "Ran Shidlansik (1,293-line commit) on valkey t_zset.c": 2,
-  "Shay Banon on ES IndexMetadata.java": 33,
-  "Shay Banon on ES InternalEngine.java": 32,
-  "Shay Banon on ES Node.java": 38,
+  "Shay Banon on ES IndexMetadata.java": 35,
+  "Shay Banon on ES InternalEngine.java": 33,
+  "Shay Banon on ES Node.java": 42,
   "Shay Banon on ES SearchService.java": 34,
   "Till Rohrmann on flink JobMaster.java": 6,
   "antirez on valkey server.c": 25,
-  "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2244
+  "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 1699
  },
- "name": "baseline",
+ "name": "c6_not_mass200",
  "now": "2026-08-21",
- "overrides": {},
+ "overrides": {
+  "first_rule": "not_mass"
+ },
  "regression": {
   "Alex Dima on vscode textModel.ts": 1,
   "David Turner on ES Node.java": 1,
@@ -536,8 +538,8 @@
     "top1": "Mark Vieira",
     "top3": [
      "Mark Vieira",
-     "Shay Banon",
-     "Ryan Ernst"
+     "Ryan Ernst",
+     "Shay Banon"
     ]
    },
    "server/src/main/resources/transport/definitions/referable/esql_regex_match_with_case_insensitivity.csv": {
@@ -618,7 +620,7 @@
     "top3": [
      "Armin Braun",
      "David Turner",
-     "Dimitris Athanasiou"
+     "Mark Vieira"
     ]
    },
    "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ml/inference/trainedmodel/QuestionAnsweringConfig.java": {
@@ -1038,7 +1040,7 @@
     "top3": [
      "Rufus Refactor",
      "\u91d1\u7af9",
-     "StephanEwen"
+     "Fabian Hueske"
     ]
    },
    "flink-core/src/test/java/org/apache/flink/api/common/state/StateDescriptorTest.java": {
@@ -1230,10 +1232,10 @@
     ]
    },
    "flink-runtime-web/web-dashboard/src/app/components/checkpoint-badge/checkpoint-badge.component.html": {
-    "top1": "vthinkxie",
+    "top1": "Ingo B\u00fcrk",
     "top3": [
-     "vthinkxie",
-     "Ingo B\u00fcrk"
+     "Ingo B\u00fcrk",
+     "vthinkxie"
     ]
    },
    "flink-runtime-web/web-dashboard/src/app/pages/application/application-detail/status/application-status.component.ts": {
@@ -1376,10 +1378,10 @@
     ]
    },
    "flink-runtime/src/test/resources/stream-element-serializer-1.20/serializer-snapshot": {
-    "top1": "Weijie Guo",
+    "top1": "JunRuiLee",
     "top3": [
-     "Weijie Guo",
-     "JunRuiLee"
+     "JunRuiLee",
+     "Weijie Guo"
     ]
    },
    "flink-runtime/src/test/resources/ttl-serializer-1.19/serializer-snapshot": {
@@ -1813,8 +1815,8 @@
     "top1": "Alexander Alekhin",
     "top3": [
      "Alexander Alekhin",
-     "Alexander Alekhin",
-     "oqtvs"
+     "oqtvs",
+     "Alexander Alekhin"
     ]
    },
    "apps/interactive-calibration/rotationConverters.hpp": {
@@ -1888,10 +1890,10 @@
     ]
    },
    "doc/py_tutorials/py_core/images/speed.jpg": {
-    "top1": "abidrahmank",
+    "top1": "Maksim Shabunin",
     "top3": [
-     "abidrahmank",
-     "Maksim Shabunin"
+     "Maksim Shabunin",
+     "abidrahmank"
     ]
    },
    "doc/py_tutorials/py_imgproc/py_morphological_ops/images/gradient.png": {
@@ -1928,10 +1930,10 @@
     ]
    },
    "doc/tutorials/core/mat_the_basic_image_container/images/MatBasicContainerOut8.png": {
-    "top1": "Bernat Gabor",
+    "top1": "Alexander Shishkov",
     "top3": [
-     "Bernat Gabor",
-     "Alexander Shishkov"
+     "Alexander Shishkov",
+     "Bernat Gabor"
     ]
    },
    "doc/tutorials/dnn/dnn_yolo/images/yolo.jpg": {
@@ -2657,10 +2659,10 @@
     ]
    },
    "src/commands/blmove.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Adam Fowler"
     ]
    },
@@ -2673,26 +2675,26 @@
     ]
    },
    "src/commands/client-reply.json": {
-    "top1": "guybe7",
+    "top1": "Gabi Ganam",
     "top3": [
-     "guybe7",
      "Gabi Ganam",
-     "Daniil Kashapov"
+     "Daniil Kashapov",
+     "guybe7"
     ]
    },
    "src/commands/function-load.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Meir Shpilraien (Spielrein)"
     ]
    },
    "src/commands/lindex.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Oran Agra"
     ]
    },
@@ -2700,8 +2702,8 @@
     "top1": "Binbin",
     "top3": [
      "Binbin",
-     "guybe7",
-     "Daniil Kashapov"
+     "Daniil Kashapov",
+     "Jacob Murphy"
     ]
    },
    "src/commands/msetex.json": {
@@ -2714,16 +2716,16 @@
     "top1": "Daniil Kashapov",
     "top3": [
      "Daniil Kashapov",
-     "guybe7",
-     "Kyle J. Davis"
+     "Kyle J. Davis",
+     "guybe7"
     ]
    },
    "src/commands/script-debug.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
-     "Ricardo Dias"
+     "Ricardo Dias",
+     "guybe7"
     ]
    },
    "src/commands/sentinel-monitor.json": {
@@ -2745,47 +2747,47 @@
     "top1": "Daniil Kashapov",
     "top3": [
      "Daniil Kashapov",
-     "guybe7",
-     "Kyle J. Davis"
+     "Kyle J. Davis",
+     "guybe7"
     ]
    },
    "src/commands/smismember.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Oran Agra"
     ]
    },
    "src/commands/xautoclaim.json": {
-    "top1": "guybe7",
+    "top1": "Joseph Heck",
     "top3": [
-     "guybe7",
      "Joseph Heck",
-     "Daniil Kashapov"
+     "Daniil Kashapov",
+     "guybe7"
     ]
    },
    "src/commands/xsetid.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Itamar Haber"
     ]
    },
    "src/commands/zpopmax.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Oran Agra"
     ]
    },
    "src/commands/zrem.json": {
-    "top1": "guybe7",
+    "top1": "Daniil Kashapov",
     "top3": [
-     "guybe7",
      "Daniil Kashapov",
+     "guybe7",
      "Oran Agra"
     ]
    },
@@ -3052,11 +3054,11 @@
     ]
    },
    "extensions/copilot/script/setup/getEnv.mts": {
-    "top1": "kieferrm",
+    "top1": "Matt Bierner",
     "top3": [
-     "kieferrm",
      "Matt Bierner",
-     "Raymond Zhao"
+     "Raymond Zhao",
+     "kieferrm"
     ]
    },
    "extensions/copilot/src/extension/byok/vscode-node/test/customEndpointProvider.spec.ts": {
@@ -3095,10 +3097,10 @@
     ]
    },
    "extensions/copilot/src/extension/prompts/node/agent/test/__snapshots__/agentPrompts-gpt-5.1/cache_BPs.spec.snap": {
-    "top1": "Rob Lourens",
+    "top1": "Bhavya U",
     "top3": [
-     "Rob Lourens",
      "Bhavya U",
+     "Rob Lourens",
      "Takashi Tamura"
     ]
    },
@@ -3126,7 +3128,7 @@
     "top3": [
      "Rob Lourens",
      "Alex Ross",
-     "kieferrm"
+     "Justin Chen"
     ]
    },
    "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p3/source/f2.ts": {
@@ -3146,15 +3148,15 @@
     "top1": "Alexandru Dima",
     "top3": [
      "Alexandru Dima",
-     "kieferrm",
-     "Sandeep Somavarapu"
+     "Sandeep Somavarapu",
+     "Kyle Cutler"
     ]
    },
    "extensions/copilot/src/platform/filesystem/common/fileSystemService.ts": {
-    "top1": "kieferrm",
+    "top1": "Don Jayamanne",
     "top3": [
-     "kieferrm",
-     "Don Jayamanne"
+     "Don Jayamanne",
+     "kieferrm"
     ]
    },
    "extensions/copilot/src/platform/networking/test/node/fetcherFallback.spec.ts": {

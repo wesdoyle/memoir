@@ -117,3 +117,19 @@ def test_json_reports_source(fixture_repo):
     assert data["source"] == "index"
     data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--live", "--now", "2026-08-21"))
     assert data["source"] == "live"
+
+
+def test_dormant_file_is_announced_and_ranked_by_raw(fixture_repo):
+    # all fixture touches are in 2023-2024; with now=2030 everything is >36 months idle
+    out = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2030-08-21", "--live")
+    assert "dormant" in out and "raw" in out
+    first = [l for l in out.splitlines() if l.strip().startswith("1.")][0]
+    assert "Alice Adams" in first
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2030-08-21", "--live", "--json"))
+    assert data["dormant"] is True and data["dormant_months"] > 36
+    assert data["experts"][0]["author"]["name"] == "Alice Adams"
+
+
+def test_active_file_is_not_dormant(fixture_repo):
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2024-06-01", "--live", "--json"))
+    assert data["dormant"] is False

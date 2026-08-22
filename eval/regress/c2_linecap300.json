@@ -14,8 +14,8 @@
     "n": 387
    },
    "raw": {
-    "bad": 103,
-    "bad_contested": 103,
+    "bad": 104,
+    "bad_contested": 104,
     "contested": 270,
     "n": 387
    }
@@ -102,8 +102,8 @@
   },
   "opencv:modules/core/src": {
    "hl18": {
-    "bad": 5,
-    "bad_contested": 3,
+    "bad": 4,
+    "bad_contested": 2,
     "contested": 103,
     "n": 191
    },
@@ -122,8 +122,8 @@
   },
   "opencv:modules/imgproc/src": {
    "hl18": {
-    "bad": 4,
-    "bad_contested": 4,
+    "bad": 3,
+    "bad_contested": 3,
     "contested": 87,
     "n": 139
    },
@@ -134,8 +134,8 @@
     "n": 139
    },
    "raw": {
-    "bad": 45,
-    "bad_contested": 45,
+    "bad": 41,
+    "bad_contested": 41,
     "contested": 87,
     "n": 139
    }
@@ -204,7 +204,7 @@
  "canaries": {
   "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 82,
   "Josh Soref in top-3 of valkey's 30 busiest src/*.c": 10,
-  "Ran Shidlansik (1,293-line commit) on valkey t_zset.c": 2,
+  "Ran Shidlansik (1,293-line commit) on valkey t_zset.c": 3,
   "Shay Banon on ES IndexMetadata.java": 33,
   "Shay Banon on ES InternalEngine.java": 32,
   "Shay Banon on ES Node.java": 38,
@@ -213,14 +213,16 @@
   "antirez on valkey server.c": 25,
   "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2244
  },
- "name": "baseline",
+ "name": "c2_linecap300",
  "now": "2026-08-21",
- "overrides": {},
+ "overrides": {
+  "line_cap": 300
+ },
  "regression": {
   "Alex Dima on vscode textModel.ts": 1,
   "David Turner on ES Node.java": 1,
   "Johannes Rieken on vscode event.ts": 1,
-  "Madelyn Olson on valkey config.c": 1,
+  "Madelyn Olson on valkey config.c": 2,
   "Ryan Ernst on ES Node.java": 2,
   "Vadim Pisarevsky on opencv matrix.cpp": 1
  },

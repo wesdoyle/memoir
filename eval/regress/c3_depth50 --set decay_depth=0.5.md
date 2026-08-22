@@ -1,4 +1,4 @@
-# regress: baseline
+# regress: c3_depth50 --set decay_depth=0.5
 
 overrides: `none` · now 2026-08-21 · seed 42
 

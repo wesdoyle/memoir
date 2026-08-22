@@ -55,6 +55,7 @@ class Commit:
     is_merge: bool
     path: str  # path of the file as of this commit (differs across renames)
     breadth: int | None = None  # files touched by the commit; None when unknown (per-file --follow mining)
+    is_root: bool = False  # no parents
 
     @property
     def is_bot(self) -> bool:
@@ -64,6 +65,18 @@ class Commit:
     def is_noop(self) -> bool:
         """No content change (pure rename, mode change). Carries no knowledge."""
         return self.added == 0 and self.deleted == 0 and not self.binary
+
+
+@dataclass(frozen=True)
+class Touch:
+    """One knowledge-bearing commit as seen by one author (primary author or co-author)."""
+
+    date: datetime
+    lines: int  # added + deleted in this file
+    breadth: int | None  # files touched by the commit; None if unknown
+    primary: bool  # False for Co-authored-by credit
+    binary: bool
+    is_root: bool
 
 
 @dataclass
@@ -76,6 +89,7 @@ class AuthorFacts:
     first_touch: datetime
     last_touch: datetime
     others_commits_since: int  # non-bot, non-merge commits by others after last_touch
+    touches: list[Touch] = field(default_factory=list)  # newest first; raw input to every scoring shape
 
     @property
     def name(self) -> str:
@@ -150,6 +164,7 @@ def _parse_log(repo: Path, path: str) -> list[Commit]:
                 binary=binary,
                 is_merge=len(parents.split()) > 1,
                 path=cur_path,
+                is_root=parents.strip() == "",
             )
         )
     mm = _check_mailmap(repo, raw_coauthors)
@@ -227,6 +242,8 @@ def _history_from_commits(path: str, commits: list[Commit]) -> FileHistory:
                 f.coauthored_count += 1
             f.first_touch = min(f.first_touch, c.date)
             f.last_touch = max(f.last_touch, c.date)
+            f.touches.append(Touch(date=c.date, lines=c.added + c.deleted, breadth=c.breadth,
+                                   primary=primary, binary=c.binary, is_root=c.is_root))
     if oldest is not None:
         get(oldest.author).first_authored = True
     for f in facts.values():
@@ -260,6 +277,7 @@ class CommitMeta:
     coauthors: list[Identity]
     is_merge: bool
     breadth: int = 0  # number of (path) records in this commit
+    parents: int = 1
 
 
 @dataclass(frozen=True)
@@ -305,7 +323,7 @@ class RepoWalk:
             m = self.commits[r.pos]
             commits.append(Commit(sha=m.sha, author=m.author, date=m.date, coauthors=m.coauthors,
                                   added=r.added, deleted=r.deleted, binary=r.binary,
-                                  is_merge=m.is_merge, path=p, breadth=m.breadth))
+                                  is_merge=m.is_merge, path=p, breadth=m.breadth, is_root=m.parents == 0))
         return _history_from_commits(path, [c for c in commits if not c.is_merge])
 
 
@@ -350,6 +368,7 @@ def _parse_walk_record(rec: str, pos: int) -> tuple[CommitMeta, list[tuple[str, 
         date=datetime.fromtimestamp(int(ts), tz=timezone.utc),
         coauthors=[Identity(n.strip(), e.strip()) for n, e in COAUTHOR_RE.findall(body)],
         is_merge=len(parents.split()) > 1,
+        parents=len(parents.split()),
     )
     recs = []
     for line in stat_lines:

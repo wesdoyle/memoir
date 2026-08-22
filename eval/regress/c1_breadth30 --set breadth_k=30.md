@@ -1,4 +1,4 @@
-# regress: baseline
+# regress: c1_breadth30 --set breadth_k=30
 
 overrides: `none` · now 2026-08-21 · seed 42
 

@@ -2,100 +2,100 @@
  "audit": {
   "elasticsearch:server/src/main/java/org/elasticsearch/cluster": {
    "hl18": {
-    "bad": 20,
-    "bad_contested": 20,
+    "bad": 61,
+    "bad_contested": 61,
     "contested": 270,
     "n": 387
    },
    "hl60": {
-    "bad": 55,
-    "bad_contested": 55,
+    "bad": 112,
+    "bad_contested": 112,
     "contested": 270,
     "n": 387
    },
    "raw": {
-    "bad": 103,
-    "bad_contested": 103,
+    "bad": 152,
+    "bad_contested": 152,
     "contested": 270,
     "n": 387
    }
   },
   "elasticsearch:server/src/main/java/org/elasticsearch/index/engine": {
    "hl18": {
-    "bad": 3,
-    "bad_contested": 3,
+    "bad": 10,
+    "bad_contested": 10,
     "contested": 37,
     "n": 54
    },
    "hl60": {
-    "bad": 6,
-    "bad_contested": 6,
+    "bad": 19,
+    "bad_contested": 19,
     "contested": 37,
     "n": 54
    },
    "raw": {
-    "bad": 11,
-    "bad_contested": 11,
+    "bad": 26,
+    "bad_contested": 26,
     "contested": 37,
     "n": 54
    }
   },
   "flink:flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint": {
    "hl18": {
-    "bad": 1,
-    "bad_contested": 1,
+    "bad": 9,
+    "bad_contested": 9,
     "contested": 86,
     "n": 146
    },
    "hl60": {
-    "bad": 15,
-    "bad_contested": 15,
+    "bad": 22,
+    "bad_contested": 22,
     "contested": 86,
     "n": 146
    },
    "raw": {
-    "bad": 32,
-    "bad_contested": 32,
+    "bad": 34,
+    "bad_contested": 34,
     "contested": 86,
     "n": 146
    }
   },
   "flink:flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph": {
    "hl18": {
-    "bad": 0,
-    "bad_contested": 0,
-    "contested": 49,
-    "n": 85
-   },
-   "hl60": {
     "bad": 7,
     "bad_contested": 7,
     "contested": 49,
     "n": 85
    },
+   "hl60": {
+    "bad": 16,
+    "bad_contested": 16,
+    "contested": 49,
+    "n": 85
+   },
    "raw": {
-    "bad": 14,
-    "bad_contested": 14,
+    "bad": 19,
+    "bad_contested": 19,
     "contested": 49,
     "n": 85
    }
   },
   "flink:flink-runtime/src/main/java/org/apache/flink/runtime/jobmaster": {
    "hl18": {
-    "bad": 0,
-    "bad_contested": 0,
+    "bad": 8,
+    "bad_contested": 8,
     "contested": 47,
     "n": 110
    },
    "hl60": {
-    "bad": 5,
-    "bad_contested": 5,
+    "bad": 12,
+    "bad_contested": 12,
     "contested": 47,
     "n": 110
    },
    "raw": {
-    "bad": 12,
-    "bad_contested": 12,
+    "bad": 15,
+    "bad_contested": 15,
     "contested": 47,
     "n": 110
    }
@@ -108,94 +108,94 @@
     "n": 191
    },
    "hl60": {
-    "bad": 12,
-    "bad_contested": 10,
+    "bad": 15,
+    "bad_contested": 13,
     "contested": 103,
     "n": 191
    },
    "raw": {
-    "bad": 38,
-    "bad_contested": 36,
+    "bad": 39,
+    "bad_contested": 37,
     "contested": 103,
     "n": 191
    }
   },
   "opencv:modules/imgproc/src": {
    "hl18": {
-    "bad": 4,
-    "bad_contested": 4,
+    "bad": 5,
+    "bad_contested": 5,
     "contested": 87,
     "n": 139
    },
    "hl60": {
-    "bad": 13,
-    "bad_contested": 13,
+    "bad": 18,
+    "bad_contested": 18,
     "contested": 87,
     "n": 139
    },
    "raw": {
-    "bad": 45,
-    "bad_contested": 45,
+    "bad": 44,
+    "bad_contested": 44,
     "contested": 87,
     "n": 139
    }
   },
   "valkey:src": {
    "hl18": {
-    "bad": 26,
-    "bad_contested": 26,
+    "bad": 136,
+    "bad_contested": 136,
     "contested": 658,
     "n": 738
    },
    "hl60": {
-    "bad": 66,
-    "bad_contested": 66,
+    "bad": 236,
+    "bad_contested": 236,
     "contested": 658,
     "n": 738
    },
    "raw": {
-    "bad": 97,
-    "bad_contested": 97,
+    "bad": 285,
+    "bad_contested": 285,
     "contested": 658,
     "n": 738
    }
   },
   "vscode:src/vs/base/common": {
    "hl18": {
-    "bad": 12,
-    "bad_contested": 11,
+    "bad": 22,
+    "bad_contested": 21,
     "contested": 105,
     "n": 158
    },
    "hl60": {
-    "bad": 25,
-    "bad_contested": 24,
+    "bad": 37,
+    "bad_contested": 36,
     "contested": 105,
     "n": 158
    },
    "raw": {
-    "bad": 45,
-    "bad_contested": 44,
+    "bad": 49,
+    "bad_contested": 48,
     "contested": 105,
     "n": 158
    }
   },
   "vscode:src/vs/editor/common": {
    "hl18": {
-    "bad": 7,
-    "bad_contested": 5,
+    "bad": 34,
+    "bad_contested": 32,
     "contested": 171,
     "n": 229
    },
    "hl60": {
-    "bad": 15,
-    "bad_contested": 13,
+    "bad": 44,
+    "bad_contested": 42,
     "contested": 171,
     "n": 229
    },
    "raw": {
-    "bad": 34,
-    "bad_contested": 32,
+    "bad": 47,
+    "bad_contested": 45,
     "contested": 171,
     "n": 229
    }
@@ -203,19 +203,21 @@
  },
  "canaries": {
   "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 82,
-  "Josh Soref in top-3 of valkey's 30 busiest src/*.c": 10,
+  "Josh Soref in top-3 of valkey's 30 busiest src/*.c": 8,
   "Ran Shidlansik (1,293-line commit) on valkey t_zset.c": 2,
-  "Shay Banon on ES IndexMetadata.java": 33,
-  "Shay Banon on ES InternalEngine.java": 32,
-  "Shay Banon on ES Node.java": 38,
-  "Shay Banon on ES SearchService.java": 34,
+  "Shay Banon on ES IndexMetadata.java": 31,
+  "Shay Banon on ES InternalEngine.java": 29,
+  "Shay Banon on ES Node.java": 34,
+  "Shay Banon on ES SearchService.java": 31,
   "Till Rohrmann on flink JobMaster.java": 6,
   "antirez on valkey server.c": 25,
   "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2244
  },
- "name": "baseline",
+ "name": "c1_breadth30",
  "now": "2026-08-21",
- "overrides": {},
+ "overrides": {
+  "breadth_k": 30
+ },
  "regression": {
   "Alex Dima on vscode textModel.ts": 1,
   "David Turner on ES Node.java": 1,
@@ -227,8 +229,8 @@
  "roster": {
   "files": 30,
   "slots": 90,
-  "top1_listed": 21,
-  "top3_slots_listed": 58
+  "top1_listed": 22,
+  "top3_slots_listed": 60
  },
  "samples": {
   "elasticsearch": {
@@ -317,8 +319,8 @@
     "top1": "Rene Groeschke",
     "top3": [
      "Rene Groeschke",
-     "Mark Vieira",
-     "Nik Everett"
+     "Nik Everett",
+     "Lorenzo Dematt\u00e9"
     ]
    },
    "libs/columnar/src/main/java/org/elasticsearch/columnar/FormatVersion.java": {
@@ -370,10 +372,10 @@
     ]
    },
    "modules/lang-painless/src/main/java/org/elasticsearch/painless/api/LimitedCharSequence.java": {
-    "top1": "Mark Vieira",
+    "top1": "Stuart Tettemer",
     "top3": [
-     "Mark Vieira",
-     "Stuart Tettemer"
+     "Stuart Tettemer",
+     "Mark Vieira"
     ]
    },
    "modules/repository-s3/qa/deprecations/src/javaRestTest/java/org/elasticsearch/repositories/s3/RepositoryS3DeprecationsRestIT.java": {
@@ -419,24 +421,24 @@
     "top1": "Armin Braun",
     "top3": [
      "Armin Braun",
-     "Mark Vieira",
-     "Luca Cavanna"
+     "David Turner",
+     "Ryan Ernst"
     ]
    },
    "server/src/main/java/org/elasticsearch/action/ingest/DeletePipelineTransportAction.java": {
-    "top1": "David Turner",
+    "top1": "Pooya Salehi",
     "top3": [
-     "David Turner",
-     "Mark Vieira",
-     "Pooya Salehi"
+     "Pooya Salehi",
+     "Niels Bauman",
+     "David Turner"
     ]
    },
    "server/src/main/java/org/elasticsearch/cluster/coordination/MasterHistory.java": {
     "top1": "Keith Massey",
     "top3": [
      "Keith Massey",
-     "Mark Vieira",
-     "David Turner"
+     "David Turner",
+     "Mark Vieira"
     ]
    },
    "server/src/main/java/org/elasticsearch/cluster/routing/allocation/allocator/BalancingWeightsFactory.java": {
@@ -450,7 +452,7 @@
     "top3": [
      "Jordan Powers",
      "Patrick Doyle",
-     "Mark Vieira"
+     "Ievgen Degtiarenko"
     ]
    },
    "server/src/main/java/org/elasticsearch/common/blobstore/support/BlobContainerUtils.java": {
@@ -465,8 +467,8 @@
     "top1": "Joe Gallo",
     "top3": [
      "Joe Gallo",
-     "Mark Vieira",
-     "Jordan Powers"
+     "Jordan Powers",
+     "Tanguy Leroux"
     ]
    },
    "server/src/main/java/org/elasticsearch/health/node/tracker/DiskHealthTracker.java": {
@@ -493,10 +495,10 @@
     ]
    },
    "server/src/main/java/org/elasticsearch/indices/IndexCreationException.java": {
-    "top1": "Mark Vieira",
+    "top1": "William Brafford",
     "top3": [
-     "Mark Vieira",
      "William Brafford",
+     "Mark Vieira",
      "Tim Vernum"
     ]
    },
@@ -512,8 +514,8 @@
     "top1": "Ignacio Vera",
     "top3": [
      "Ignacio Vera",
-     "Mark Vieira",
-     "Ignacio Vera"
+     "Ignacio Vera",
+     "Nik Everett"
     ]
    },
    "server/src/main/java/org/elasticsearch/search/diversification/mmr/MMRResultDiversification.java": {
@@ -525,19 +527,19 @@
     ]
    },
    "server/src/main/java/org/elasticsearch/search/runtime/IpScriptFieldRangeQuery.java": {
-    "top1": "Mark Vieira",
+    "top1": "Nik Everett",
     "top3": [
-     "Mark Vieira",
      "Nik Everett",
-     "Luca Cavanna"
+     "Luca Cavanna",
+     "Alan Woodward"
     ]
    },
    "server/src/main/java/org/elasticsearch/transport/TransportRequestHandler.java": {
-    "top1": "Mark Vieira",
+    "top1": "Ryan Ernst",
     "top3": [
-     "Mark Vieira",
+     "Ryan Ernst",
      "Shay Banon",
-     "Ryan Ernst"
+     "Mark Vieira"
     ]
    },
    "server/src/main/resources/transport/definitions/referable/esql_regex_match_with_case_insensitivity.csv": {
@@ -574,11 +576,11 @@
     ]
    },
    "test/framework/src/main/java/org/elasticsearch/search/geo/GeoBoundingBoxQueryIntegTestCase.java": {
-    "top1": "Mark Vieira",
+    "top1": "Ignacio Vera",
     "top3": [
-     "Mark Vieira",
-     "Armin Braun",
-     "Luca Cavanna"
+     "Ignacio Vera",
+     "David Turner",
+     "Armin Braun"
     ]
    },
    "test/framework/src/test/java/org/elasticsearch/search/internal/ConcurrentSearchSingleNodeTests.java": {
@@ -586,46 +588,46 @@
     "top3": [
      "Ignacio Vera",
      "Chris Hegarty",
-     "Mark Vieira"
+     "Luca Cavanna"
     ]
    },
    "x-pack/license-tools/src/test/java/org/elasticsearch/license/licensor/LicenseVerificationTests.java": {
-    "top1": "Mark Vieira",
+    "top1": "Armin Braun",
     "top3": [
-     "Mark Vieira",
      "Armin Braun",
-     "Ryan Ernst"
+     "Jason Tedor",
+     "jaymode"
     ]
    },
    "x-pack/plugin/core/src/main/java/org/elasticsearch/snapshots/sourceonly/SourceOnlySnapshotRepository.java": {
     "top1": "Kostas Krikellas",
     "top3": [
      "Kostas Krikellas",
-     "Yang Wang",
-     "Armin Braun"
+     "Armin Braun",
+     "Yang Wang"
     ]
    },
    "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ilm/WaitForActiveShardsStep.java": {
     "top1": "Niels Bauman",
     "top3": [
      "Niels Bauman",
-     "Simon Cooper",
-     "Joe Gallo"
+     "James Baiera",
+     "Andrei Dan"
     ]
    },
    "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ml/action/PutDataFrameAnalyticsAction.java": {
     "top1": "Armin Braun",
     "top3": [
      "Armin Braun",
-     "David Turner",
-     "Dimitris Athanasiou"
+     "Dimitris Athanasiou",
+     "Benjamin Trent"
     ]
    },
    "x-pack/plugin/core/src/main/java/org/elasticsearch/xpack/core/ml/inference/trainedmodel/QuestionAnsweringConfig.java": {
-    "top1": "Jack Conradson",
+    "top1": "Benjamin Trent",
     "top3": [
-     "Jack Conradson",
      "Benjamin Trent",
+     "Jack Conradson",
      "David Kyle"
     ]
    },
@@ -633,24 +635,24 @@
     "top1": "Armin Braun",
     "top3": [
      "Armin Braun",
-     "Chris Hegarty",
+     "Tim Vernum",
      "Ryan Ernst"
     ]
    },
    "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/LocalStateCompositeXPackPlugin.java": {
-    "top1": "Alexey Ivanov",
-    "top3": [
-     "Alexey Ivanov",
-     "David Turner",
-     "Ryan Ernst"
-    ]
-   },
-   "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/ilm/ActionConfigStatsTests.java": {
     "top1": "David Turner",
     "top3": [
      "David Turner",
+     "Alexey Ivanov",
+     "Benjamin Trent"
+    ]
+   },
+   "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/ilm/ActionConfigStatsTests.java": {
+    "top1": "Przemko Robakowski",
+    "top3": [
      "Przemko Robakowski",
-     "James Baiera"
+     "James Baiera",
+     "David Turner"
     ]
    },
    "x-pack/plugin/core/src/test/java/org/elasticsearch/xpack/core/ilm/LifecycleExecutionStateTests.java": {
@@ -666,7 +668,7 @@
     "top3": [
      "Tim Vernum",
      "Niels Bauman",
-     "Joe Gallo"
+     "Keith Massey"
     ]
    },
    "x-pack/plugin/esql-datasource-compression-libs/licenses/snappy-java-NOTICE.txt": {
@@ -784,10 +786,10 @@
     ]
    },
    "x-pack/plugin/inference/src/test/java/org/elasticsearch/xpack/inference/TaskTypeTests.java": {
-    "top1": "Max Hniebergall",
+    "top1": "Donal Evans",
     "top3": [
-     "Max Hniebergall",
      "Donal Evans",
+     "Max Hniebergall",
      "Jonas Kunz"
     ]
    },
@@ -804,11 +806,11 @@
     ]
    },
    "x-pack/plugin/ml/qa/native-multi-node-tests/src/javaRestTest/java/org/elasticsearch/xpack/ml/integration/OverallBucketsIT.java": {
-    "top1": "Mark Vieira",
+    "top1": "Benjamin Trent",
     "top3": [
-     "Mark Vieira",
+     "Benjamin Trent",
      "Dimitris Athanasiou",
-     "Benjamin Trent"
+     "David Kyle"
     ]
    },
    "x-pack/plugin/ml/src/main/java/org/elasticsearch/xpack/ml/process/BlackHoleResultIterator.java": {
@@ -824,10 +826,10 @@
     ]
    },
    "x-pack/plugin/ql/src/main/java/org/elasticsearch/xpack/ql/expression/Order.java": {
-    "top1": "Armin Braun",
+    "top1": "Lukas Wegmann",
     "top3": [
+     "Lukas Wegmann",
      "Armin Braun",
-     "Mark Vieira",
      "Costin Leau"
     ]
    },
@@ -862,23 +864,23 @@
     "top1": "Armin Braun",
     "top3": [
      "Armin Braun",
-     "David Turner",
-     "Mark Vieira"
+     "Alan Woodward",
+     "jaymode"
     ]
    },
    "x-pack/plugin/security/src/test/java/org/elasticsearch/xpack/security/rest/action/apikey/RestUpdateCrossClusterApiKeyActionTests.java": {
     "top1": "Graeme Mjehovich",
     "top3": [
      "Graeme Mjehovich",
-     "Ryan Ernst",
-     "Yang Wang"
+     "Yang Wang",
+     "Ryan Ernst"
     ]
    },
    "x-pack/plugin/sql/jdbc/src/main/java/org/elasticsearch/xpack/sql/jdbc/Cursor.java": {
     "top1": "Lukas Wegmann",
     "top3": [
      "Lukas Wegmann",
-     "Mark Vieira",
+     "Costin Leau",
      "Costin Leau"
     ]
    },
@@ -891,19 +893,19 @@
     ]
    },
    "x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/stats/QueryMetric.java": {
-    "top1": "Mark Vieira",
+    "top1": "Andrei Stefan",
     "top3": [
-     "Mark Vieira",
      "Andrei Stefan",
-     "Costin Leau"
+     "Costin Leau",
+     "Mark Vieira"
     ]
    },
    "x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/expression/function/scalar/geo/GeoProcessorTests.java": {
-    "top1": "Mark Vieira",
+    "top1": "Igor Motov",
     "top3": [
-     "Mark Vieira",
+     "Igor Motov",
      "Ievgen Degtiarenko",
-     "Igor Motov"
+     "Costin Leau"
     ]
    },
    "x-pack/plugin/src/yamlRestTest/resources/rest-api-spec/test/ml/job_groups.yml": {
@@ -941,7 +943,7 @@
     "top3": [
      "Ryan Ernst",
      "Matteo Piergiovanni",
-     "David Turner"
+     "Jay Modi"
     ]
    },
    "x-pack/test/idp-fixture/src/main/java/org/elasticsearch/test/fixtures/idp/HttpProxyTestContainer.java": {
@@ -957,16 +959,16 @@
     "top1": "Martijn Visser",
     "top3": [
      "Martijn Visser",
-     "Kunni",
-     "Hongshun Wang"
+     "Hongshun Wang",
+     "Kunni"
     ]
    },
    "docs/content/release-notes/flink-1.10.md": {
-    "top1": "Martijn Visser",
+    "top1": "Seth Wiesman",
     "top3": [
-     "Martijn Visser",
      "Seth Wiesman",
-     "Gary Yao"
+     "Gary Yao",
+     "martijnvisser"
     ]
    },
    "docs/layouts/shortcodes/config_file_zh.html": {
@@ -991,11 +993,11 @@
     ]
    },
    "flink-clients/src/test/java/org/apache/flink/client/testjar/JobWithExternalDependency.java": {
-    "top1": "Rufus Refactor",
+    "top1": "Robert Metzger",
     "top3": [
-     "Rufus Refactor",
+     "Robert Metzger",
      "zentol",
-     "Robert Metzger"
+     "Rufus Refactor"
     ]
    },
    "flink-connectors/flink-connector-base/src/main/java/org/apache/flink/connector/base/table/sink/AsyncDynamicTableSinkBuilder.java": {
@@ -1005,10 +1007,10 @@
     ]
    },
    "flink-core/src/main/java/org/apache/flink/api/common/operators/base/CoGroupOperatorBase.java": {
-    "top1": "Sergey Nuyanzin",
+    "top1": "Weijie Guo",
     "top3": [
-     "Sergey Nuyanzin",
      "Weijie Guo",
+     "Sergey Nuyanzin",
      "Rufus Refactor"
     ]
    },
@@ -1022,8 +1024,8 @@
     "top1": "Hangxiang Yu",
     "top3": [
      "Hangxiang Yu",
-     "Rufus Refactor",
-     "Igal Shilman"
+     "Igal Shilman",
+     "Tzu-Li (Gordon) Tai"
     ]
    },
    "flink-core/src/main/java/org/apache/flink/configuration/ExternalResourceOptions.java": {
@@ -1034,19 +1036,19 @@
     ]
    },
    "flink-core/src/main/java/org/apache/flink/types/parser/ShortParser.java": {
-    "top1": "Rufus Refactor",
+    "top1": "\u91d1\u7af9",
     "top3": [
-     "Rufus Refactor",
      "\u91d1\u7af9",
+     "Rufus Refactor",
      "StephanEwen"
     ]
    },
    "flink-core/src/test/java/org/apache/flink/api/common/state/StateDescriptorTest.java": {
-    "top1": "Weijie Guo",
+    "top1": "gongzhongqiang",
     "top3": [
-     "Weijie Guo",
      "gongzhongqiang",
-     "Matthias Pohl"
+     "Weijie Guo",
+     "Yun Tang"
     ]
    },
    "flink-core/src/test/java/org/apache/flink/api/common/typeutils/ThreadContextClassLoader.java": {
@@ -1061,32 +1063,32 @@
     "top1": "Chesnay Schepler",
     "top3": [
      "Chesnay Schepler",
-     "Rufus Refactor",
-     "StephanEwen"
+     "StephanEwen",
+     "Robert Metzger"
     ]
    },
    "flink-core/src/test/java/org/apache/flink/core/fs/RefCountedFileTest.java": {
     "top1": "gongzhongqiang",
     "top3": [
      "gongzhongqiang",
-     "Rufus Refactor",
-     "Roman Khachatryan"
+     "Roman Khachatryan",
+     "kkloudas"
     ]
    },
    "flink-core/src/test/java/org/apache/flink/testutils/EntropyInjectingTestFileSystem.java": {
-    "top1": "Rufus Refactor",
+    "top1": "Gary Yao",
     "top3": [
-     "Rufus Refactor",
      "Gary Yao",
-     "Stefan Richter"
+     "Stefan Richter",
+     "Rufus Refactor"
     ]
    },
    "flink-core/src/test/java/org/apache/flink/testutils/serialization/types/ByteArrayType.java": {
-    "top1": "Rufus Refactor",
+    "top1": "Stephan Ewen",
     "top3": [
-     "Rufus Refactor",
      "Stephan Ewen",
-     "StephanEwen"
+     "StephanEwen",
+     "Rufus Refactor"
     ]
    },
    "flink-core/src/test/resources/byte-serializer-1.15/test-data": {
@@ -1153,7 +1155,7 @@
     "top1": "JingsongLi",
     "top3": [
      "JingsongLi",
-     "Rufus Refactor",
+     "Jark Wu",
      "slinkydeveloper"
     ]
    },
@@ -1183,7 +1185,7 @@
     "top3": [
      "Weijie Guo",
      "felixzheng",
-     "Rufus Refactor"
+     "wangyang0918"
     ]
    },
    "flink-libraries/flink-cep/src/test/resources/cep-migration-single-pattern-afterwards-flink2.0-snapshot": {
@@ -1222,18 +1224,18 @@
     ]
    },
    "flink-queryable-state/flink-queryable-state-runtime/src/test/java/org/apache/flink/queryablestate/network/KVStateRequestSerializerRocksDBTest.java": {
-    "top1": "AlexYinHan",
+    "top1": "fredia",
     "top3": [
-     "AlexYinHan",
      "fredia",
-     "Rufus Refactor"
+     "AlexYinHan",
+     "Stephan Ewen"
     ]
    },
    "flink-runtime-web/web-dashboard/src/app/components/checkpoint-badge/checkpoint-badge.component.html": {
-    "top1": "vthinkxie",
+    "top1": "Ingo B\u00fcrk",
     "top3": [
-     "vthinkxie",
-     "Ingo B\u00fcrk"
+     "Ingo B\u00fcrk",
+     "vthinkxie"
     ]
    },
    "flink-runtime-web/web-dashboard/src/app/pages/application/application-detail/status/application-status.component.ts": {
@@ -1256,19 +1258,19 @@
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/CheckpointStatsSnapshot.java": {
-    "top1": "Rufus Refactor",
+    "top1": "Roman Khachatryan",
     "top3": [
-     "Rufus Refactor",
      "Roman Khachatryan",
-     "Chesnay Schepler"
+     "Chesnay Schepler",
+     "Ufuk Celebi"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/client/JobCancellationException.java": {
-    "top1": "Rufus Refactor",
+    "top1": "Till Rohrmann",
     "top3": [
-     "Rufus Refactor",
      "Till Rohrmann",
-     "Stephan Ewen"
+     "Stephan Ewen",
+     "Rufus Refactor"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/rest/messages/MessageHeaders.java": {
@@ -1276,15 +1278,15 @@
     "top3": [
      "Chesnay Schepler",
      "Alexander Fedulov",
-     "Rufus Refactor"
+     "Till Rohrmann"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/rest/messages/job/metrics/JobMetricsHeaders.java": {
-    "top1": "Rufus Refactor",
+    "top1": "gyao",
     "top3": [
-     "Rufus Refactor",
      "gyao",
-     "maxbelov"
+     "maxbelov",
+     "Rufus Refactor"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/scheduler/InputsLocationsRetriever.java": {
@@ -1306,7 +1308,7 @@
     "top3": [
      "Zakelly",
      "Hangxiang Yu",
-     "Rufus Refactor"
+     "Andrey Zagrebin"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/state/v2/adaptor/ReducingStateAdaptor.java": {
@@ -1317,19 +1319,19 @@
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/TaskManagerRuntimeInfo.java": {
-    "top1": "Rui Fan",
+    "top1": "Till Rohrmann",
     "top3": [
-     "Rui Fan",
      "Till Rohrmann",
-     "Rufus Refactor"
+     "TsReaper",
+     "Stephan Ewen"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/streaming/api/functions/source/FileProcessingMode.java": {
-    "top1": "Kunni",
+    "top1": "kl0u",
     "top3": [
+     "kl0u",
      "Kunni",
-     "Rufus Refactor",
-     "kl0u"
+     "Greg Hogan"
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/streaming/runtime/io/StreamMultipleInputProcessorFactory.java": {
@@ -1348,10 +1350,10 @@
     ]
    },
    "flink-runtime/src/main/java/org/apache/flink/streaming/runtime/operators/sink/StatelessSinkWriterStateHandler.java": {
-    "top1": "pvary",
+    "top1": "Arvid Heise",
     "top3": [
-     "pvary",
      "Arvid Heise",
+     "pvary",
      "Gyula Fora"
     ]
    },
@@ -1395,10 +1397,10 @@
     ]
    },
    "flink-table/flink-table-api-java/src/main/java/org/apache/flink/table/operations/UnregisteredSinkModifyOperation.java": {
-    "top1": "xuyang",
+    "top1": "Dawid Wysakowicz",
     "top3": [
-     "xuyang",
      "Dawid Wysakowicz",
+     "xuyang",
      "Rufus Refactor"
     ]
    },
@@ -1432,8 +1434,8 @@
     "top1": "Hao Li",
     "top3": [
      "Hao Li",
-     "Sergey Nuyanzin",
-     "Jark Wu"
+     "Jark Wu",
+     "Jing Zhang"
     ]
    },
    "flink-table/flink-table-planner/src/main/java/org/apache/flink/table/planner/plan/nodes/exec/serde/ShuffleJsonDeserializer.java": {
@@ -1448,7 +1450,7 @@
     "top3": [
      "sunxia",
      "godfrey he",
-     "Marios Trivyzas"
+     "\u9f99\u4e09"
     ]
    },
    "flink-table/flink-table-planner/src/test/java/org/apache/flink/table/planner/functions/aggfunctions/LastValueAggFunctionWithoutOrderTest.java": {
@@ -1456,7 +1458,7 @@
     "top3": [
      "godfreyhe",
      "Jiabao Sun",
-     "Rufus Refactor"
+     "Timo Walther"
     ]
    },
    "flink-table/flink-table-planner/src/test/java/org/apache/flink/table/planner/plan/batch/sql/MatchRecognizeTest.java": {
@@ -1473,10 +1475,10 @@
     ]
    },
    "flink-table/flink-table-planner/src/test/resources/org/apache/flink/table/planner/plan/batch/sql/DagOptimizationTest.xml": {
-    "top1": "Sergey Nuyanzin",
+    "top1": "Xuyang",
     "top3": [
-     "Sergey Nuyanzin",
      "Xuyang",
+     "Sergey Nuyanzin",
      "godfrey he"
     ]
    },
@@ -1484,8 +1486,8 @@
     "top1": "Sergey Nuyanzin",
     "top3": [
      "Sergey Nuyanzin",
-     "xuyang",
-     "godfrey he"
+     "godfrey he",
+     "xuyang"
     ]
    },
    "flink-table/flink-table-planner/src/test/resources/restore-tests/stream-exec-group-aggregate_1/group-aggregate-simple/savepoint/_metadata": {
@@ -1511,16 +1513,16 @@
     "top1": "Jim Hughes",
     "top3": [
      "Jim Hughes",
-     "Jiabao Sun",
-     "Rufus Refactor"
+     "Jark Wu",
+     "Leonard Xu"
     ]
    },
    "flink-table/flink-table-planner/src/test/scala/org/apache/flink/table/planner/plan/rules/physical/stream/ExpandWindowTableFunctionTransposeRuleTest.scala": {
     "top1": "Jark Wu",
     "top3": [
      "Jark Wu",
-     "Jiabao Sun",
-     "Rufus Refactor"
+     "Marios Trivyzas",
+     "Jiabao Sun"
     ]
    },
    "flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/dataview/ListViewSpec.java": {
@@ -1544,10 +1546,10 @@
     ]
    },
    "flink-table/flink-table-runtime/src/test/java/org/apache/flink/table/runtime/operators/join/String2HashJoinOperatorTest.java": {
-    "top1": "Sergey Nuyanzin",
+    "top1": "fengli",
     "top3": [
-     "Sergey Nuyanzin",
      "fengli",
+     "Sergey Nuyanzin",
      "Jingsong Lee"
     ]
    },
@@ -1556,7 +1558,7 @@
     "top3": [
      "Matthias Pohl",
      "Timo Walther",
-     "Rufus Refactor"
+     "TsReaper"
     ]
    },
    "flink-test-utils-parent/flink-test-utils/src/main/java/org/apache/flink/streaming/util/TestStreamEnvironment.java": {
@@ -1703,10 +1705,10 @@
     ]
    },
    "3rdparty/libjpeg-turbo/simd/arm/neon-compat.h.in": {
-    "top1": "Suleyman TURKMEN",
+    "top1": "ocpalo",
     "top3": [
-     "Suleyman TURKMEN",
-     "ocpalo"
+     "ocpalo",
+     "Suleyman TURKMEN"
     ]
    },
    "3rdparty/libjpeg-turbo/simd/mips64/jidctint-mmi.c": {
@@ -1723,10 +1725,10 @@
     ]
    },
    "3rdparty/libjpeg-turbo/src/jcarith.c": {
-    "top1": "ocpalo",
+    "top1": "Alexander Alekhin",
     "top3": [
-     "ocpalo",
      "Alexander Alekhin",
+     "ocpalo",
      "Juha Reunanen"
     ]
    },
@@ -1742,8 +1744,8 @@
     "top1": "Alexander Smorkalov",
     "top3": [
      "Alexander Smorkalov",
-     "Suleyman TURKMEN",
-     "Alexander Alekhin"
+     "Alexander Alekhin",
+     "Suleyman TURKMEN"
     ]
    },
    "3rdparty/libjpeg-turbo/src/jsamplecomp.h": {
@@ -1776,10 +1778,10 @@
     ]
    },
    "3rdparty/libwebp/sharpyuv/sharpyuv.h": {
-    "top1": "Alexander Smorkalov",
+    "top1": "Vincent Rabaud",
     "top3": [
-     "Alexander Smorkalov",
      "Vincent Rabaud",
+     "Alexander Smorkalov",
      "Vincent Rabaud"
     ]
    },
@@ -1814,7 +1816,7 @@
     "top3": [
      "Alexander Alekhin",
      "Alexander Alekhin",
-     "oqtvs"
+     "Dmitry Kurtaev"
     ]
    },
    "apps/interactive-calibration/rotationConverters.hpp": {
@@ -1999,10 +2001,10 @@
     ]
    },
    "modules/calib/doc/pics/fisheye_undistorted.jpg": {
-    "top1": "Vadim Pisarevsky",
+    "top1": "Ilya Krylov",
     "top3": [
-     "Vadim Pisarevsky",
-     "Ilya Krylov"
+     "Ilya Krylov",
+     "Vadim Pisarevsky"
     ]
    },
    "modules/calib/doc/pics/hand-eye_figure.png": {
@@ -2076,7 +2078,7 @@
     "top3": [
      "Kumataro",
      "sight",
-     "Sean McBride"
+     "Alexander Alekhin"
     ]
    },
    "modules/flann/include/opencv2/flann/dist.h": {
@@ -2213,10 +2215,10 @@
     ]
    },
    "modules/videoio/cmake/detect_ximea.cmake": {
-    "top1": "Maksim Shabunin",
+    "top1": "Alexander Alekhin",
     "top3": [
-     "Maksim Shabunin",
      "Alexander Alekhin",
+     "Maksim Shabunin",
      "Philippe FOUBERT"
     ]
    },
@@ -2251,8 +2253,8 @@
     "top1": "Andrey Kamaev",
     "top3": [
      "Andrey Kamaev",
-     "hbristow",
-     "Alexander Smorkalov"
+     "Alexander Smorkalov",
+     "hbristow"
     ]
    },
    "samples/android/tutorial-2-mixedprocessing/res/values/strings.xml": {
@@ -2269,18 +2271,18 @@
     ]
    },
    "samples/data/pic4.png": {
-    "top1": "Dmitriy Anisimov",
+    "top1": "Vadim Pisarevsky",
     "top3": [
-     "Dmitriy Anisimov",
      "Vadim Pisarevsky",
+     "Dmitriy Anisimov",
      "hbristow"
     ]
    },
    "samples/data/right05.jpg": {
-    "top1": "Dmitriy Anisimov",
+    "top1": "Vadim Pisarevsky",
     "top3": [
-     "Dmitriy Anisimov",
      "Vadim Pisarevsky",
+     "Dmitriy Anisimov",
      "hbristow"
     ]
    },
@@ -2389,7 +2391,7 @@
     "top3": [
      "Viktor S\u00f6derqvist",
      "Sarthak Aggarwal",
-     "Harry Lin"
+     "Daniel Lemire"
     ]
    },
    "deps/hdr_histogram/README.md": {
@@ -2527,10 +2529,10 @@
     "top3": []
    },
    "deps/jemalloc/test/unit/junk_free.sh": {
-    "top1": "Yoav Steinberg",
+    "top1": "antirez",
     "top3": [
-     "Yoav Steinberg",
-     "antirez"
+     "antirez",
+     "Yoav Steinberg"
     ]
    },
    "deps/jemalloc/test/unit/prof_hook.c": {
@@ -2633,11 +2635,11 @@
     ]
    },
    "src/ae.h": {
-    "top1": "Mikhail Koviazin",
+    "top1": "uriyage",
     "top3": [
-     "Mikhail Koviazin",
      "uriyage",
-     "Shivshankar"
+     "Shivshankar",
+     "antirez"
     ]
    },
    "src/allocator_defrag.c": {
@@ -2660,8 +2662,8 @@
     "top1": "guybe7",
     "top3": [
      "guybe7",
-     "Daniil Kashapov",
-     "Adam Fowler"
+     "Adam Fowler",
+     "Ran Shidlansik"
     ]
    },
    "src/commands/client-capa.json": {
@@ -2669,23 +2671,23 @@
     "top3": [
      "zhaozhao.zz",
      "Gabi Ganam",
-     "Daniil Kashapov"
+     "Sarthak Aggarwal"
     ]
    },
    "src/commands/client-reply.json": {
-    "top1": "guybe7",
+    "top1": "Gabi Ganam",
     "top3": [
-     "guybe7",
      "Gabi Ganam",
-     "Daniil Kashapov"
+     "guybe7",
+     "Gabi Ganam"
     ]
    },
    "src/commands/function-load.json": {
     "top1": "guybe7",
     "top3": [
      "guybe7",
-     "Daniil Kashapov",
-     "Meir Shpilraien (Spielrein)"
+     "Meir Shpilraien (Spielrein)",
+     "Daniil Kashapov"
     ]
    },
    "src/commands/lindex.json": {
@@ -2701,7 +2703,7 @@
     "top3": [
      "Binbin",
      "guybe7",
-     "Daniil Kashapov"
+     "Jacob Murphy"
     ]
    },
    "src/commands/msetex.json": {
@@ -2711,27 +2713,27 @@
     ]
    },
    "src/commands/psetex.json": {
-    "top1": "Daniil Kashapov",
+    "top1": "Kyle J. Davis",
     "top3": [
-     "Daniil Kashapov",
+     "Kyle J. Davis",
      "guybe7",
-     "Kyle J. Davis"
+     "Itamar Haber"
     ]
    },
    "src/commands/script-debug.json": {
-    "top1": "guybe7",
+    "top1": "Ricardo Dias",
     "top3": [
+     "Ricardo Dias",
      "guybe7",
-     "Daniil Kashapov",
-     "Ricardo Dias"
+     "Daniil Kashapov"
     ]
    },
    "src/commands/sentinel-monitor.json": {
-    "top1": "Daniil Kashapov",
+    "top1": "guybe7",
     "top3": [
-     "Daniil Kashapov",
      "guybe7",
-     "Itamar Haber"
+     "Wen Hui",
+     "Daniil Kashapov"
     ]
    },
    "src/commands/sentinel-primaries.json": {
@@ -2742,11 +2744,11 @@
     ]
    },
    "src/commands/slowlog-len.json": {
-    "top1": "Daniil Kashapov",
+    "top1": "Kyle J. Davis",
     "top3": [
-     "Daniil Kashapov",
+     "Kyle J. Davis",
      "guybe7",
-     "Kyle J. Davis"
+     "zhaozhao.zz"
     ]
    },
    "src/commands/smismember.json": {
@@ -2758,19 +2760,19 @@
     ]
    },
    "src/commands/xautoclaim.json": {
-    "top1": "guybe7",
+    "top1": "Joseph Heck",
     "top3": [
-     "guybe7",
      "Joseph Heck",
-     "Daniil Kashapov"
+     "guybe7",
+     "Lucas Yang"
     ]
    },
    "src/commands/xsetid.json": {
     "top1": "guybe7",
     "top3": [
      "guybe7",
-     "Daniil Kashapov",
-     "Itamar Haber"
+     "Itamar Haber",
+     "knggk"
     ]
    },
    "src/commands/zpopmax.json": {
@@ -2786,7 +2788,7 @@
     "top3": [
      "guybe7",
      "Daniil Kashapov",
-     "Oran Agra"
+     "Itamar Haber"
     ]
    },
    "src/connection.h": {
@@ -2914,11 +2916,11 @@
     ]
    },
    "src/ziplist.h": {
-    "top1": "Ping Xie",
+    "top1": "Mason Hall",
     "top3": [
+     "Mason Hall",
      "Ping Xie",
-     "Pieter Cailliau",
-     "Mason Hall"
+     "Vitah Lin"
     ]
    },
    "tests/integration/replication-multi-cmd.tcl": {
@@ -2947,8 +2949,8 @@
     "top1": "Seungmin Lee",
     "top3": [
      "Seungmin Lee",
-     "Dmitry Polyakovsky",
-     "KarthikSubbarao"
+     "KarthikSubbarao",
+     "Dmitry Polyakovsky"
     ]
    },
    "tests/modules/unsupported_features.c": {
@@ -3042,7 +3044,7 @@
     "top3": [
      "Robo",
      "Raymond Zhao",
-     "dileepyavan"
+     "Jo\u00e3o Moreno"
     ]
    },
    "extensions/copilot/.mocharc.js": {
@@ -3052,11 +3054,11 @@
     ]
    },
    "extensions/copilot/script/setup/getEnv.mts": {
-    "top1": "kieferrm",
+    "top1": "Matt Bierner",
     "top3": [
-     "kieferrm",
      "Matt Bierner",
-     "Raymond Zhao"
+     "Raymond Zhao",
+     "kieferrm"
     ]
    },
    "extensions/copilot/src/extension/byok/vscode-node/test/customEndpointProvider.spec.ts": {
@@ -3099,7 +3101,7 @@
     "top3": [
      "Rob Lourens",
      "Bhavya U",
-     "Takashi Tamura"
+     "Vijay Upadya"
     ]
    },
    "extensions/copilot/src/extension/prompts/node/panel/currentEditor.tsx": {
@@ -3126,7 +3128,7 @@
     "top3": [
      "Rob Lourens",
      "Alex Ross",
-     "kieferrm"
+     "Justin Chen"
     ]
    },
    "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p3/source/f2.ts": {
@@ -3146,15 +3148,15 @@
     "top1": "Alexandru Dima",
     "top3": [
      "Alexandru Dima",
-     "kieferrm",
+     "Kyle Cutler",
      "Sandeep Somavarapu"
     ]
    },
    "extensions/copilot/src/platform/filesystem/common/fileSystemService.ts": {
-    "top1": "kieferrm",
+    "top1": "Don Jayamanne",
     "top3": [
-     "kieferrm",
-     "Don Jayamanne"
+     "Don Jayamanne",
+     "kieferrm"
     ]
    },
    "extensions/copilot/src/platform/networking/test/node/fetcherFallback.spec.ts": {
@@ -3248,7 +3250,7 @@
     "top3": [
      "Matt Bierner",
      "Martin Aeschlimann",
-     "Robo"
+     "hj"
     ]
    },
    "extensions/terminal-suggest/src/completions/upstream/docker.ts": {
@@ -3312,7 +3314,7 @@
     "top3": [
      "Lee Murray",
      "Raymond Zhao",
-     "David Dossett"
+     "Lee Murray"
     ]
    },
    "extensions/vscode-colorize-tests/test/colorize-tree-sitter-results/test-173224_sh.json": {
@@ -3342,7 +3344,7 @@
     "top3": [
      "Matt Bierner",
      "Benjamin Pasero",
-     "Robo"
+     "Martin Aeschlimann"
     ]
    },
    "src/vs/base/browser/ui/findinput/findInput.ts": {
@@ -3354,11 +3356,11 @@
     ]
    },
    "src/vs/base/browser/ui/grid/gridview.ts": {
-    "top1": "Benjamin Pasero",
+    "top1": "eli-w-king",
     "top3": [
-     "Benjamin Pasero",
      "eli-w-king",
-     "Jo\u00e3o Moreno"
+     "Jo\u00e3o Moreno",
+     "Benjamin Pasero"
     ]
    },
    "src/vs/base/test/common/lazy.test.ts": {
@@ -3366,15 +3368,15 @@
     "top3": [
      "Matt Bierner",
      "Benjamin Pasero",
-     "Johannes"
+     "Fabien Launay"
     ]
    },
    "src/vs/base/test/common/linkedText.test.ts": {
-    "top1": "Benjamin Pasero",
+    "top1": "Connor Peet",
     "top3": [
-     "Benjamin Pasero",
+     "Connor Peet",
      "Joao Moreno",
-     "Johannes"
+     "Matt Bierner"
     ]
    },
    "src/vs/base/test/node/__snapshots__/snapshot_cleans_up_old_snapshots.0.snap": {
@@ -3435,8 +3437,8 @@
     "top1": "Alexandru Dima",
     "top3": [
      "Alexandru Dima",
-     "Benjamin Pasero",
-     "Johannes"
+     "Johannes",
+     "Benjamin Pasero"
     ]
    },
    "src/vs/editor/test/common/viewLayout/__snapshots__/renderViewLine2_two-tokens.1.snap": {
@@ -3559,7 +3561,7 @@
     "top3": [
      "BeniBenj",
      "Benjamin Christopher Simmonds",
-     "mrleemurray"
+     "Connor Peet"
     ]
    },
    "src/vs/sessions/contrib/agentFeedback/test/browser/feedbackInputWidget.test.ts": {
@@ -3582,7 +3584,7 @@
     "top3": [
      "Connor Peet",
      "Sandeep Somavarapu",
-     "Connor Peet"
+     "Benjamin Christopher Simmonds"
     ]
    },
    "src/vs/sessions/test/electron-browser/vscodeActions.test.ts": {
@@ -3606,7 +3608,7 @@
     "top3": [
      "Megan Rogge",
      "Osvaldo Ortega",
-     "Rob Lourens"
+     "Connor Peet"
     ]
    },
    "src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSdkSetupNotification.ts": {
@@ -3647,10 +3649,10 @@
     ]
    },
    "src/vs/workbench/contrib/codeEditor/browser/find/simpleFindWidget.css": {
-    "top1": "mrleemurray",
+    "top1": "Benjamin Pasero",
     "top3": [
-     "mrleemurray",
      "Benjamin Pasero",
+     "mrleemurray",
      "Jean Pierre"
     ]
    },
@@ -3659,15 +3661,15 @@
     "top3": [
      "Alexandru Dima",
      "Benjamin Pasero",
-     "Henning Dieterichs"
+     "Matt Bierner"
     ]
    },
    "src/vs/workbench/contrib/debug/browser/debugStatus.ts": {
-    "top1": "Benjamin Pasero",
+    "top1": "John Murray",
     "top3": [
-     "Benjamin Pasero",
      "John Murray",
-     "isidor"
+     "isidor",
+     "Johannes"
     ]
    },
    "src/vs/workbench/contrib/search/browser/searchChatContext.ts": {
@@ -3695,15 +3697,15 @@
     "top3": [
      "Connor Peet",
      "Connor Peet",
-     "Benjamin Pasero"
+     "Maruthan G"
     ]
    },
    "src/vs/workbench/services/tunnel/electron-browser/tunnelService.ts": {
     "top1": "Alexandru Dima",
     "top3": [
      "Alexandru Dima",
-     "Benjamin Pasero",
-     "Alex Ross"
+     "Alex Ross",
+     "Benjamin Pasero"
     ]
    },
    "src/vs/workbench/services/workingCopy/common/workingCopyBackupTracker.ts": {
@@ -3738,7 +3740,7 @@
     "top1": "Matt Bierner",
     "top3": [
      "Matt Bierner",
-     "Robo",
+     "Megan Rogge",
      "Alex Ross"
     ]
    }

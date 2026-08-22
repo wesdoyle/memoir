@@ -1,4 +1,4 @@
-# regress: baseline
+# regress: c2_both --set line_scale=20 --set line_cap=300
 
 overrides: `none` · now 2026-08-21 · seed 42
 

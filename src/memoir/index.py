@@ -1,8 +1,8 @@
 """On-disk index: the single-walk output persisted in SQLite and queried per file.
 
-Layout (schema v2):
+Layout (schema v3):
   meta(key, value)                      head sha, pathspec, schema, built_at
-  commits(pos, sha, name, email, ts, merge, coauthors, breadth)   pos 0 = newest; breadth = files touched
+  commits(pos, sha, name, email, ts, merge, coauthors, breadth, parents)   pos 0 = newest
   files(path, pos, added, deleted, binary, renamed_from)
 
 Facts and scores are derived at query time from these rows (same code path as live
@@ -26,7 +26,7 @@ from memoir.mining import (
     iter_walk,
 )
 
-SCHEMA = 2
+SCHEMA = 3
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -54,7 +54,7 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
             PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;
             CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT);
             CREATE TABLE commits(pos INTEGER PRIMARY KEY, sha TEXT, name TEXT, email TEXT,
-                                 ts INTEGER, merge INTEGER, coauthors TEXT, breadth INTEGER);
+                                 ts INTEGER, merge INTEGER, coauthors TEXT, breadth INTEGER, parents INTEGER);
             CREATE TABLE files(path TEXT, pos INTEGER, added INTEGER, deleted INTEGER,
                                binary INTEGER, renamed_from TEXT);
             """
@@ -65,7 +65,7 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
         for meta, recs in iter_walk(repo, pathspec):
             pos = len(crows)
             crows.append((pos, meta.sha, meta.author.name, meta.author.email,
-                          int(meta.date.timestamp()), int(meta.is_merge), None, meta.breadth))
+                          int(meta.date.timestamp()), int(meta.is_merge), None, meta.breadth, meta.parents))
             if meta.coauthors:
                 pending.append((pos, meta.coauthors))
                 raw_coauthors.update(meta.coauthors)
@@ -75,7 +75,7 @@ def build_index(repo: str | Path, db_path: str | Path, pathspec: str | None = No
                 con.executemany("INSERT INTO files VALUES (?,?,?,?,?,?)", frows)
                 frows = []
         con.executemany("INSERT INTO files VALUES (?,?,?,?,?,?)", frows)
-        con.executemany("INSERT INTO commits VALUES (?,?,?,?,?,?,?,?)", crows)
+        con.executemany("INSERT INTO commits VALUES (?,?,?,?,?,?,?,?,?)", crows)
         mm = _check_mailmap(repo, raw_coauthors)
         con.executemany(
             "UPDATE commits SET coauthors=? WHERE pos=?",
@@ -155,18 +155,19 @@ class Index:
             return _history_from_commits(path, [])
         positions = [l[1] for l in lin]
         rows = self.con.execute(
-            f"SELECT pos, sha, name, email, ts, merge, coauthors, breadth FROM commits WHERE pos IN ({','.join('?' * len(positions))})",
+            f"SELECT pos, sha, name, email, ts, merge, coauthors, breadth, parents FROM commits WHERE pos IN ({','.join('?' * len(positions))})",
             positions,
         ).fetchall()
         by_pos = {r[0]: r for r in rows}
         commits = []
         for p, pos, added, deleted, binary, _ in lin:
-            _, sha, name, email, ts, merge, coauthors, breadth = by_pos[pos]
+            _, sha, name, email, ts, merge, coauthors, breadth, parents = by_pos[pos]
             commits.append(Commit(
                 sha=sha, author=Identity(name, email),
                 date=datetime.fromtimestamp(ts, tz=timezone.utc),
                 coauthors=[Identity(n, e) for n, e in json.loads(coauthors)] if coauthors else [],
                 added=added, deleted=deleted, binary=binary, is_merge=bool(merge), path=p, breadth=breadth,
+                is_root=parents == 0,
             ))
         return _history_from_commits(path, [c for c in commits if not c.is_merge])
 

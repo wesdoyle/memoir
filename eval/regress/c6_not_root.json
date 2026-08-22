@@ -114,8 +114,8 @@
     "n": 191
    },
    "raw": {
-    "bad": 38,
-    "bad_contested": 36,
+    "bad": 36,
+    "bad_contested": 34,
     "contested": 103,
     "n": 191
    }
@@ -148,8 +148,8 @@
     "n": 738
    },
    "hl60": {
-    "bad": 66,
-    "bad_contested": 66,
+    "bad": 63,
+    "bad_contested": 63,
     "contested": 658,
     "n": 738
    },
@@ -174,8 +174,8 @@
     "n": 158
    },
    "raw": {
-    "bad": 45,
-    "bad_contested": 44,
+    "bad": 41,
+    "bad_contested": 40,
     "contested": 105,
     "n": 158
    }
@@ -194,15 +194,15 @@
     "n": 229
    },
    "raw": {
-    "bad": 34,
-    "bad_contested": 32,
+    "bad": 28,
+    "bad_contested": 26,
     "contested": 171,
     "n": 229
    }
   }
  },
  "canaries": {
-  "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 82,
+  "Erich Gamma earns first_authored credit in vscode audited dirs (of 393)": 0,
   "Josh Soref in top-3 of valkey's 30 busiest src/*.c": 10,
   "Ran Shidlansik (1,293-line commit) on valkey t_zset.c": 2,
   "Shay Banon on ES IndexMetadata.java": 33,
@@ -211,11 +211,13 @@
   "Shay Banon on ES SearchService.java": 34,
   "Till Rohrmann on flink JobMaster.java": 6,
   "antirez on valkey server.c": 25,
-  "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2244
+  "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2103
  },
- "name": "baseline",
+ "name": "c6_not_root",
  "now": "2026-08-21",
- "overrides": {},
+ "overrides": {
+  "first_rule": "not_root"
+ },
  "regression": {
   "Alex Dima on vscode textModel.ts": 1,
   "David Turner on ES Node.java": 1,
@@ -3052,11 +3054,11 @@
     ]
    },
    "extensions/copilot/script/setup/getEnv.mts": {
-    "top1": "kieferrm",
+    "top1": "Matt Bierner",
     "top3": [
-     "kieferrm",
      "Matt Bierner",
-     "Raymond Zhao"
+     "Raymond Zhao",
+     "kieferrm"
     ]
    },
    "extensions/copilot/src/extension/byok/vscode-node/test/customEndpointProvider.spec.ts": {
@@ -3126,7 +3128,7 @@
     "top3": [
      "Rob Lourens",
      "Alex Ross",
-     "kieferrm"
+     "Justin Chen"
     ]
    },
    "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p3/source/f2.ts": {
@@ -3146,15 +3148,15 @@
     "top1": "Alexandru Dima",
     "top3": [
      "Alexandru Dima",
-     "kieferrm",
-     "Sandeep Somavarapu"
+     "Sandeep Somavarapu",
+     "Kyle Cutler"
     ]
    },
    "extensions/copilot/src/platform/filesystem/common/fileSystemService.ts": {
-    "top1": "kieferrm",
+    "top1": "Don Jayamanne",
     "top3": [
-     "kieferrm",
-     "Don Jayamanne"
+     "Don Jayamanne",
+     "kieferrm"
     ]
    },
    "extensions/copilot/src/platform/networking/test/node/fetcherFallback.spec.ts": {

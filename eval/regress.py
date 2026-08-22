@@ -27,7 +27,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from memoir.index import default_index_path, open_index
-from memoir.scoring import Weights, divergence, rank
+from memoir.scoring import Weights, _first_earns, divergence, rank
 
 ROOT = Path(__file__).resolve().parent.parent
 REPOS = ROOT / "eval" / "repos"
@@ -90,7 +90,13 @@ def parse_overrides(argv: list[str]) -> dict:
             k, v = argv[i + 1].split("=", 1)
             if k not in names:
                 raise SystemExit(f"unknown Weights field {k}; known: {sorted(names)}")
-            kw[k] = float(v) if "." in v or "e" in v.lower() else int(v) if v.lstrip("-").isdigit() else v
+            try:
+                kw[k] = int(v)
+            except ValueError:
+                try:
+                    kw[k] = float(v)
+                except ValueError:
+                    kw[k] = v
             i += 2
         else:
             raise SystemExit(f"unexpected arg {argv[i]}")
@@ -178,8 +184,17 @@ def run(name: str, overrides: dict) -> dict:
             for f in tracked("vscode", d):
                 h = idx["vscode"].history(f)
                 n_vs += 1
-                gamma += any(a.first_authored and a.name == IMPORTER for a in h.authors)
-        report["canaries"][f"{IMPORTER} holds first_authored in vscode audited dirs (of {n_vs})"] = gamma
+                gamma += any(a.first_authored and a.name == IMPORTER and _first_earns(a, base) for a in h.authors)
+        report["canaries"][f"{IMPORTER} earns first_authored credit in vscode audited dirs (of {n_vs})"] = gamma
+        credited = n_creators = 0
+        for repo, d in DIRS:
+            for f in tracked(repo, d):
+                h = idx[repo].history(f)
+                c = next((a for a in h.authors if a.first_authored), None)
+                if c is not None:
+                    n_creators += 1
+                    credited += _first_earns(c, base)
+        report["canaries"][f"files in the 10 P4 dirs whose creator earns first_authored credit (of {n_creators})"] = credited
         # regression
         for label, repo, path, author in REGRESSION:
             report["regression"][label] = _rank_of(rank(idx[repo].history(path), now=NOW, w=base), author)

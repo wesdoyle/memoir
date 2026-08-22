@@ -1,4 +1,4 @@
-# regress: baseline
+# regress: c6_not_mass200 --set first_rule=not_mass
 
 overrides: `none` · now 2026-08-21 · seed 42
 

@@ -1,4 +1,4 @@
-# regress: baseline
+# regress: c6_needs_followup --set first_rule=needs_followup
 
 overrides: `none` · now 2026-08-21 · seed 42
 

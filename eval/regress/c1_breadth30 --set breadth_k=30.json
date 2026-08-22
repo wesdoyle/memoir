@@ -213,7 +213,7 @@
   "antirez on valkey server.c": 25,
   "files in the 10 P4 dirs whose creator earns first_authored credit (of 2244)": 2244
  },
- "name": "baseline",
+ "name": "c1_breadth30 --set breadth_k=30",
  "now": "2026-08-21",
  "overrides": {},
  "regression": {
