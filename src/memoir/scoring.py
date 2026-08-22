@@ -12,6 +12,7 @@ Variant of the degree-of-knowledge shape (Fritz et al., ICSE 2010); not their ca
 from __future__ import annotations
 
 import math
+from bisect import bisect_right
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 
@@ -135,16 +136,30 @@ def score_author(f: AuthorFacts, now: datetime, w: Weights = Weights(), others_s
     )
 
 
+def _erosion_by_author(history: FileHistory, w: Weights) -> dict[str, float]:
+    """Breadth-weighted count of others' primary touches after each author's last touch.
+
+    One sorted pass with prefix sums (O(T log T)) instead of authors × touches. An author's own
+    primary touches are never after their own last touch, so the total after it is exactly others'.
+    """
+    touches = sorted(
+        ((t.date, breadth_weight(t.breadth, w)) for a in history.authors for t in a.touches if t.primary),
+        key=lambda x: x[0],
+    )
+    dates = [d for d, _ in touches]
+    suffix = [0.0] * (len(touches) + 1)
+    for i in range(len(touches) - 1, -1, -1):
+        suffix[i] = suffix[i + 1] + touches[i][1]
+    return {a.author.key: suffix[bisect_right(dates, a.last_touch)] for a in history.authors}
+
+
 def rank(history: FileHistory, now: datetime | None = None, w: Weights = Weights()) -> list[Evidence]:
     """Score every non-bot author of the file; highest score first, ties broken by name."""
     now = now or datetime.now(tz=timezone.utc)
     if w.breadth_k:
         # erosion by others is breadth-discounted too: a sweep displaces little knowledge
-        scored = []
-        for f in history.authors:
-            since = sum(breadth_weight(t.breadth, w) for g in history.authors if g.author.key != f.author.key
-                        for t in g.touches if t.primary and t.date > f.last_touch)
-            scored.append(score_author(f, now, w, others_since=since))
+        erosion = _erosion_by_author(history, w)
+        scored = [score_author(f, now, w, others_since=erosion[f.author.key]) for f in history.authors]
     else:
         scored = [score_author(f, now, w) for f in history.authors]
     return sorted(scored, key=lambda e: (-e.score, e.author.name, e.author.email))

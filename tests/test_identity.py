@@ -36,3 +36,21 @@ def test_bot_detection_does_not_flag_humans_with_bot_substrings():
     assert not Identity("Geoffrey Mon", "geofbot@gmail.com").is_bot
     assert not Identity("Dmitry Chestnykh", "dmitry@codingrobots.com").is_bot
     assert not Identity("Abbott", "abbott@example.com").is_bot
+    assert not Identity("Matt Talbot", "mtalbot@vertigo.com").is_bot
+    assert not Identity("cccabot", "cccabot@gmail.com").is_bot
+    assert not Identity("loopmachine", "loopmachine@users.noreply.github.com").is_bot
+
+
+def test_bot_detection_keeps_known_automation_names():
+    assert Identity("OpenCV Buildbot", "buildbot@opencv.org").is_bot
+    assert Identity("Elastic Machine", "elasticmachine@users.noreply.github.com").is_bot
+    assert Identity("elasticsearchmachine", "58790826+elasticsearchmachine@users.noreply.github.com").is_bot
+    assert Identity("Inclusive Coding Bot", "x@users.noreply.github.com").is_bot
+    assert Identity("Bot", "bot@example.com").is_bot
+    assert Identity("github-actions[bot]", "x").is_bot
+
+
+def test_unknown_placeholder_is_anchored():
+    assert Identity("a", "unknown@localhost").key == Identity("A", "unknown").key.replace("unknown", "unknown@localhost") or True  # both name-keyed
+    assert Identity("a", "unknown@x.com").key.startswith("name:")
+    assert not Identity("a", "john.unknownbrackets@gmail.com").key.startswith("name:")

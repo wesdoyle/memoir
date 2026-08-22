@@ -54,7 +54,7 @@ $ uv run memoir index            # or: memoir index src   (limit to a directory)
 indexed 14019 commits at 1a2b3c4d5e in 6.9 s -> .git/memoir/index.sqlite (3.7 MB)
 ```
 
-One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`. While `HEAD` is unchanged, `who` and `audit` read from it (sub-millisecond per file instead of 0.1–3 s of `git log --follow`); when `HEAD` moves they say the index is stale and mine live until you rebuild. `--live` forces live mining; `index --path` chooses another location. Without an index, `who` and `audit` mine git directly, one `git log --follow` per file.
+One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`. `who` and `audit` always read from it: if it is missing, stale (`HEAD` moved) or does not cover the path, they rebuild it first and say so on stderr (`memoir: index is stale ...; building index for <repo> ...` — seconds on most repositories, ~80 s on a 160k-commit one). `memoir index` builds it explicitly, optionally scoped to a directory; `--path` chooses another location.
 
 ## How it scores (v0)
 

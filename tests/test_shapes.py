@@ -121,3 +121,14 @@ def test_is_root_is_known_from_walk_and_follow(fixture_repo):
     f = mine_file(fixture_repo, "README.md")
     assert w.commits[-1].is_root is True and f.commits[-1].is_root is True
     assert w.commits[0].is_root is False
+
+
+def test_breadth_weighted_erosion_matches_naive_sum(fixture_repo):
+    from memoir.scoring import breadth_weight, _erosion_by_author
+    w = Weights(breadth_k=2)
+    h = walk(fixture_repo).history("src/core.py")
+    fast = _erosion_by_author(h, w)
+    for f in h.authors:
+        naive = sum(breadth_weight(t.breadth, w) for g in h.authors if g.author.key != f.author.key
+                    for t in g.touches if t.primary and t.date > f.last_touch)
+        assert fast[f.author.key] == pytest.approx(naive)

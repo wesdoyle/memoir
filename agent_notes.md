@@ -112,4 +112,14 @@ Decisions
 - `who --json` now returns `lists` (current / built_it / recent) and `flags` (dormant, last_touch_is_sweep, stability over HL 12/18/36/inf). `Index.history(before=pos)` gives history as of any commit.
 - Offline fix-commit replay (eval/replay.py, eval/replay.md): decay validated (raw and hl60 lose everywhere); adopted >= v0; memoir beats last-committer and most-commits by 10-20 points at k=3 everywhere; vs the 3 most recent humans it wins on valkey and vscode, loses narrowly on opencv and flink, ties on ES; at k=1 the last committer is the better single guess on 3/5 repos. The fix criterion is recency-biased; review-routing replay (network) and a deep-bug subset are the next criteria.
 - Q1 status: partially answered. The premise survives against naive last-touch; it is not yet shown to beat pure recency (last 3 humans) on the proxy we have.
+- Direction (2026-08-22): the fix replay's recency bias and a deep-bug criterion are different heuristics for different questions about human-codebase understanding; worth keeping in mind, but for now simple is better. No further replay criteria; next is review of subtle bugs, then MCP.
+
+## P8 — review fixes (Wes's list), live path removed
+
+- `--live` removed; `who`/`audit` build or refresh the index on demand with a one-line stderr notice (missing, stale, or not covering the path -> full rebuild). One engine; `mine_file` (per-file `--follow`) stays as a library function and the test reference only.
+- BOT_NAME_RE tightened: "bot" as its own token / after a separator / in buildbot|pushbot; "machine" as a separate word or the literal elasticsearchmachine. "Matt Talbot", "cccabot", "loopmachine" (1 commit each) are no longer dropped; OpenCV Buildbot/Pushbot, Copilot, Elastic Machine, elasticsearchmachine (923 + 5,272 under a noreply address), Inclusive Coding Bot still are.
+- PLACEHOLDER_EMAIL_RE: `unknown` anchored (`^unknown(@|$)`); across the 5 repos all 77 placeholder emails were genuine placeholders, no bad merges found.
+- `lists.recent` keyed by identity and emitted as {name, email} like the other lists.
+- Erosion was O(authors x touches) per file (server.c: 550k ops, 168 ms per rank()); now a sorted prefix-sum, 2.0 ms, identical results (equality test vs the naive sum).
+- regress `diff_fixes.md` vs `adopted`: no movement anywhere.
 

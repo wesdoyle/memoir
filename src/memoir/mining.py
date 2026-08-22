@@ -15,12 +15,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 BOT_RE = re.compile(r"dependabot|renovate|\[bot\]|actions@github", re.I)  # name or email
-# Name-only patterns: "OpenCV Pushbot", "Copilot", "elasticsearchmachine". Word boundary
-# after "bot" avoids humans like "sunhaibotb"; emails are not checked (geofbot@...).
-BOT_NAME_RE = re.compile(r"bot\b|^copilot\b|machine$", re.I)
+# Name-only patterns. "bot" must be its own token or a suffix after a separator, or one of
+# the known compounds (buildbot, pushbot): "Talbot", "cccabot", "Abbott" are people.
+# "machine" only as a separate word ("Elastic Machine") or the literal elasticsearchmachine.
+BOT_NAME_RE = re.compile(r"\bbot\b|[-_ .]bot\b|(build|push)bot\b|^copilot\b|\bmachine$|^elasticsearchmachine$", re.I)
 # Emails that many distinct people share (SVN imports, misconfigured git). Keying on
 # them would merge unrelated authors, so such identities key on name instead.
-PLACEHOLDER_EMAIL_RE = re.compile(r"^$|^[^@]*$|@[^.]*$|\(none\)|localhost|^no@email$|unknown", re.I)
+PLACEHOLDER_EMAIL_RE = re.compile(r"^$|^[^@]*$|@[^.]*$|\(none\)|localhost|^no@email$|^unknown(@|$)", re.I)
 COAUTHOR_RE = re.compile(r"^Co-authored-by:\s*(.+?)\s*<([^>]+)>\s*$", re.I | re.M)
 
 _REC = "\x1e"  # record separator between commits

@@ -10,7 +10,7 @@ from pathlib import Path
 import typer
 
 from memoir.index import Index, build_index, default_index_path, open_index
-from memoir.mining import FileHistory, mine_file
+from memoir.mining import FileHistory
 from memoir.scoring import Evidence, Weights, divergence, rank
 
 app = typer.Typer(no_args_is_help=True, help="Find who most likely holds the mental model of a file.")
@@ -58,29 +58,39 @@ def _by_raw(ranked: list[Evidence]) -> list[Evidence]:
 
 
 class _Source:
-    """Chooses between a fresh on-disk index and live mining; announces fallbacks once."""
+    """The on-disk index for a repository; built or refreshed on demand with a one-line notice."""
 
-    def __init__(self, root: Path, live: bool):
-        self.root, self.name, self.index = root, "live", None
-        if live:
-            return
-        db = default_index_path(root)
-        if not db.exists():
-            return
-        ix = open_index(db)
-        if not ix.is_fresh(root):
-            typer.echo(f"memoir: index is stale (built at {ix.head[:10]}, HEAD differs); using live mining. "
-                       f"Run `memoir index` to rebuild.", err=True)
-            ix.close()
-            return
-        self.index, self.name = ix, "index"
+    def __init__(self, root: Path, need: str | None = None):
+        self.root = root
+        self.db = default_index_path(root)
+        self.index: Index | None = None
+        reason = None
+        if not self.db.exists():
+            reason = "no index yet"
+        else:
+            ix = open_index(self.db)
+            if not ix.is_fresh(root):
+                reason = f"index is stale (built at {ix.head[:10]}, HEAD differs)"
+            elif need is not None and not ix.covers(need):
+                reason = f"index covers only {ix.pathspec}"
+            if reason:
+                ix.close()
+            else:
+                self.index = ix
+        if reason:
+            typer.echo(f"memoir: {reason}; building index for {root} ...", err=True)
+            build_index(root, self.db)
+            self.index = open_index(self.db)
+        self.name = "index"
 
     def history(self, rel: str) -> FileHistory:
-        if self.index is not None:
-            if self.index.covers(rel):
-                return self.index.history(rel)
-            typer.echo(f"memoir: index does not cover {rel} (built for {self.index.pathspec}); using live mining.", err=True)
-        return mine_file(self.root, rel)
+        assert self.index is not None
+        return self.index.history(rel)
+
+    @property
+    def head(self) -> str:
+        assert self.index is not None
+        return self.index.head
 
     def close(self) -> None:
         if self.index is not None:
@@ -106,10 +116,11 @@ STABILITY_HALF_LIVES = {"12": 12.0, "18": 18.0, "36": 36.0, "inf": 1e9}
 
 def _lists_and_flags(h: FileHistory, ranked: list[Evidence], n: int, now: datetime | None) -> tuple[dict, dict]:
     """Proposal 5: labeled answers, each with the decay regime that fits its question, plus trust flags."""
-    recent = []
+    recent, seen = [], set()
     for a in sorted(h.authors, key=lambda a: a.last_touch, reverse=True):
-        if a.name not in recent:
-            recent.append(a.name)
+        if a.author.key not in seen:
+            seen.add(a.author.key)
+            recent.append({"name": a.name, "email": a.email})
         if len(recent) >= n:
             break
     top1_by_hl = {k: (r[0].author.name if (r := rank(h, now=now, w=Weights(half_life_months=hl))) else None)
@@ -148,11 +159,10 @@ def who(
     repo: Path | None = typer.Option(None, "--repo", help="Repository root (default: discover from path)"),
     as_json: bool = typer.Option(False, "--json", help="Emit structured JSON"),
     now: str | None = typer.Option(None, "--now", help="Reference date YYYY-MM-DD (default: today); for reproducible output"),
-    live: bool = typer.Option(False, "--live", help="Ignore any index; mine git directly"),
 ) -> None:
     """Ranked experts for a file, with one-line evidence each."""
     root, rel = _resolve(path, repo)
-    src = _Source(root, live)
+    src = _Source(root, need=rel)
     when = _parse_now(now)
     h, ranked, div = _who(src, rel, n, when)
     dormant, idle = _dormancy(h, when)
@@ -165,7 +175,7 @@ def who(
                                "dormant": dormant, "dormant_months": round(idle, 1),
                                "lists": lists, "flags": flags,
                                "last_commit": div["last_commit"], "diverges": div["diverges"],
-                               "source": src.name}, indent=2))
+                               "source": src.name, "index_head": src.head}, indent=2))
         return
     if not ranked:
         typer.echo(f"{rel}: no human history")
@@ -194,11 +204,10 @@ def audit(
     repo: Path | None = typer.Option(None, "--repo"),
     worst: int = typer.Option(10, "--worst", help="How many worst cases to list"),
     now: str | None = typer.Option(None, "--now", help="Reference date YYYY-MM-DD"),
-    live: bool = typer.Option(False, "--live", help="Ignore any index; mine git directly"),
 ) -> None:
     """Headline stat: % of files whose last committer is NOT in memoir's top-n (how often blame lies)."""
     root, rel = _resolve(directory, repo)
-    src = _Source(root, live)
+    src = _Source(root, need=rel if rel != "." else None)
     files = subprocess.run(  # ls-tree (not ls-files): works on --no-checkout clones
         ["git", "-C", str(root), "ls-tree", "-r", "--name-only", "-z", "HEAD", "--", rel],
         capture_output=True, text=True, check=True,

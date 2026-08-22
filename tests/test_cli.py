@@ -96,7 +96,7 @@ def test_index_command_then_who_and_audit_use_it(fixture_repo, monkeypatch):
     assert "2/4" in audit_idx
 
 
-def test_stale_index_falls_back_to_live(fixture_repo, tmp_path):
+def test_stale_index_is_rebuilt_automatically(fixture_repo, tmp_path):
     import subprocess
     clone = tmp_path / "clone"
     subprocess.run(["git", "clone", "-q", str(fixture_repo), str(clone)], check=True)
@@ -107,41 +107,53 @@ def test_stale_index_falls_back_to_live(fixture_repo, tmp_path):
     subprocess.run(["git", "-C", str(clone), "commit", "-qam", "rewrite"], check=True, env={**env, "PATH": "/usr/bin:/bin"})
     r = runner.invoke(app, ["who", "src/core.py", "--repo", str(clone), "--now", "2026-08-21"], catch_exceptions=False)
     assert r.exit_code == 0
-    assert "Zed" in r.output  # live result includes the new commit
-    assert "stale" in r.output  # the fallback is announced
+    assert "Zed" in r.output  # the rebuilt index includes the new commit
+    assert "index" in r.output and "stale" in r.output  # the rebuild is announced
+    r2 = runner.invoke(app, ["who", "src/core.py", "--repo", str(clone), "--now", "2026-08-21"], catch_exceptions=False)
+    assert "stale" not in r2.output  # second run: index is fresh, no notice
 
 
-def test_json_reports_source(fixture_repo):
-    run("index", "--repo", str(fixture_repo))
-    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--now", "2026-08-21"))
-    assert data["source"] == "index"
-    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--live", "--now", "2026-08-21"))
-    assert data["source"] == "live"
+def test_missing_index_is_built_automatically(fixture_repo, tmp_path):
+    import subprocess
+    clone = tmp_path / "clone2"
+    subprocess.run(["git", "clone", "-q", str(fixture_repo), str(clone)], check=True)
+    r = runner.invoke(app, ["who", "src/core.py", "--repo", str(clone), "--json", "--now", "2026-08-21"], catch_exceptions=False)
+    assert r.exit_code == 0
+    assert "building index" in r.output
+    data = json.loads(r.output[r.output.index("{"):])
+    assert data["source"] == "index" and data["index_head"]
+    assert (clone / ".git" / "memoir" / "index.sqlite").exists()
+
+
+def test_no_live_flag():
+    assert runner.invoke(app, ["who", "x", "--" + "live"]).exit_code == 2
 
 
 def test_dormant_file_is_announced_and_ranked_by_raw(fixture_repo):
     # all fixture touches are in 2023-2024; with now=2030 everything is >36 months idle
-    out = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2030-08-21", "--live")
+    out = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2030-08-21")
     assert "dormant" in out and "raw" in out
     first = [l for l in out.splitlines() if l.strip().startswith("1.")][0]
     assert "Alice Adams" in first
-    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2030-08-21", "--live", "--json"))
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2030-08-21", "--json"))
     assert data["dormant"] is True and data["dormant_months"] > 36
     assert data["experts"][0]["author"]["name"] == "Alice Adams"
 
 
 def test_active_file_is_not_dormant(fixture_repo):
-    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2024-06-01", "--live", "--json"))
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2024-06-01", "--json"))
     assert data["dormant"] is False
 
 
 def test_json_carries_labeled_lists_and_flags(fixture_repo):
-    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--live", "--now", "2026-08-21"))
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--now", "2026-08-21"))
     lists = data["lists"]
     assert [e["author"]["name"] for e in lists["current"]][:2] == ["Alice Adams", "Carol Chen"]
     assert [e["author"]["name"] for e in lists["built_it"]][:1] == ["Alice Adams"]
-    assert lists["recent"][:2] == ["Carol Chen", "Alice Adams"]  # last distinct humans by last substantive touch, newest first
+    assert [r["name"] for r in lists["recent"][:2]] == ["Carol Chen", "Alice Adams"]  # last distinct humans, newest first
+    assert lists["recent"][0]["email"] == "carol@example.com"
     assert data["flags"]["dormant"] is False
-    assert data["flags"]["last_touch_is_sweep"] is False  # live mining: breadth unknown -> False
+    assert data["flags"]["last_touch_is_sweep"] is False  # Carol's sweep touched 3 files
+    assert data["flags"]["last_touch_breadth"] == 3
     assert data["flags"]["stability"]["top1_stable"] in (True, False)
     assert set(data["flags"]["stability"]["top1_by_half_life"]) == {"12", "18", "36", "inf"}
