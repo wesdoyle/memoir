@@ -74,3 +74,10 @@ Open questions — evidence so far
 - Q5: a sweep author in the top-3 is the common mismatch; the file is usually right and the listed roster is per-project, not per-file. Unlisted active contributors (Rain Valentine) are a legitimate disagreement.
 - Q6: deferred with P3.
 
+## Perf baseline (eval/perf.md, eval/bench.py)
+
+- Measured before any optimization so later changes have a comparison. `bench.py` attributes git time by wrapping `mining._git` from outside; production code is not instrumented.
+- Result: every `who` is one `git log --follow --numstat` that walks the whole commit graph; cost is set by repo history depth (0.15 s valkey .. 2.5 s vscode), not file depth; git is 80-100% of the time. Audit = files × that (6 files/s on valkey).
+- One whole-repo `git log --numstat -M` walk on valkey: 6.8 s vs 122 s for 738 per-file walks. Per-file `--follow` is the wrong shape for audit/MCP; see perf.md §5.
+- Direction (Wes, 2026-08-21): the no-persistence constraint is relaxed for an on-disk index built from one walk; query-time improvement is the metric. Not yet implemented. Largest repos are not to be benchmarked further.
+
