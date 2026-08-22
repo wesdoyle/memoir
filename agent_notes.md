@@ -81,3 +81,12 @@ Open questions — evidence so far
 - One whole-repo `git log --numstat -M` walk on valkey: 6.8 s vs 122 s for 738 per-file walks. Per-file `--follow` is the wrong shape for audit/MCP; see perf.md §5.
 - Direction (Wes, 2026-08-21): the no-persistence constraint is relaxed for an on-disk index built from one walk; query-time improvement is the metric. Not yet implemented. Largest repos are not to be benchmarked further.
 
+## Collaboration (how this project is being run; learnings)
+
+- Wes directs at gates, reviews the artifacts, and steers with short directives; the builder proposes the smaller option and records cuts. Gate outputs so far: clamp at 0, no-op commits carry no knowledge, skip P3, raw alongside decayed, relax persistence.
+- Commit messages: short subject, body only when it adds information (feedback after P0).
+- Measure before optimizing: the perf baseline existed before any change, so P5 has a comparison. Benchmarks use a seeded random sample of 100 files per repo and report mean, median, p95, stdev, min, max (direction 2026-08-21).
+- A gut check from Wes ("does git walk the whole graph per file?") caught the per-file `--follow` design flaw that the benchmarks then quantified (18-22x). Architectural sanity checks beat more measurement; raise them early.
+- Constraints are revisable by direction when evidence says so (no-persistence -> on-disk index), but the change is recorded here with the date and the reason.
+- Real repos found five correctness bugs the synthetic fixture could not; each went fixture/unit test first, then fix, then a separate commit.
+

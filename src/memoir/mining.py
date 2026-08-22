@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import re
 import subprocess
-from dataclasses import dataclass
+from collections.abc import Iterator
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -107,11 +108,13 @@ def _check_mailmap(repo: Path, idents: set[Identity]) -> dict[Identity, Identity
     if not idents:
         return {}
     ordered = sorted(idents, key=lambda i: (i.name, i.email))
-    out = _git(repo, "check-mailmap", *[f"{i.name} <{i.email}>" for i in ordered])
     resolved = {}
-    for ident, line in zip(ordered, out.splitlines()):
-        m = re.match(r"^(.*?)\s*<([^>]*)>$", line.strip())
-        resolved[ident] = Identity(m.group(1), m.group(2)) if m else ident
+    for i0 in range(0, len(ordered), 500):  # keep argv well under ARG_MAX
+        chunk = ordered[i0:i0 + 500]
+        out = _git(repo, "check-mailmap", *[f"{i.name} <{i.email}>" for i in chunk])
+        for ident, line in zip(chunk, out.splitlines()):
+            m = re.match(r"^(.*?)\s*<([^>]*)>$", line.strip())
+            resolved[ident] = Identity(m.group(1), m.group(2)) if m else ident
     return resolved
 
 
@@ -166,21 +169,35 @@ def _split_body_and_numstat(text: str) -> tuple[str, list[str]]:
     return "\n".join(lines), list(reversed(stat))
 
 
-def _numstat_path(p: str) -> str:
-    # rename forms: "old => new" or "dir/{old => new}/file"
+def _numstat_paths(p: str) -> tuple[str | None, str]:
+    """(old, new) for a numstat path; old is None when the line is not a rename.
+
+    Rename forms: "old => new" or "dir/{old => new}/file" (either side may be empty).
+    """
     m = re.match(r"^(.*)\{(.*) => (.*)\}(.*)$", p)
     if m:
-        return re.sub(r"/{2,}", "/", f"{m.group(1)}{m.group(3)}{m.group(4)}")
+        old = re.sub(r"/{2,}", "/", f"{m.group(1)}{m.group(2)}{m.group(4)}")
+        new = re.sub(r"/{2,}", "/", f"{m.group(1)}{m.group(3)}{m.group(4)}")
+        return old, new
     if " => " in p:
-        return p.split(" => ", 1)[1]
-    return p
+        old, new = p.split(" => ", 1)
+        return old, new
+    return None, p
+
+
+def _numstat_path(p: str) -> str:
+    return _numstat_paths(p)[1]
 
 
 def mine_file(repo: str | Path, path: str) -> FileHistory:
-    """Mine the full --follow history of `path` (relative to repo root)."""
+    """Mine the full --follow history of `path` (relative to repo root) with one git log call."""
     repo = Path(repo)
     all_commits = _parse_log(repo, path)
-    commits = [c for c in all_commits if not c.is_merge]  # newest first
+    return _history_from_commits(path, [c for c in all_commits if not c.is_merge])
+
+
+def _history_from_commits(path: str, commits: list[Commit]) -> FileHistory:
+    """Aggregate per-author facts from a file's non-merge commits (newest first)."""
     content = [c for c in commits if not c.is_noop]  # bots included: their human co-authors earn credit
     human = [c for c in content if not c.is_bot]
     oldest = human[-1] if human else None
@@ -230,3 +247,129 @@ def mine_file(repo: str | Path, path: str) -> FileHistory:
         authors=sorted(facts.values(), key=lambda f: (f.author.name, f.author.email)),
         last_commit=commits[0] if commits else None,
     )
+
+
+# --- single walk over the whole history -------------------------------------------------
+
+@dataclass
+class CommitMeta:
+    sha: str
+    author: Identity
+    date: datetime
+    coauthors: list[Identity]
+    is_merge: bool
+
+
+@dataclass(frozen=True)
+class FileRec:
+    pos: int  # index into RepoWalk.commits; 0 is newest
+    added: int
+    deleted: int
+    binary: bool
+    renamed_from: str | None
+
+
+@dataclass
+class RepoWalk:
+    """Every (commit, path) record from one `git log --numstat -M` over the repository."""
+
+    head: str
+    pathspec: str | None
+    commits: list[CommitMeta] = field(default_factory=list)  # newest first
+    files: dict[str, list[FileRec]] = field(default_factory=dict)  # path -> records, newest first
+
+    def lineage(self, path: str) -> list[tuple[str, FileRec]]:
+        """(path-at-the-time, record) newest first, following renames backwards."""
+        out: list[tuple[str, FileRec]] = []
+        cur: str | None = path
+        after = -1  # only records older than the rename we came through
+        seen = set()
+        while cur is not None and (cur, after) not in seen:
+            seen.add((cur, after))
+            nxt = None
+            for r in self.files.get(cur, []):
+                if r.pos <= after:
+                    continue
+                out.append((cur, r))
+                if r.renamed_from is not None and r.renamed_from != cur:
+                    nxt, after = r.renamed_from, r.pos
+                    break
+            cur = nxt
+        return out
+
+    def history(self, path: str) -> FileHistory:
+        commits = []
+        for p, r in self.lineage(path):
+            m = self.commits[r.pos]
+            commits.append(Commit(sha=m.sha, author=m.author, date=m.date, coauthors=m.coauthors,
+                                  added=r.added, deleted=r.deleted, binary=r.binary,
+                                  is_merge=m.is_merge, path=p))
+        return _history_from_commits(path, [c for c in commits if not c.is_merge])
+
+
+def iter_walk(repo: str | Path, pathspec: str | None = None) -> Iterator[tuple[CommitMeta, list[tuple[str, FileRec]]]]:
+    """Stream (commit, [(path, record)]) newest first from one git log process.
+
+    Co-author identities are raw here (not mailmapped); `walk()` resolves them in one batch.
+    """
+    fmt = _REC + _UNIT.join(["%H", "%aN", "%aE", "%at", "%P", "%B"])
+    cmd = ["git", "-C", str(repo), "log", "--numstat", "-M", f"--format={fmt}"]
+    if pathspec:
+        cmd += ["--", pathspec]
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    assert proc.stdout is not None
+    buf = b""
+    pos = 0
+    rec_sep = _REC.encode()
+    while True:
+        chunk = proc.stdout.read(1 << 20)
+        if not chunk:
+            break
+        buf += chunk
+        parts = buf.split(rec_sep)
+        buf = parts.pop()  # incomplete tail
+        for raw in parts:
+            if not raw:
+                continue
+            yield _parse_walk_record(raw.decode("utf-8", errors="replace"), pos)
+            pos += 1
+    if buf.strip():
+        yield _parse_walk_record(buf.decode("utf-8", errors="replace"), pos)
+    proc.wait()
+    if proc.returncode != 0:
+        raise subprocess.CalledProcessError(proc.returncode, cmd)
+
+
+def _parse_walk_record(rec: str, pos: int) -> tuple[CommitMeta, list[tuple[str, FileRec]]]:
+    sha, name, email, ts, parents, body_and_stat = rec.split(_UNIT, 5)
+    body, stat_lines = _split_body_and_numstat(body_and_stat)
+    meta = CommitMeta(
+        sha=sha, author=Identity(name, email),
+        date=datetime.fromtimestamp(int(ts), tz=timezone.utc),
+        coauthors=[Identity(n.strip(), e.strip()) for n, e in COAUTHOR_RE.findall(body)],
+        is_merge=len(parents.split()) > 1,
+    )
+    recs = []
+    for line in stat_lines:
+        a, d, p = line.split("\t", 2)
+        old, new = _numstat_paths(p)
+        recs.append((new, FileRec(pos=pos, added=int(a) if a != "-" else 0, deleted=int(d) if d != "-" else 0,
+                                  binary=a == "-", renamed_from=old)))
+    return meta, recs
+
+
+def walk(repo: str | Path, pathspec: str | None = None) -> RepoWalk:
+    """One git log over the repository (or `pathspec`), aggregated in memory."""
+    repo = Path(repo)
+    head = _git(repo, "rev-parse", "HEAD").strip()
+    w = RepoWalk(head=head, pathspec=pathspec)
+    raw_coauthors: set[Identity] = set()
+    for meta, recs in iter_walk(repo, pathspec):
+        w.commits.append(meta)
+        raw_coauthors.update(meta.coauthors)
+        for path, r in recs:
+            w.files.setdefault(path, []).append(r)
+    mm = _check_mailmap(repo, raw_coauthors)
+    for m in w.commits:
+        m.coauthors = [mm.get(i, i) for i in m.coauthors]
+    return w

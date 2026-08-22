@@ -84,3 +84,36 @@ def test_who_lists_raw_top_when_it_differs(fixture_repo):
     data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--now", "2026-08-21"))
     assert data["experts"][0]["raw_score"] > data["experts"][0]["score"]
     assert [e["author"]["name"] for e in data["by_raw_score"][:2]] == ["Alice Adams", "Carol Chen"]
+
+
+def test_index_command_then_who_and_audit_use_it(fixture_repo, monkeypatch):
+    live = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2026-08-21")
+    out = run("index", "--repo", str(fixture_repo))
+    assert "indexed" in out and "commits" in out
+    idx = run("who", "src/core.py", "--repo", str(fixture_repo), "--now", "2026-08-21")
+    assert idx == live  # stdout identical; provenance goes to stderr
+    audit_idx = run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21")
+    assert "3/4" in audit_idx
+
+
+def test_stale_index_falls_back_to_live(fixture_repo, tmp_path):
+    import subprocess
+    clone = tmp_path / "clone"
+    subprocess.run(["git", "clone", "-q", str(fixture_repo), str(clone)], check=True)
+    run("index", "--repo", str(clone))
+    env = {"GIT_AUTHOR_NAME": "Zed", "GIT_AUTHOR_EMAIL": "z@example.com", "GIT_COMMITTER_NAME": "Zed",
+           "GIT_COMMITTER_EMAIL": "z@example.com", "HOME": str(tmp_path), "GIT_CONFIG_GLOBAL": "/dev/null"}
+    (clone / "src" / "core.py").write_text("# rewritten\n")
+    subprocess.run(["git", "-C", str(clone), "commit", "-qam", "rewrite"], check=True, env={**env, "PATH": "/usr/bin:/bin"})
+    r = runner.invoke(app, ["who", "src/core.py", "--repo", str(clone), "--now", "2026-08-21"], catch_exceptions=False)
+    assert r.exit_code == 0
+    assert "Zed" in r.output  # live result includes the new commit
+    assert "stale" in r.output  # the fallback is announced
+
+
+def test_json_reports_source(fixture_repo):
+    run("index", "--repo", str(fixture_repo))
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--now", "2026-08-21"))
+    assert data["source"] == "index"
+    data = json.loads(run("who", "src/core.py", "--repo", str(fixture_repo), "--json", "--live", "--now", "2026-08-21"))
+    assert data["source"] == "live"
