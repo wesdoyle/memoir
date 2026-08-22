@@ -112,15 +112,19 @@ def audit(
             bot_last += 1
             continue
         last_score = next((e.score for e in ranked if e.author.key == h.last_commit.author.key), 0.0)
-        cases.append((f, div, ranked[0], last_score))
+        cases.append((f, div, ranked[0], last_score, len(ranked)))
     n = len(cases)
     bad = [c for c in cases if c[1]["diverges"]]
     pct = 100.0 * len(bad) / n if n else 0.0
+    contested = [c for c in cases if c[4] > top]  # top-n membership is non-trivial only here
+    bad_contested = [c for c in contested if c[1]["diverges"]]
+    cpct = 100.0 * len(bad_contested) / len(contested) if contested else 0.0
     typer.echo(f"audit {rel}: {len(files)} tracked files; {bot_last} file(s) last touched by a bot and {empty} without human history excluded")
     typer.echo(f"blame lies: {len(bad)}/{n} files ({pct:.1f}%) — last committer not in memoir top-{top}")
+    typer.echo(f"  among contested files (more than {top} authors): {len(bad_contested)}/{len(contested)} ({cpct:.1f}%)")
     bad.sort(key=lambda c: -(c[2].score - c[3]))
     if bad:
         typer.echo(f"worst cases (largest gap between top expert and last committer):")
-        for f, div, best, last_score in bad[:worst]:
+        for f, div, best, last_score, _ in bad[:worst]:
             lc = div["last_commit"]
             typer.echo(f"  {f}: last {lc['author']['name']} {lc['date']} (score {last_score:.2f}) vs top {best.author.name} (score {best.score:.2f})")

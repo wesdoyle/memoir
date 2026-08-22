@@ -60,3 +60,9 @@ def test_audit_works_without_a_working_tree(fixture_repo, tmp_path):
     subprocess.run(["git", "clone", "-q", "--no-checkout", str(fixture_repo), str(bare)], check=True)
     out = run("audit", "--repo", str(bare), "--top", "1", "--now", "2026-08-21")
     assert "3/4" in out
+
+
+def test_audit_reports_divergence_among_contested_files(fixture_repo):
+    # core.py (3 authors), helpers.py (3), README (2), .mailmap (1): none has >1 author... except all but .mailmap
+    out = run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21")
+    assert "contested" in out and "3/3" in out  # files with >1 author: core, helpers, README; all diverge at top-1
