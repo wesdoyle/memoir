@@ -159,3 +159,18 @@ def mcp(
 
     root = _toplevel(repo or Path.cwd())
     make_server(root).run()
+
+
+@app.command()
+def identities(
+    repo: Path | None = typer.Option(None, "--repo"),
+) -> None:
+    """Suggest .mailmap lines for split identities (same name / noreply / spellings). Nothing is written."""
+    from memoir.identities import format_mailmap, suggest_mailmap
+
+    root, _ = _resolve(".", repo)
+    src = Source(root)
+    try:
+        typer.echo(format_mailmap(suggest_mailmap(src.index)))
+    finally:
+        src.close()
