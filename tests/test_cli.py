@@ -52,3 +52,11 @@ def test_audit_top1_reports_divergence_and_worst_cases(fixture_repo):
 def test_audit_subdir(fixture_repo):
     out = run("audit", "src", "--repo", str(fixture_repo), "--top", "1")
     assert "2/2" in out
+
+
+def test_audit_works_without_a_working_tree(fixture_repo, tmp_path):
+    import subprocess
+    bare = tmp_path / "nocheckout"
+    subprocess.run(["git", "clone", "-q", "--no-checkout", str(fixture_repo), str(bare)], check=True)
+    out = run("audit", "--repo", str(bare), "--top", "1", "--now", "2026-08-21")
+    assert "3/4" in out

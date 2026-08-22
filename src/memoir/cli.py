@@ -96,9 +96,11 @@ def audit(
 ) -> None:
     """Headline stat: % of files whose last committer is NOT in memoir's top-n (how often blame lies)."""
     root, rel = _resolve(directory, repo)
-    files = subprocess.run(
-        ["git", "-C", str(root), "ls-files", "--", rel], capture_output=True, text=True, check=True
-    ).stdout.split()
+    files = subprocess.run(  # ls-tree (not ls-files): works on --no-checkout clones
+        ["git", "-C", str(root), "ls-tree", "-r", "--name-only", "-z", "HEAD", "--", rel],
+        capture_output=True, text=True, check=True,
+    ).stdout.split("\0")
+    files = [f for f in files if f]
     when = _parse_now(now)
     bot_last, empty, cases = 0, 0, []
     for f in files:

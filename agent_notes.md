@@ -44,3 +44,9 @@ Decisions
 
 Learnings
 - Smoke test on this repo: single author, 0/19 divergence, 0.24 s for 19 files (~12 ms/file, one git process each). P4 repos with 10k+ files will need a path filter or patience; no caching per spec.
+
+## P3 — MCP: skipped at the gate (Wes). Revisit after P4 settles the internals.
+
+## P4 — real repos
+
+Repos (Wes): elastic/elasticsearch, valkey-io/valkey, opencv/opencv, microsoft/vscode, apache/flink. Cloned `--no-checkout --single-branch` into gitignored `eval/repos/` (13 GB free on disk). `audit` now enumerates files with `git ls-tree -r HEAD` so it works without a working tree.
