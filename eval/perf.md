@@ -97,3 +97,43 @@ Startup is noise next to a single `git log` on any repo larger than the fixture.
 4. **Per-file fast path without `--follow`.** `git log -- path` is ~half the cost of `--follow` on shallow files; a manual rename chase at the file's first commit would recover lineage. Only worth it if (1)/(2) are rejected.
 5. **Parse cost** (0.1–0.15 ms/commit) matters only on >1k-commit files and only after the walk is fixed.
 6. **git's own index.** `git commit-graph write --changed-paths` (bloom filters) speeds path-limited walks without `--follow`; it is git-side state inside `.git`, not memoir persistence, and does not help `--follow`. Note for completeness.
+
+## 6. After P5: single walk + persisted index (measured 2026-08-21)
+
+Same machine. `eval/bench.py build|query|equiv`; query and equivalence use `random.Random(42).sample` of 100 files from `git ls-tree -r HEAD`. Largest repos (elasticsearch, vscode) not run by direction.
+
+### Build: one `git log --numstat -M` walk, persisted to SQLite
+
+| repo | commits | (commit, path) rows | distinct paths | build time | index size |
+|---|---|---|---|---|---|
+| valkey | 14,019 | 35,603 | 3,132 | 6.9 s | 3.7 MB |
+| opencv | 37,642 | 122,969 | 19,382 | 18.1 s | 17.7 MB |
+| flink | 38,347 | 350,015 | 71,154 | 23.9 s | 87.3 MB |
+
+Build time ≈ the raw git walk (valkey 6.8 s raw → 6.9 s; flink 21.8 s raw → 23.9 s): parsing and SQLite insertion add <10%. Cost is one walk per HEAD, equal to roughly 45 (valkey) to 40 (flink) per-file `--follow` calls.
+
+### Query: `who` on 100 seeded files, live vs index
+
+"cold" opens the SQLite file per query (what one CLI invocation does); "warm" reuses one connection (what `audit` and an MCP server do). Process startup (~70–90 ms, §4) is excluded from all three and now dominates a cold CLI `who`.
+
+| repo | live (`--follow` per file) | index, cold | index, warm | median speedup | 100 files total |
+|---|---|---|---|---|---|
+| valkey | mean 126 · median 114 · p95 188 · stdev 33 · min 87 · max 234 ms | mean 0.40 · median 0.15 · p95 1.82 · stdev 0.93 · min 0.09 · max 7.98 ms | mean 0.29 · median 0.05 · p95 1.68 · stdev 0.91 · min 0.01 · max 7.79 ms | 742× | 12.6 s → 0.04 s |
+| opencv | mean 298 · median 287 · p95 419 · stdev 63 · min 209 · max 563 ms | mean 0.35 · median 0.15 · p95 1.46 · stdev 0.80 · min 0.10 · max 7.05 ms | mean 0.23 · median 0.05 · p95 1.23 · stdev 0.78 · min 0.01 · max 6.73 ms | 1,882× | 29.8 s → 0.03 s |
+| flink | mean 581 · median 541 · p95 876 · stdev 174 · min 353 · max 1,378 ms | mean 0.24 · median 0.15 · p95 0.74 · stdev 0.27 · min 0.12 · max 2.46 ms | mean 0.13 · median 0.05 · p95 0.57 · stdev 0.25 · min 0.03 · max 2.24 ms | 3,567× | 58.1 s → 0.02 s |
+
+Index query cost is flat across repos (median 0.15 ms cold, 0.05 ms warm) and set by the file's own record count (max 8 ms for the 1,700-commit files), i.e. the shape the per-file design lacked: cost now tracks the file, not the repository. `audit` of valkey `src` goes from 122 s live to the index build (6.9 s) plus well under a second of queries; repeated audits are free until HEAD moves.
+
+### Equivalence: walk/index lineage vs per-file `--follow`, same 100 files
+
+| repo | files differing | top-1 changed | explanation |
+|---|---|---|---|
+| valkey | 5 | 3 | 3 copies followed by `--follow` (source still at HEAD: `sentinel-masters → -primaries`, `hsetex → msetex`, `client-setname → client-capa`); 1 `--follow` chain (`propagate.c ← … ← zmalloc.h`); 1 rename-away counted by `--follow` as a 114-line deletion (`Makefile`) |
+| opencv | 11 | 2 | mostly copies (`libjpeg → libjpeg-turbo`, Android sample `strings.xml` across tutorials, images duplicated under `doc/`); 1 file where the walk found *more* (`ts.hpp`: 35 commits `--follow` lost through a bad rename hop) |
+| flink | 52 | 23 | 38 copies (per-version test-resource fixtures, copied components), 12 `--follow` chains through boilerplate-similar unrelated files (`HadoopDummyProgressable → JobCancellationException`, `DummyCoGroupStub → CoGroupOperatorBase`), 1 true rename the whole-tree `-M` paired differently (`LongArraySerializerTest → ShortPrimitiveArraySerializerTest`), 1 path-order only |
+
+Not the rename limit: `git log` emitted no "rename detection was skipped" warnings on flink, and `-M -l0` produced byte-identical output at the same cost. The differences are `--follow`'s semantics: it follows copies (the source need not be deleted) and, evaluating one path at a time, accepts similarity matches that whole-tree `-M` pairs elsewhere. The walk's lineage is the stricter one; it is now the reference and `mine_file` (`--follow`) is the live fallback. Adding `-C` (copies) to the walk is an open choice, not taken.
+
+### Against the §5 proposals
+
+1 (one walk) and 2 (persisted index) are done; 3 (parallel per-file loop) and 4 (`--follow`-free per-file path) are superseded for any repo worth indexing; 5 (parse cost) is visible only in build time and is <10% of it. Next cost centre is the build itself (one full walk per HEAD); incremental update (`old_head..HEAD`, re-resolving lineage for touched paths) is the obvious follow-on, and cold CLI startup (~80 ms) is now the floor for single `who` calls.

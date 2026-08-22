@@ -6,12 +6,12 @@ Last-touch attribution — the blame gutter, `git log -1` — often masks long-t
 
 ## Quickstart
 
-Requires Python 3.12 and [uv](https://docs.astral.sh/uv/). No network access, no LLM calls, no caching; git is read through plumbing commands only.
+Requires Python 3.12 and [uv](https://docs.astral.sh/uv/). No network access, no LLM calls; git is read through plumbing commands only. The only state memoir writes is the optional index under `.git/memoir/`.
 
 ```sh
 git clone <this repo> memoir && cd memoir
 uv sync
-uv run pytest            # 44 tests against a synthetic fixture repo
+uv run pytest            # tests against a synthetic fixture repo
 uv run memoir --help
 ```
 
@@ -45,7 +45,16 @@ worst cases (largest gap between top expert and last committer):
   …
 ```
 
-Options: `--top` compare against top-n, `--worst` number of cases to list, `--now`, `--repo`. Cost is one `git log --follow` per file (0.01–3 s depending on history depth), so scope the directory on large repos.
+Options: `--top` compare against top-n, `--worst` number of cases to list, `--now`, `--repo`.
+
+**Index once, query in milliseconds**
+
+```sh
+$ uv run memoir index            # or: memoir index src   (limit to a directory)
+indexed 14019 commits at 1a2b3c4d5e in 6.9 s -> .git/memoir/index.sqlite (3.7 MB)
+```
+
+One `git log --numstat -M` walk over the history is persisted under `.git/memoir/`. While `HEAD` is unchanged, `who` and `audit` read from it (sub-millisecond per file instead of 0.1–3 s of `git log --follow`); when `HEAD` moves they say the index is stale and mine live until you rebuild. `--live` forces live mining; `index --path` chooses another location. Without an index, `who` and `audit` mine git directly, one `git log --follow` per file.
 
 ## How it scores (v0)
 
@@ -59,7 +68,7 @@ score = max(0, raw) · 0.5 ^ (months_since_last_touch / 18)
 
 `deliveries` = commits + 0.5 × co-authored commits (`Co-authored-by:` trailers, including on bot-authored commits). Identities resolve through `.mailmap`; placeholder emails fall back to name. Evidence per author: `score, raw_score, first_authored, commits, coauthored_count, lines_changed, active_span, last_touch, months_since_last_touch, others_commits_since`.
 
-Evaluation against five public repositories is in [eval/results.md](eval/results.md); design notes and decisions in [agent_notes.md](agent_notes.md).
+Evaluation against five public repositories is in [eval/results.md](eval/results.md); performance baseline and index benchmarks in [eval/perf.md](eval/perf.md); design notes and decisions in [agent_notes.md](agent_notes.md).
 
 ## Open questions
 

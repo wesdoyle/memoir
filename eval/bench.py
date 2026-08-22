@@ -5,6 +5,12 @@ Usage (from repo root, clones under eval/repos/):
     uv run python eval/bench.py git                # git-level micro-benchmarks per file
     uv run python eval/bench.py dir <repo> <dir>   # per-file distribution over a directory
     uv run python eval/bench.py startup            # CLI process startup
+    uv run python eval/bench.py build <repo>        # one-walk index build: time and size
+    uv run python eval/bench.py query <repo> [n] [seed]   # live vs index `who` on a seeded file sample
+    uv run python eval/bench.py equiv <repo> [n] [seed]   # walk/index lineage vs per-file --follow
+
+Query and equivalence benchmarks use random.Random(seed).sample over `git ls-tree -r HEAD`
+(default n=100, seed=42) and report mean, median, p95, stdev, min, max.
 
 Timing is wall-clock (perf_counter), median of REPEATS for the per-file sections. The
 git subprocess time is measured by wrapping memoir.mining._git from the outside; the
@@ -13,14 +19,17 @@ production code is not instrumented.
 
 from __future__ import annotations
 
+import random
 import statistics
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 import memoir.mining as mining
+from memoir.index import build_index, open_index
 from memoir.mining import mine_file
 from memoir.scoring import rank
 
@@ -179,6 +188,83 @@ def bench_startup():
         print(f"| `{label}` | {t*1000:.0f} |")
 
 
+def _sample(r: Path, n: int, seed: int) -> list[str]:
+    files = [f for f in sh(r, "ls-tree", "-r", "--name-only", "HEAD").split("\n") if f]
+    return random.Random(seed).sample(files, min(n, len(files)))
+
+
+def _stats(xs: list[float]) -> str:
+    xs = sorted(xs)
+    p95 = xs[min(len(xs) - 1, int(0.95 * len(xs)))]
+    sd = statistics.stdev(xs) if len(xs) > 1 else 0.0
+    return (f"mean {statistics.mean(xs)*1000:.2f} · median {statistics.median(xs)*1000:.2f} · p95 {p95*1000:.2f} · "
+            f"stdev {sd*1000:.2f} · min {xs[0]*1000:.2f} · max {xs[-1]*1000:.2f} ms")
+
+
+def _index_path(repo: str) -> Path:
+    return Path(tempfile.gettempdir()) / f"memoir-bench-{repo}.sqlite"
+
+
+def bench_build(repo: str):
+    r = REPOS / repo
+    db = _index_path(repo)
+    t = time.perf_counter()
+    build_index(r, db)
+    dt = time.perf_counter() - t
+    with open_index(db) as ix:
+        n_files = ix.con.execute("SELECT COUNT(*) FROM files").fetchone()[0]
+        n_paths = ix.con.execute("SELECT COUNT(DISTINCT path) FROM files").fetchone()[0]
+        print(f"| {repo} | {ix.meta['commits']} | {n_files} | {n_paths} | {dt:.1f} s | {db.stat().st_size/1e6:.1f} MB |")
+
+
+def bench_query(repo: str, n: int = 100, seed: int = 42):
+    r = REPOS / repo
+    db = _index_path(repo)
+    if not db.exists():
+        build_index(r, db)
+    sample = _sample(r, n, seed)
+    live, idx, cold = [], [], []
+    for f in sample:
+        t = time.perf_counter(); rank(mine_file(r, f), now=NOW); live.append(time.perf_counter() - t)
+    # cold: open the index per query (what a CLI invocation does); warm: one open, many queries
+    for f in sample:
+        t = time.perf_counter()
+        with open_index(db) as ix:
+            rank(ix.history(f), now=NOW)
+        cold.append(time.perf_counter() - t)
+    with open_index(db) as ix:
+        for f in sample:
+            t = time.perf_counter(); rank(ix.history(f), now=NOW); idx.append(time.perf_counter() - t)
+    print(f"### {repo} — {len(sample)} files, seed {seed}")
+    print(f"- live (`git log --follow` per file): {_stats(live)}")
+    print(f"- index, cold (open + query per file): {_stats(cold)}")
+    print(f"- index, warm (one connection):       {_stats(idx)}")
+    print(f"- speedup (median live / median cold): {statistics.median(live)/statistics.median(cold):.0f}×; "
+          f"total {sum(live):.1f} s -> {sum(cold):.2f} s")
+    print()
+
+
+def bench_equiv(repo: str, n: int = 100, seed: int = 42):
+    r = REPOS / repo
+    db = _index_path(repo)
+    if not db.exists():
+        build_index(r, db)
+    sample = _sample(r, n, seed)
+    diffs = []
+    with open_index(db) as ix:
+        for f in sample:
+            a, b = mine_file(r, f), ix.history(f)
+            if [c.sha for c in a.commits] != [c.sha for c in b.commits] or a.authors != b.authors or a.paths != b.paths:
+                sa, sb = {c.sha for c in a.commits}, {c.sha for c in b.commits}
+                top_a = rank(a, now=NOW)[:1]; top_b = rank(b, now=NOW)[:1]
+                diffs.append((f, len(a.commits), len(b.commits), len(sa - sb), len(sb - sa), a.paths, b.paths,
+                              (top_a[0].author.name if top_a else None) == (top_b[0].author.name if top_b else None)))
+    print(f"### {repo} — {len(sample)} files, seed {seed}: {len(diffs)} differ; top-1 unchanged on {sum(d[7] for d in diffs)} of those")
+    for f, na, nb, oa, ob, pa, pb, same_top in diffs:
+        print(f"- `{f}`: follow {na} commits / walk {nb} (only-follow {oa}, only-walk {ob}); follow paths {pa}; walk paths {pb}; top-1 {'same' if same_top else 'DIFFERENT'}")
+    print()
+
+
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "files"
     if what == "files":
@@ -189,5 +275,11 @@ if __name__ == "__main__":
         bench_dir(sys.argv[2], sys.argv[3])
     elif what == "startup":
         bench_startup()
+    elif what == "build":
+        bench_build(sys.argv[2])
+    elif what == "query":
+        bench_query(sys.argv[2], int(sys.argv[3]) if len(sys.argv) > 3 else 100, int(sys.argv[4]) if len(sys.argv) > 4 else 42)
+    elif what == "equiv":
+        bench_equiv(sys.argv[2], int(sys.argv[3]) if len(sys.argv) > 3 else 100, int(sys.argv[4]) if len(sys.argv) > 4 else 42)
     else:
         raise SystemExit(__doc__)

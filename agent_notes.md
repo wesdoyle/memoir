@@ -9,10 +9,6 @@ Decisions
 - Fixture history (12 commits) covers every required case: rename (`src/util.py` -> `src/helpers.py`), bot commit (dependabot on requirements.txt), co-authored commit (Dave on core.py), lint sweep by non-expert (Carol, last touch on core.py/helpers.py/README), plus `.mailmap` alias for Bob and one pure `--no-ff` merge. The latter two are not in the P0 list but are hard constraints P1 must test; cost was ~5 lines.
 - `tests/test_fixture.py` asserts the fixture's shape via git only (no memoir code yet).
 
-Notes for P1
-- Scoring needs an injectable `now` for deterministic tests (fixture dates are fixed; wall clock is not).
-- Hand-computed v0 check on core.py with now=2026-08: Alice raw≈6.2 -> ≈1.9 decayed; Carol raw≈2.4 -> ≈0.8. Ranking holds at default weights.
-
 Open questions — evidence so far
 - None yet; no real-repo runs until P4. Q3 (authorship-looking commits with no knowledge) is what the Carol/bot fixture cases exercise.
 
@@ -89,4 +85,13 @@ Open questions — evidence so far
 - A gut check from Wes ("does git walk the whole graph per file?") caught the per-file `--follow` design flaw that the benchmarks then quantified (18-22x). Architectural sanity checks beat more measurement; raise them early.
 - Constraints are revisable by direction when evidence says so (no-persistence -> on-disk index), but the change is recorded here with the date and the reason.
 - Real repos found five correctness bugs the synthetic fixture could not; each went fixture/unit test first, then fix, then a separate commit.
+
+## P5 — single walk + persisted index
+
+Decisions
+- `mining.walk()`: one streamed `git log --numstat -M --format=...` (optionally pathspec-scoped); rename lineage follows `{old => new}` records backwards from the current path. `mine_file` (per-file `--follow`) is kept as the live fallback and as the reference in tests. Both feed the same `_history_from_commits`, so facts and scoring are unchanged.
+- `index.py`: stdlib sqlite3, schema v1 (meta / commits / files), written atomically to `<git-dir>/memoir/index.sqlite` (inside .git: never in the worktree). Rows, not facts, are stored so weights and `now` stay tunable. Freshness = meta head == `rev-parse HEAD`; a pathspec-scoped index reports coverage. Incremental update is a follow-on.
+- CLI: `memoir index [dir]`; `who`/`audit` use a fresh covering index silently, announce stale/uncovered fallbacks on stderr, `--live` forces mining, JSON carries `source`.
+- Walk vs `--follow` differ on 5/100 seeded valkey files, all explained and all in the walk's favour or neutral: `--follow` follows *copies* (source still exists: sentinel-masters -> sentinel-primaries, hsetex -> msetex, client-setname -> client-capa), one false rename chain (propagate.c <- ... <- zmalloc.h), and a rename-away counted as a 114-line deletion (Makefile). Not adding `-C` (copies) for now.
+- Benchmarks: `bench.py build|query|equiv`, seeded 100-file samples, mean/median/p95/stdev/min/max; results in eval/perf.md §6.
 
