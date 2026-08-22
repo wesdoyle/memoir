@@ -102,11 +102,37 @@ Review, paste into `.mailmap`, rebuild the index. `person` already merges identi
 
 **For agents (MCP)**
 
+memoir serves five tools over stdio: `who_knows(path, n=3)` → compact ranked answer (`current`, `recent`, `built_it` when it differs, trust flags); `expertise_evidence(path, author)` → full evidence record and rank for one person; `blame_divergence(path, n=3)` → whether the last committer holds the knowledge, explained; `person_profile(query, n=5)` → what a person knows; `experts_for_files(paths | dir | glob | match, n=5)` → who has the most expertise across a set of files (e.g. the files of a change). Paths are relative to the repository root; the index is built or updated on demand (stderr notice on the first call).
+
+*Claude Code* — run inside the repository you want answers about (the server uses that repo; add `--repo PATH` to pin another):
+
 ```sh
-$ uv run memoir mcp --repo /path/to/repo      # stdio server; three tools
+claude mcp add memoir -- uv run --directory /path/to/memoir memoir mcp
+claude mcp list            # or /mcp inside a session
 ```
 
-`who_knows(path, n=3)` → compact ranked answer (`current`, `recent`, `built_it` when it differs, trust flags); `expertise_evidence(path, author)` → the full evidence record and rank for one person; `blame_divergence(path, n=3)` → whether the last committer holds the knowledge, with a one-sentence explanation; `person_profile(query, n=5)` → what a person knows (themes, top files, directories); `experts_for_files(paths | dir | glob | match, n=5)` → who has the most expertise across a set of files, e.g. the files of a change. Paths are relative to the repository root; the index is built or updated on demand.
+Or commit it for the team as `.mcp.json` in the repository root:
+
+```json
+{ "mcpServers": { "memoir": { "command": "uv",
+    "args": ["run", "--directory", "/path/to/memoir", "memoir", "mcp"] } } }
+```
+
+*GitHub Copilot (VS Code agent mode)* — `.vscode/mcp.json` in the repository (or add via the "MCP: Add Server" command):
+
+```json
+{ "servers": { "memoir": { "type": "stdio", "command": "uv",
+    "args": ["run", "--directory", "/path/to/memoir", "memoir", "mcp"] } } }
+```
+
+*Claude Desktop* — `claude_desktop_config.json`, pinning the repo since Desktop has no working directory:
+
+```json
+{ "mcpServers": { "memoir": { "command": "uv",
+    "args": ["run", "--directory", "/path/to/memoir", "memoir", "mcp", "--repo", "/path/to/your-repo"] } } }
+```
+
+If `uv` is not on the PATH the host app uses, give its full path (e.g. `~/.local/bin/uv`). Only stdout is the MCP protocol; memoir's notices go to stderr.
 
 ## How it scores (v0)
 
