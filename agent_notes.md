@@ -15,3 +15,20 @@ Notes for P1
 
 Open questions — evidence so far
 - None yet; no real-repo runs until P4. Q3 (authorship-looking commits with no knowledge) is what the Carol/bot fixture cases exercise.
+
+## P1 — mining + scoring
+
+Decisions
+- One `git log --follow --numstat` call per file (record/unit separators 0x1e/0x1f, numstat rows peeled off the end of `%B` so bodies with blank lines parse). Co-author trailers resolved through `git check-mailmap` in one batched call. No other git calls.
+- Identity key = mailmap-resolved email (lowercased); display name from `%aN`.
+- Excluded from facts: commits with >1 parent; authors matching the bot regex (name or email). `FileHistory.last_commit` is the raw newest non-merge commit, bots included, so P2 can report what blame shows vs. what memoir says.
+- Co-authored commits: 0.5 delivery, no lines credit (cut: weighting lines for co-authors; smaller thing). A co-author who is also the primary author is counted once.
+- Dates are author dates (UTC). `active_span` and decay are in months (days/30.4375). `rank()` takes an injectable `now`; defaults to wall clock.
+- Evidence record keeps the spec keys plus `raw_score`, `months_since_last_touch`, `others_commits_since` so the formula's terms are inspectable.
+
+Learnings
+- The spec formula can go negative: Dave (1 co-authored commit, 3 later commits by others) scores -0.12 on core.py. Not changed; flag for the gate (floor at 0? show as-is?).
+- A pure rename commit is a delivery with 0 lines (Q3 case). Bob did his own rename so it is harmless in the fixture; on real repos a mass-rename by a non-author will earn `log(2)` per file.
+
+Open questions — evidence so far
+- Q3: bots and merges are filtered; lint sweeps and renames are not — they count as deliveries, relying on `first_authored` + delivery count + size to outweigh them. Fixture confirms at default weights (Alice 1.87 vs Carol 0.77).
