@@ -50,3 +50,27 @@ Learnings
 ## P4 — real repos
 
 Repos (Wes): elastic/elasticsearch, valkey-io/valkey, opencv/opencv, microsoft/vscode, apache/flink. Cloned `--no-checkout --single-branch` into gitignored `eval/repos/` (13 GB free on disk). `audit` now enumerates files with `git ls-tree -r HEAD` so it works without a working tree.
+
+Fixes driven by real repos (each test-first)
+- numstat rename form `{old => }` produced `a//b` paths.
+- Identity key: email, but name when the email is a placeholder (`no@email`, `(none)`, `localhost`, no domain dot). OpenCV's SVN era had 55 people on `no@email` merged into one "author".
+- Bot detection widened: name `bot\b` (OpenCV Pushbot), `^copilot` (1012 vscode commits), `machine$` (elasticsearchmachine, 923 commits). Emails not checked for `bot\b` (geofbot@ is human).
+- Human co-authors of bot-authored commits now earn the 0.5 delivery (Copilot commits name the human driver in a trailer).
+- `audit` prints divergence among contested files (more than top-n authors) because small files make top-n membership trivial.
+
+Learnings (details and numbers in eval/results.md)
+- The 18-month half-life decides almost every ranking on old code. Founders with the highest raw score (antirez 9.9 on server.c, Till Rohrmann 9.4 on JobMaster, Shay Banon on ES core) rank 6th-38th. Whether that is correct depends on what the question is: "who can I ask today" vs "who built the mental model".
+- `first_authored` credits whoever made the first commit in git's history: the bulk importer (Erich Gamma on every vscode file, Vadim's 2010 "atomic bomb" in OpenCV), not the author. Unreliable when history begins with an import/restructure.
+- Sweeps are the dominant divergence case: one recent 1-2 line commit scores ~1.2, which beats anyone >2 years stale. Josh Soref's spelling sweep is the last commit on 11 of Valkey's 26 divergent src files and sits in the top-3 of 9/30 busiest files.
+- Dormant files: all scores collapse toward 0 and order is set by who is least stale, not who knows the code.
+- Identity splits remain (Benjamin Pasero: 3 emails, vscode .mailmap does not cover him; Alekhin x3 in OpenCV). Wrong merges are worse than splits, so the fix only targeted merges.
+- Cost: one `git log --follow` per file, 0.5-3 s on 100k+ commit repos. Audit scoped to 150-740 file directories.
+
+Open questions — evidence so far
+- Q1: Valkey MAINTAINERS.md as partial ground truth: top-1 listed on 21/30 busiest files; 58/90 top-3 slots. Falsification proposal in eval/results.md.
+- Q2: last committer is outside top-3 on 0-10% of files (contested: 0-10%) across 10 directories; the differences are almost all signal (sweeps, one-off fixes). But at HL=18 memoir's top-3 is mostly recent committers, so agreement with blame is by construction: contested divergence is 1-4% at HL=18, 8-15% at HL=60, 15-37% with no decay.
+- Q3: bots, merges, no-op renames filtered; sweeps and bulk imports are the remaining authorship-without-knowledge cases. Agent-authored commits should credit the human in the trailer (done).
+- Q4: decay makes dormant files uninformative; the tool should say "dormant since X, low confidence" and probably show raw ranking.
+- Q5: a sweep author in the top-3 is the common mismatch; the file is usually right and the listed roster is per-project, not per-file. Unlisted active contributors (Rain Valentine) are a legitimate disagreement.
+- Q6: deferred with P3.
+

@@ -3,4 +3,4 @@
 - P1 also picked up on mass-rename. Content-free commits (pure renames, etc. with 0 lines changed) likely carry little to no knowledge. Could dampen or fully exclude. Simplest now to exclude.
 - Decided to skip P3 (MCP) until working more on internals, where most of the learning will likely arise
 - Chose repos ... wanted a mix of sizes, but with many contributors. Elasticsearch, Valkey, VS Code, OpenCV, Flink
-- 
+- Holding on manual review for a bit while agent cloned repos and running audit
