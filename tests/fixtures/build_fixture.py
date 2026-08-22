@@ -13,7 +13,7 @@ History (chronological; see EXPECTED below for what tests rely on):
   c05 2023-05-20 "Robert B" <rob@old.example>  edit util.py   (mailmap alias of bob)
   c06 2023-06-15 bob     pure rename src/util.py -> src/helpers.py
   c07 2023-07-01 alice   edit core.py
-  c08 2023-08-01 dependabot[bot]  bump requirements.txt
+  c08 2023-08-01 dependabot[bot]  bump requirements.txt, Co-authored-by: dave
   c09 2023-10-01 dave    edit helpers.py on branch feature/dave
   c10 2023-10-05 alice   merge feature/dave (--no-ff; pure merge commit, no diff of its own)
   c11 2024-01-15 alice   edit core.py
@@ -145,7 +145,7 @@ def build(dest: Path) -> Path:
 
     # c08 (bot)
     _write(dest, "requirements.txt", "requests==2.31.0\n")
-    commit(BOT, "2023-08-01", "Bump requests from 2.28.0 to 2.31.0", "requirements.txt")
+    commit(BOT, "2023-08-01", f"Bump requests from 2.28.0 to 2.31.0\n\nCo-authored-by: {DAVE[0]} <{DAVE[1]}>", "requirements.txt")
 
     # c09 on branch + c10 merge
     _git(dest, "checkout", "-q", "-b", "feature/dave", author=DAVE, date="2023-10-01")

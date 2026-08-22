@@ -34,6 +34,12 @@ def test_bot_commits_are_excluded_from_facts_but_visible_as_last_commit(fixture_
     assert h.last_commit.is_bot is True
 
 
+def test_human_coauthor_of_bot_commit_is_credited(fixture_repo):
+    dave = by_name(mine_file(fixture_repo, "requirements.txt"))["Dave Diaz"]
+    assert dave.commits == 0
+    assert dave.coauthored_count == 1
+
+
 def test_coauthor_is_credited_as_coauthor_not_committer(fixture_repo):
     dave = by_name(mine_file(fixture_repo, "src/core.py"))["Dave Diaz"]
     assert dave.commits == 0

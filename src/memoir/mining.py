@@ -13,7 +13,10 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-BOT_RE = re.compile(r"dependabot|renovate|\[bot\]|actions@github", re.I)
+BOT_RE = re.compile(r"dependabot|renovate|\[bot\]|actions@github", re.I)  # name or email
+# Name-only patterns: "OpenCV Pushbot", "Copilot", "elasticsearchmachine". Word boundary
+# after "bot" avoids humans like "sunhaibotb"; emails are not checked (geofbot@...).
+BOT_NAME_RE = re.compile(r"bot\b|^copilot\b|machine$", re.I)
 # Emails that many distinct people share (SVN imports, misconfigured git). Keying on
 # them would merge unrelated authors, so such identities key on name instead.
 PLACEHOLDER_EMAIL_RE = re.compile(r"^$|^[^@]*$|@[^.]*$|\(none\)|localhost|^no@email$|unknown", re.I)
@@ -36,7 +39,7 @@ class Identity:
 
     @property
     def is_bot(self) -> bool:
-        return bool(BOT_RE.search(self.name) or BOT_RE.search(self.email))
+        return bool(BOT_RE.search(self.name) or BOT_RE.search(self.email) or BOT_NAME_RE.search(self.name))
 
 
 @dataclass
@@ -178,7 +181,8 @@ def mine_file(repo: str | Path, path: str) -> FileHistory:
     repo = Path(repo)
     all_commits = _parse_log(repo, path)
     commits = [c for c in all_commits if not c.is_merge]  # newest first
-    human = [c for c in commits if not c.is_bot and not c.is_noop]
+    content = [c for c in commits if not c.is_noop]  # bots included: their human co-authors earn credit
+    human = [c for c in content if not c.is_bot]
     oldest = human[-1] if human else None
 
     facts: dict[str, AuthorFacts] = {}
@@ -192,8 +196,10 @@ def mine_file(repo: str | Path, path: str) -> FileHistory:
             )
         return facts[ident.key]
 
-    for c in human:
-        participants = [(c.author, True)] + [(co, False) for co in c.coauthors if not co.is_bot and co.key != c.author.key]
+    for c in content:
+        participants = ([] if c.is_bot else [(c.author, True)]) + [
+            (co, False) for co in c.coauthors if not co.is_bot and co.key != c.author.key
+        ]
         for ident, primary in participants:
             f = get(ident)
             if primary:
