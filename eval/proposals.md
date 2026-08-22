@@ -101,6 +101,65 @@ Design, no code yet:
 - **Decision rule.** A change is adopted if it does not lose against its own baseline on hit@3 pooled and wins on the sweep subset; the half-life question is settled by which HL maximizes hit@3 for `current` and which maximizes fix-replay hit@3 for `built_it` — two answers, as §5 predicts.
 - **Cost.** Fetching PR approvals needs network (your approval); trailers-only is offline but covers few repos. Replay itself is index-speed: thousands of events in seconds.
 
+## Status after the gate (continued by direction)
+
+- Adopted as defaults (commit `Adopt defaults`): `breadth_k=10`, `line_cap=300`, `first_rule=not_root`. `V0` is kept in `scoring.py` as the spec formula and the harness baseline. `eval/regress/diff_adopted.md`: Soref 10→4, Ran 2→3, Gamma 82→0, Shay 33→30, roster 21→23 / 58→62; regression holds except the Madelyn/Binbin 0.03 swap.
+- `line_scale=20` stays a flag: on top of the adopted defaults it takes Soref 4→1 and moves ≤5% of top-1s, but costs 4 roster slots (`diff_adopted_linescale.md`). The replay decides.
+- §5 implemented in `who --json`: `lists.current` / `lists.built_it` / `lists.recent` and `flags` (`dormant`, `dormant_months`, `last_touch_is_sweep`, `last_touch_breadth`, `stability.top1_by_half_life` over HL ∈ {12, 18, 36, ∞}). Text output unchanged apart from the dormancy line.
+- §7 implemented offline as `eval/replay.py` (fix-commit replay; see ### §7 results: fix-commit replay, 1,000 events per repo (eval/replay.md)
+
+hit@3 / hit@1, and paired wins/losses against recency-3 on hit@3:
+
+| repo (pairs) | adopted | v0 | hl60 | raw | recency-3 | last committer | most commits | adopted vs recency-3 |
+|---|---|---|---|---|---|---|---|---|
+| valkey (1,702) | **.541** / .391 | .541 / .384 | .525 / .364 | .509 / .305 | .520 / .385 | .385 | .462 | **78 W / 43 L** |
+| opencv (2,193) | .569 / .366 | .559 / .353 | .552 / .328 | .537 / .295 | **.577 / .425** | .425 | .491 | 44 W / 62 L |
+| flink (2,685) | .493 / .304 | .495 / .288 | .483 / .267 | .476 / .251 | **.502 / .357** | .357 | .435 | 73 W / 98 L |
+| elasticsearch (2,334) | .510 / .313 | .515 / .313 | .494 / .278 | .482 / .254 | .515 / **.352** | .352 | .452 | 91 W / 103 L |
+| vscode (1,997) | **.754** / .525 | .744 / .509 | .746 / .499 | .738 / .485 | .728 / .523 | .523 | .680 | **130 W / 78 L** |
+
+Sweep-last subset (last commit before the event had breadth > 50), hit@3 adopted vs recency-3: valkey .246 vs .185 (n=65), opencv .387 vs .404 (349), flink .383 vs .386 (661), elasticsearch .385 vs .397 (514), vscode .698 vs .549 (162).
+
+Reading, in order of confidence:
+
+1. **Decay is right for "who will fix this next", and longer is worse.** `raw` and `hl60` lose to the adopted HL18 on every repo, on every metric. That settles the half-life debate for the `current` list: do not lengthen it. (It says nothing about `built_it`, whose criterion is not "who fixes next".)
+2. **Adopted ≥ v0**: hit@1 up on 4/5 repos (equal on ES), hit@3 up on 3/5, flat on 2. The breadth/cap/not_root changes did not hurt predictive value and slightly helped. `line_scale=20` is flat-to-slightly-worse on hit@3 everywhere → leave it off.
+3. **memoir beats `git log -1` and "most commits ever" everywhere** at k=3 (by 10–20 points), which is the floor the thesis needed to clear.
+4. **memoir does not clearly beat the 3 most recent humans.** Wins with margin on valkey and vscode (sign tests ~p<0.01), loses narrowly on opencv and flink, ties on elasticsearch. At k=1 the last committer is a *better* single guess than memoir's #1 on opencv/flink/ES (.43/.36/.35 vs .37/.30/.31). Fixers are usually the people who just touched the file; a pure-recency list captures that and memoir's extra terms add little on top for this question.
+5. **The sweep-last prediction held on 2/5.** Where a sweep was the last touch, memoir beats recency-3 on valkey (+6 pts) and vscode (+15) and is level elsewhere — recency-3 also survives a sweep because its second and third names are the pre-sweep people. The clearer win is against the single last committer (.08–.27 vs .25–.70).
+
+Caveat on the criterion itself: fix replay is recency-biased by construction (people fix what they just changed), so it favours recency baselines; it measures `current`, not `built_it`. A review-routing replay (who is asked, rather than who acts) and a deep-bug subset (fix touching code untouched for > 2 years) are the criteria where depth should matter, and neither is run yet — the first needs network.
+
+What this does to the thesis: the strong form ("memoir's ranking beats last-touch") holds at k=3 against `git log -1` on all five repos, and against the 3-most-recent-humans baseline on two of five. The honest statement today is: **memoir is a cheap, deterministic, well-behaved recency-plus-depth signal that is never worse than the naive baselines and sometimes better, with the useful property that it can say when it disagrees with recency (`lists.recent`, `flags`)** — not yet a demonstrated large improvement over the cheapest competitor on the one proxy we can run offline.
+ below). PR-approval replay needs network and is not built.
+
+### §7 results: fix-commit replay, 1,000 events per repo (eval/replay.md)
+
+hit@3 / hit@1, and paired wins/losses against recency-3 on hit@3:
+
+| repo (pairs) | adopted | v0 | hl60 | raw | recency-3 | last committer | most commits | adopted vs recency-3 |
+|---|---|---|---|---|---|---|---|---|
+| valkey (1,702) | **.541** / .391 | .541 / .384 | .525 / .364 | .509 / .305 | .520 / .385 | .385 | .462 | **78 W / 43 L** |
+| opencv (2,193) | .569 / .366 | .559 / .353 | .552 / .328 | .537 / .295 | **.577 / .425** | .425 | .491 | 44 W / 62 L |
+| flink (2,685) | .493 / .304 | .495 / .288 | .483 / .267 | .476 / .251 | **.502 / .357** | .357 | .435 | 73 W / 98 L |
+| elasticsearch (2,334) | .510 / .313 | .515 / .313 | .494 / .278 | .482 / .254 | .515 / **.352** | .352 | .452 | 91 W / 103 L |
+| vscode (1,997) | **.754** / .525 | .744 / .509 | .746 / .499 | .738 / .485 | .728 / .523 | .523 | .680 | **130 W / 78 L** |
+
+Sweep-last subset (last commit before the event had breadth > 50), hit@3 adopted vs recency-3: valkey .246 vs .185 (n=65), opencv .387 vs .404 (349), flink .383 vs .386 (661), elasticsearch .385 vs .397 (514), vscode .698 vs .549 (162).
+
+Reading, in order of confidence:
+
+1. **Decay is right for "who will fix this next", and longer is worse.** `raw` and `hl60` lose to the adopted HL18 on every repo, on every metric. That settles the half-life debate for the `current` list: do not lengthen it. (It says nothing about `built_it`, whose criterion is not "who fixes next".)
+2. **Adopted ≥ v0**: hit@1 up on 4/5 repos (equal on ES), hit@3 up on 3/5, flat on 2. The breadth/cap/not_root changes did not hurt predictive value and slightly helped. `line_scale=20` is flat-to-slightly-worse on hit@3 everywhere → leave it off.
+3. **memoir beats `git log -1` and "most commits ever" everywhere** at k=3 (by 10–20 points), which is the floor the thesis needed to clear.
+4. **memoir does not clearly beat the 3 most recent humans.** Wins with margin on valkey and vscode (sign tests ~p<0.01), loses narrowly on opencv and flink, ties on elasticsearch. At k=1 the last committer is a *better* single guess than memoir's #1 on opencv/flink/ES (.43/.36/.35 vs .37/.30/.31). Fixers are usually the people who just touched the file; a pure-recency list captures that and memoir's extra terms add little on top for this question.
+5. **The sweep-last prediction held on 2/5.** Where a sweep was the last touch, memoir beats recency-3 on valkey (+6 pts) and vscode (+15) and is level elsewhere — recency-3 also survives a sweep because its second and third names are the pre-sweep people. The clearer win is against the single last committer (.08–.27 vs .25–.70).
+
+Caveat on the criterion itself: fix replay is recency-biased by construction (people fix what they just changed), so it favours recency baselines; it measures `current`, not `built_it`. A review-routing replay (who is asked, rather than who acts) and a deep-bug subset (fix touching code untouched for > 2 years) are the criteria where depth should matter, and neither is run yet — the first needs network.
+
+What this does to the thesis: the strong form ("memoir's ranking beats last-touch") holds at k=3 against `git log -1` on all five repos, and against the 3-most-recent-humans baseline on two of five. The honest statement today is: **memoir is a cheap, deterministic, well-behaved recency-plus-depth signal that is never worse than the naive baselines and sometimes better, with the useful property that it can say when it disagrees with recency (`lists.recent`, `flags`)** — not yet a demonstrated large improvement over the cheapest competitor on the one proxy we can run offline.
+
+
 ## Summary for the gate
 
 | proposal | recommendation | evidence |

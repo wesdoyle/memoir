@@ -58,17 +58,17 @@ One `git log --numstat -M` walk over the history is persisted under `.git/memoir
 
 ## How it scores (v0)
 
-For each (file, author) over the file's full `--follow` history, excluding bot authors, pure merges, and content-free commits (renames, mode changes):
+For each (file, author) over the file's full history, excluding bot authors, pure merges, and content-free commits (renames, mode changes):
 
 ```
-raw   = 3.0 · first_authored + 1.0 · log(1 + deliveries) + 0.5 · log(1 + lines_changed)
+raw   = 3.0 · first_authored + 1.0 · log(1 + deliveries) + 0.5 · log(1 + lines)
         − 0.7 · log(1 + commits_by_others_since_last_touch)
 score = max(0, raw) · 0.5 ^ (months_since_last_touch / 18)
 ```
 
-`deliveries` = commits + 0.5 × co-authored commits (`Co-authored-by:` trailers, including on bot-authored commits). Identities resolve through `.mailmap`; placeholder emails fall back to name. Evidence per author: `score, raw_score, first_authored, commits, coauthored_count, lines_changed, active_span, last_touch, months_since_last_touch, others_commits_since`.
+with, as of the P6 gate: a commit touching *B* files counts as `min(1, 10/B)` of a commit (for credit, lines, and the erosion it causes others — sweeps carry little knowledge); lines per commit are capped at 300 before the size term; `first_authored` earns its +3 unless the creating commit is the repository's root commit (bulk imports). `deliveries` = commits + 0.5 × co-authored commits (`Co-authored-by:` trailers, including on bot-authored commits). Identities resolve through `.mailmap`; placeholder emails fall back to name. Every shape is a field of `scoring.Weights`; `scoring.V0` is the original formula. Evidence per author: `score, raw_score, first_authored, first_credited, commits, coauthored_count, lines_changed, active_span, last_touch, months_since_last_touch, others_commits_since`. `who --json` also returns labeled lists — `current` (decayed: who can answer today), `built_it` (raw: deepest accumulated knowledge), `recent` (the last distinct humans, i.e. the recency baseline) — and trust flags (`dormant`, `last_touch_is_sweep`, `stability` across half-lives).
 
-Evaluation against five public repositories is in [eval/results.md](eval/results.md); performance baseline and index benchmarks in [eval/perf.md](eval/perf.md); design notes and decisions in [agent_notes.md](agent_notes.md).
+Evaluation against five public repositories is in [eval/results.md](eval/results.md); performance baseline and index benchmarks in [eval/perf.md](eval/perf.md); the scoring-change harness and measured proposals in [eval/proposals.md](eval/proposals.md) and [eval/regress/](eval/regress/); the fix-commit replay in [eval/replay.md](eval/replay.md); design notes and decisions in [agent_notes.md](agent_notes.md).
 
 ## Open questions
 

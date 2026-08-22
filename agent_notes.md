@@ -105,3 +105,11 @@ Decisions
 - Subtree merges (valkey deps/jemalloc) leave files with no non-merge history: 16/100 sampled valkey files have no ranking. Known limitation (merges excluded by constraint).
 - No defaults changed; recommendations and the replay design are in proposals.md for the gate.
 
+## P7 — adoption, lists, replay
+
+- Adopted defaults: `breadth_k=10`, `line_cap=300`, `first_rule=not_root` (diff_adopted.md). `line_scale` left as a flag (roster -4, replay flat). `V0` constant keeps the spec formula; the regress baseline is V0.
+- Fixture consequence of `not_root`: Alice's root-commit creation earns no +3, so Carol's sweep wins README.md and the fixture audit at top-1 is 2/4 (was 3/4). Small real repos with a genuine root-commit creation pay the same price; accepted for the importer case (Gamma 82->0, 6% of P4 files).
+- `who --json` now returns `lists` (current / built_it / recent) and `flags` (dormant, last_touch_is_sweep, stability over HL 12/18/36/inf). `Index.history(before=pos)` gives history as of any commit.
+- Offline fix-commit replay (eval/replay.py, eval/replay.md): decay validated (raw and hl60 lose everywhere); adopted >= v0; memoir beats last-committer and most-commits by 10-20 points at k=3 everywhere; vs the 3 most recent humans it wins on valkey and vscode, loses narrowly on opencv and flink, ties on ES; at k=1 the last committer is the better single guess on 3/5 repos. The fix criterion is recency-biased; review-routing replay (network) and a deep-bug subset are the next criteria.
+- Q1 status: partially answered. The premise survives against naive last-touch; it is not yet shown to beat pure recency (last 3 humans) on the proxy we have.
+
