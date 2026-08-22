@@ -1,1 +1,4 @@
 - Wrote initial prompt, made revisions, sketched questions the proto should help answer.
+- In P1 agent noticed formula can go negative ... interesting; since only a dev who's worked with a file can have a score at all, negative is a heuristic that could represent experience "loss" with a file. That's pretty loose, intuitively seems better to clamp for now.
+- P1 also picked up on mass-rename. Content-free commits (pure renames, etc. with 0 lines changed) likely carry little to no knowledge. Could dampen or fully exclude. Simplest now to exclude.
+- 

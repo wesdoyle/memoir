@@ -84,3 +84,24 @@ def rank(history: FileHistory, now: datetime | None = None, w: Weights = Weights
     now = now or datetime.now(tz=timezone.utc)
     scored = [score_author(f, now, w) for f in history.authors]
     return sorted(scored, key=lambda e: (-e.score, e.author.name, e.author.email))
+
+
+def divergence(history: FileHistory, ranked: list[Evidence], n: int = 3) -> dict:
+    """Compare the file's last committer (what blame shows) with memoir's top-n."""
+    last = history.last_commit
+    top = ranked[:n]
+    if last is None:
+        return {"last_commit": None, "last_is_bot": False, "rank_of_last": None, "diverges": False, "top": []}
+    rank_of_last = next((i + 1 for i, e in enumerate(ranked) if e.author.key == last.author.key), None)
+    return {
+        "last_commit": {
+            "author": {"name": last.author.name, "email": last.author.email},
+            "date": last.date.date().isoformat(),
+            "sha": last.sha[:10],
+            "is_noop": last.is_noop,
+        },
+        "last_is_bot": last.is_bot,
+        "rank_of_last": rank_of_last,  # None if the last committer has no expertise record
+        "diverges": not last.is_bot and (rank_of_last is None or rank_of_last > n),
+        "top": [e.to_dict() for e in top],
+    }

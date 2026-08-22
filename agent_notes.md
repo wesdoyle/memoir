@@ -32,3 +32,15 @@ Gate decisions (Wes)
 
 Open questions — evidence so far
 - Q3: bots and merges are filtered; lint sweeps and renames are not — they count as deliveries, relying on `first_authored` + delivery count + size to outweigh them. Fixture confirms at default weights (Alice 1.87 vs Carol 0.77).
+
+## P2 — CLI
+
+Decisions
+- `memoir who <path> [-n] [--repo] [--json] [--now]`, `memoir audit [<dir>] [--top 3] [--worst 10] [--repo] [--now]`. `--json` added because rankings must be structured data and it makes the MCP surface a thin wrapper; `--now` for reproducible output/tests.
+- `divergence()` lives in scoring.py and is shared by `audit` (P2) and `blame_divergence` (P3). Last committer = raw newest non-merge commit (bots and no-op renames included: that is what `git log -1` shows).
+- Audit headline excludes files whose last commit is a bot (reported as a separate count) and files with no human history. Counting bot-last files as "blame lies" would inflate the stat with a trivially true case.
+- Worst cases = divergent files sorted by (top expert score - last committer score); last committer with no record scores 0.
+- Paths resolve relative to cwd via `git rev-parse --show-toplevel` unless `--repo` is given (then relative to root).
+
+Learnings
+- Smoke test on this repo: single author, 0/19 divergence, 0.24 s for 19 files (~12 ms/file, one git process each). P4 repos with 10k+ files will need a path filter or patience; no caching per spec.
