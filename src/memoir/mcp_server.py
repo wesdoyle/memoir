@@ -36,7 +36,8 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
     root = Path(repo).resolve()
     when = _parse_now(now)
     mcp = FastMCP("memoir", instructions=(
-        "memoir ranks the people most likely to hold the mental model of a file, from git history. "
+        f"memoir ranks the people most likely to hold the mental model of a file, from git history. This server "
+        f"answers about the repository at {root} (every result carries `repo`). "
         "Start with who_knows; call expertise_evidence to justify or compare a name; call blame_divergence "
         "when the last committer (git blame/log) may be misleading; call person_profile before pulling "
         "someone in, to see what they know (themes, files, directories). Scores: `score` is time-decayed "
@@ -59,6 +60,7 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
         h, ranked, div = _answer(path, n)
         lists, flags = lists_and_flags(h, ranked, n, when)
         out = {
+            "repo": str(root),
             "path": path,
             "current": [_compact(e) for e in ranked[:n]],
             "recent": [r["name"] for r in lists["recent"]],
@@ -82,8 +84,8 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
         for i, e in enumerate(ranked, 1):
             if q in e.author.name.lower() or q in e.author.email.lower():
                 d = e.to_dict()
-                return {"path": path, "author": d.pop("author"), "rank": i, "of": len(ranked), "evidence": d}
-        return {"path": path, "author": author, "rank": None, "of": len(ranked),
+                return {"repo": str(root), "path": path, "author": d.pop("author"), "rank": i, "of": len(ranked), "evidence": d}
+        return {"repo": str(root), "path": path, "author": author, "rank": None, "of": len(ranked),
                 "candidates": [e.author.name for e in ranked[:10]]}
 
     @mcp.tool
@@ -94,7 +96,7 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
         h, ranked, div = _answer(path, n)
         last = div["last_commit"]
         if last is None:
-            return {"path": path, "diverges": False, "explanation": "no history for this path"}
+            return {"repo": str(root), "path": path, "diverges": False, "explanation": "no history for this path"}
         lc = h.last_commit
         why = []
         if div["last_is_bot"]:
@@ -109,7 +111,7 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
         explanation = (f"last commit by {last['author']['name']} on {last['date']}: {where}. "
                        + ("; ".join(why) + ". " if why else "")
                        + (f"memoir top-{n}: {top}." if top else "memoir has no ranking."))
-        return {"path": path, "last_commit": last, "last_is_bot": div["last_is_bot"], "rank_of_last": r,
+        return {"repo": str(root), "path": path, "last_commit": last, "last_is_bot": div["last_is_bot"], "rank_of_last": r,
                 "diverges": div["diverges"], "top": [_compact(e) for e in ranked[:n]], "explanation": explanation}
 
     @mcp.tool
@@ -126,7 +128,7 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
                 cands = []
                 if note and note.startswith("ambiguous"):
                     cands = [c.strip() for c in note[len("ambiguous: "):].split(";") if c.strip()]
-                return {"query": query, "ambiguous": bool(cands), "candidates": cands, "person": None,
+                return {"repo": str(root), "query": query, "ambiguous": bool(cands), "candidates": cands, "person": None,
                         "note": None if cands else note}
             rep = person_report(src.index, keys, now=when, n_top=n)
         finally:
@@ -137,6 +139,7 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
             d["representative"] = d["representative"][:3]
         rep["query"] = query
         rep["ambiguous"] = False
+        rep["repo"] = str(root)
         return rep
 
     @mcp.tool
@@ -156,6 +159,7 @@ def make_server(repo: str | Path, now: str | None = None) -> FastMCP:
         finally:
             src.close()
         rep["selection"]["selector"] = desc
+        rep["repo"] = str(root)
         return rep
 
     return mcp

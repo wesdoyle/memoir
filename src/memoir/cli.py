@@ -154,10 +154,16 @@ def index(
 def mcp(
     repo: Path | None = typer.Option(None, "--repo", help="Repository root (default: the current directory's repository)"),
 ) -> None:
-    """Serve the three MCP tools (who_knows, expertise_evidence, blame_divergence) over stdio."""
+    """Serve the MCP tools over stdio for the repository at --repo (default: the current directory's)."""
     from memoir.mcp_server import make_server
 
-    root = _toplevel(repo or Path.cwd())
+    try:
+        root = _toplevel(repo or Path.cwd())
+    except typer.BadParameter as e:
+        typer.echo(f"memoir mcp: {e}. Run it inside a repository or pass --repo PATH "
+                   f"(with uv, use `uv run --project`, not `--directory`, which changes the working directory).", err=True)
+        raise typer.Exit(code=2)
+    typer.echo(f"memoir mcp: serving {root}", err=True)
     make_server(root).run()
 
 

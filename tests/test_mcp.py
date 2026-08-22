@@ -82,3 +82,18 @@ def test_experts_for_files_tool(fixture_repo):
     assert out["selection"]["files"] == 1 and out["current"][0]["name"] == "Alice Adams"
     out = call(srv, "experts_for_files", dir="src", match="zzz")
     assert out["selection"]["files"] == 0 and out["current"] == []
+
+
+def test_every_tool_result_names_the_repo(fixture_repo):
+    srv = make_server(fixture_repo, now="2026-08-21")
+    for tool, args in (("who_knows", {"path": "src/core.py"}), ("expertise_evidence", {"path": "src/core.py", "author": "alice"}),
+                       ("blame_divergence", {"path": "src/core.py"}), ("person_profile", {"query": "alice"}),
+                       ("experts_for_files", {"dir": "src"})):
+        assert call(srv, tool, **args)["repo"] == str(fixture_repo.resolve()), tool
+
+
+def test_mcp_command_refuses_outside_a_repo(tmp_path):
+    from typer.testing import CliRunner
+    from memoir.cli import app
+    r = CliRunner().invoke(app, ["mcp", "--repo", str(tmp_path)])
+    assert r.exit_code == 2 and "not inside a git repository" in r.output and "--project" in r.output

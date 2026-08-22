@@ -25,7 +25,7 @@ cd /path/to/some-repo
 memoir who src/foo.c
 ```
 
-(Without installing: `uv run --directory /path/to/memoir memoir who src/foo.c`.) The first command in a repository builds the index under `.git/memoir/` and says so on stderr; after that queries are instant and the index updates itself when `HEAD` moves.
+(Without installing: `uv run --project /path/to/memoir memoir who src/foo.c` — `--project` uses memoir's environment without changing your working directory; `--directory` would.) The first command in a repository builds the index under `.git/memoir/` and says so on stderr; after that queries are instant and the index updates itself when `HEAD` moves.
 
 **Who knows a file?**
 
@@ -115,7 +115,7 @@ memoir serves five tools over stdio: `who_knows(path, n=3)` → compact ranked a
 *Claude Code* — run inside the repository you want answers about (the server uses that repo; add `--repo PATH` to pin another):
 
 ```sh
-claude mcp add memoir -- uv run --directory /path/to/memoir memoir mcp
+claude mcp add memoir -- uv run --project /path/to/memoir memoir mcp
 claude mcp list            # or /mcp inside a session
 ```
 
@@ -123,24 +123,24 @@ Or commit it for the team as `.mcp.json` in the repository root:
 
 ```json
 { "mcpServers": { "memoir": { "command": "uv",
-    "args": ["run", "--directory", "/path/to/memoir", "memoir", "mcp"] } } }
+    "args": ["run", "--project", "/path/to/memoir", "memoir", "mcp"] } } }
 ```
 
 *GitHub Copilot (VS Code agent mode)* — `.vscode/mcp.json` in the repository (or add via the "MCP: Add Server" command):
 
 ```json
 { "servers": { "memoir": { "type": "stdio", "command": "uv",
-    "args": ["run", "--directory", "/path/to/memoir", "memoir", "mcp"] } } }
+    "args": ["run", "--project", "/path/to/memoir", "memoir", "mcp"] } } }
 ```
 
 *Claude Desktop* — `claude_desktop_config.json`, pinning the repo since Desktop has no working directory:
 
 ```json
 { "mcpServers": { "memoir": { "command": "uv",
-    "args": ["run", "--directory", "/path/to/memoir", "memoir", "mcp", "--repo", "/path/to/your-repo"] } } }
+    "args": ["run", "--project", "/path/to/memoir", "memoir", "mcp", "--repo", "/path/to/your-repo"] } } }
 ```
 
-If `uv` is not on the PATH the host app uses, give its full path (e.g. `~/.local/bin/uv`). Only stdout is the MCP protocol; memoir's notices go to stderr.
+Use `--project`, not `--directory`: `--directory` changes the working directory to memoir itself, and the server would then answer about the wrong repository (every tool result carries `repo` so a mismatch is visible). If `uv` is not on the PATH the host app uses, give its full path (e.g. `~/.local/bin/uv`). Only stdout is the MCP protocol; memoir's notices go to stderr.
 
 ## How it scores (v0)
 
