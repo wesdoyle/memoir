@@ -1,4 +1,4 @@
-"""MCP surface: exactly three tools, mirroring the resolution ladder; in-memory client."""
+"""MCP surface: the file ladder (who_knows / expertise_evidence / blame_divergence) plus person_profile; in-memory client."""
 
 import asyncio
 import json
@@ -21,10 +21,6 @@ def tools(server):
         async with Client(server) as c:
             return sorted(t.name for t in await c.list_tools())
     return asyncio.run(go())
-
-
-def test_exactly_three_tools(fixture_repo):
-    assert tools(make_server(fixture_repo, now="2026-08-21")) == ["blame_divergence", "expertise_evidence", "who_knows"]
 
 
 def test_who_knows_is_compact_and_ranked(fixture_repo):
@@ -57,3 +53,20 @@ def test_blame_divergence_explains(fixture_repo):
     assert "explanation" in out and "Carol Chen" in out["explanation"]
     out1 = call(srv, "blame_divergence", path="src/core.py", n=1)
     assert out1["diverges"] is True and "Alice Adams" in out1["explanation"]
+
+
+def test_four_tools_now_include_person_profile(fixture_repo):
+    assert tools(make_server(fixture_repo, now="2026-08-21")) == ["blame_divergence", "expertise_evidence", "person_profile", "who_knows"]
+
+
+def test_person_profile_tool(fixture_repo):
+    srv = make_server(fixture_repo, now="2026-08-21")
+    out = call(srv, "person_profile", query="alice", n=3)
+    assert out["person"]["name"] == "Alice Adams"
+    assert out["summary"]["top3_built_it"] >= 1
+    assert out["top_files"]["current"][0]["path"] == "src/core.py"
+    assert "themes" in out and "directories" in out
+    amb = call(srv, "person_profile", query="example.com")
+    assert amb["ambiguous"] is True and len(amb["candidates"]) >= 3
+    none = call(srv, "person_profile", query="nobody")
+    assert none["ambiguous"] is False and none["person"] is None
