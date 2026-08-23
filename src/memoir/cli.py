@@ -179,25 +179,6 @@ def mcp(
     make_server(root).run()
 
 
-@app.command()
-def identities(
-    repo: Path | None = typer.Option(None, "--repo"),
-    as_json: bool = typer.Option(False, "--json"),
-) -> None:
-    """Suggest .mailmap lines for split identities (same name / noreply / spellings / handles). Nothing is written."""
-    from memoir.identities import format_mailmap, suggest_mailmap
-
-    root, _ = _resolve(".", repo)
-    src = Source(root)
-    try:
-        out = suggest_mailmap(src.index)
-    finally:
-        src.close()
-    if as_json:
-        typer.echo(json.dumps({k: [{"mailmap": l, "commits": c} for l, c in v] for k, v in out.items()}, indent=2))
-    else:
-        typer.echo(format_mailmap(out))
-
 
 @app.command()
 def person(

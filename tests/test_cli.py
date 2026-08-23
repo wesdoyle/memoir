@@ -166,7 +166,3 @@ def test_audit_json(fixture_repo):
     assert data["worst"][0]["path"] in ("src/core.py", "src/helpers.py")
     assert {"path", "last_commit", "last_score", "top", "top_score"} <= set(data["worst"][0])
 
-
-def test_identities_json(fixture_repo):
-    data = json.loads(run("identities", "--repo", str(fixture_repo), "--json"))
-    assert set(data) == {"high", "noreply", "names", "handle"}

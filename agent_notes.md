@@ -164,3 +164,8 @@ Decisions
 - `.mailmap` leverage: memoir applies it when the repo has one; pipecat has none, so splits like filipi87 / Filipi Fuchter surface. New `handle` tier in `memoir identities`: digit-stripped single-token name matching the first name of exactly one multi-token person; skipped when the handle's email already belongs to a multi-token identity (names tier owns it) or the first name is ambiguous. First cut had both false-positive classes (Johannes Rieken's email mapped to Johannes Herchen; one of several Pauls); vscode suggestions went 117 -> 39 after the two rules. Report-time merging stays conservative (email or full name); handles are suggest-only.
 - Known dilution, not addressed: generated files (valkey src/commands/*.json) put guybe7 top-3 on ~half of src/ in `experts --dir src`.
 
+## Identities scrapped (Wes, 2026-08-23)
+
+- `memoir identities` (the tiered .mailmap suggester) removed. The field test showed why: every cheap heuristic tier needed exception rules (shared-key, ambiguous-first-name) discovered by eyeballing output, and the confidence of a suggestion is not knowable from names alone. Identity mapping needs a properly tiered / more robust solution (evidence beyond names: co-occurrence of emails in the same PRs, commit timezones, GitHub API), not a heuristic block in a prototype.
+- What remains: `.mailmap` is honored when present; person/experts merge identities sharing an email or a full multi-token name at report time and say so. The limitation is documented in the README.
+

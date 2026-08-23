@@ -25,3 +25,7 @@
     - Interesting, but there is possibly more to learn sooner from using the tooling without spending time wiring it into a plugin.
     - Though, "putting a name to the code" through browsing could be a useful experience to test
   - Integration with tooling the codebase connects to _outside of git_ is useful. GH issues + PRs.
+
+## Sun 8/23 2:45 PM
+- Structured output would be much more useful for composing memoir with other tools
+- In future work, we'll need a better way to maintain an index of identities when a .mailmap file isn't available

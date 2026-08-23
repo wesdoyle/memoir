@@ -100,15 +100,7 @@ $ uv run memoir experts --match auth --prefix                          # a topic
 
 Selectors (`--dir`, `--glob`, `--match`, `--files`) combine; a person's mass sums their score over the files where they are top-3, more for #1 than #3 and more for contested files. A topic word only means what the paths say — the sample shows what matched — and a selection under 3 files is flagged as a file question. `--json` for the structure.
 
-**Split identities**
-
-```sh
-$ uv run memoir identities          # suggested .mailmap lines, tiered (same name / GitHub noreply / spellings / handles); nothing is written
-```
-
-Review, paste into `.mailmap`, rebuild the index (the `handle` tier — `filipi87` → `Filipi Fuchter` — is low confidence; check it first). `person` already merges identities that share an email or a full name for its report and says so.
-
-Every command takes `--json` for piping into `jq` and friends; ordering fields like `mass` live there, while the text views stick to counts, shares and examples.
+**Split identities.** memoir honors `.mailmap` and merges identities that share an email or a full name at report time (and says so), but identity mapping beyond that — handles, noreply addresses, spelling variants — is a known open problem for this prototype; expect the same person to appear more than once in repositories without a `.mailmap`.
 
 **For agents (MCP)**
 
