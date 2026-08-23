@@ -169,3 +169,9 @@ Decisions
 - `memoir identities` (the tiered .mailmap suggester) removed. The field test showed why: every cheap heuristic tier needed exception rules (shared-key, ambiguous-first-name) discovered by eyeballing output, and the confidence of a suggestion is not knowable from names alone. Identity mapping needs a properly tiered / more robust solution (evidence beyond names: co-occurrence of emails in the same PRs, commit timezones, GitHub API), not a heuristic block in a prototype.
 - What remains: `.mailmap` is honored when present; person/experts merge identities sharing an email or a full multi-token name at report time and say so. The limitation is documented in the README.
 
+## Session wrap (2026-08-23)
+
+- State: main at `Scrap memoir identities`; 101 tests; clean tree. Surfaces: who / audit / person / experts (all with --json), MCP with five tools (who_knows, expertise_evidence, blame_divergence, person_profile, experts_for_files), index v5 auto-built and incrementally updated.
+- Known open problems, in rough priority: identity mapping (needs a robust tiered design; .mailmap + email/full-name merge is all we do); generated-file dilution (valkey src/commands/*.json, pipecat equivalents) — same family as the vendored exclusion; review-routing replay still unrun (needs network approval); theme noise (`server`, `type`); `audit` does not yet read file_rank.
+- Field-test learnings (pipecat): install docs must use `uv run --project` (--directory changes cwd and served the wrong repo over MCP; every MCP result now carries `repo`); opaque numbers do not belong in text output.
+
