@@ -5,6 +5,9 @@ Tiers:
   noreply  GitHub `ID+login@users.noreply.github.com` whose login equals another identity's email
            local part or squashed name
   names    one email, several display names (already one identity; picks the canonical spelling)
+  handle   a single-token name (a handle) whose digit-stripped form equals the first name or the
+           squashed full name of exactly one multi-token person (filipi87 -> Filipi Fuchter); skipped
+           when the handle's email already belongs to a multi-token identity or the name is ambiguous
 Canonical identity = the one with the most commits. Single-token names are never merged by name;
 bots and placeholder emails are skipped.
 """
@@ -28,7 +31,7 @@ def suggest_mailmap(ix: Index) -> dict[str, list[tuple[str, int]]]:
     rows = ix.con.execute("SELECT name, email, COUNT(*) FROM commits GROUP BY name, email").fetchall()
     idents = [(Identity(n, e), c) for n, e, c in rows
               if not Identity(n, e).is_bot and not PLACEHOLDER_EMAIL_RE.search(e)]
-    out: dict[str, list[tuple[str, int]]] = {"high": [], "noreply": [], "names": []}
+    out: dict[str, list[tuple[str, int]]] = {"high": [], "noreply": [], "names": [], "handle": []}
     line = lambda canon, other: f"{canon.name} <{canon.email}> {other.name} <{other.email}>"
 
     by_name = defaultdict(list)
@@ -60,6 +63,32 @@ def suggest_mailmap(ix: Index) -> dict[str, list[tuple[str, int]]]:
             if l not in seen:
                 out["noreply"].append((l, c)); seen.add(l)
 
+    # handle: single-token name vs multi-token identities sharing the first name (digits stripped).
+    # Only when (a) the handle's email is not already a multi-token identity's email (same key ->
+    # the names tier owns it) and (b) the stem matches exactly one person.
+    multi = defaultdict(list)  # first-name / squashed-name -> multi-token identities
+    multi_keys = set()
+    for i, c in idents:
+        toks = _norm(i.name)
+        if len(toks) >= 2:
+            multi[toks[0]].append((i, c))
+            multi["".join(toks)].append((i, c))
+            multi_keys.add(i.key)
+    for i, c in idents:
+        toks = _norm(i.name)
+        if len(toks) != 1 or i.key in multi_keys:
+            continue
+        stem = re.sub(r"\d+$", "", toks[0])
+        if len(stem) < 4 or stem not in multi:
+            continue
+        cands = [(j, d) for j, d in multi[stem] if j.key != i.key]
+        persons = {" ".join(_norm(j.name)) for j, _ in cands}
+        if cands and len(persons) == 1:
+            canon = max(cands, key=lambda x: x[1])[0]
+            l = line(canon, i)
+            if l not in seen:
+                out["handle"].append((l, c)); seen.add(l)
+
     by_email = defaultdict(list)
     for i, c in idents:
         by_email[i.email.lower()].append((i, c))
@@ -78,7 +107,8 @@ def format_mailmap(out: dict[str, list[tuple[str, int]]]) -> str:
     L = ["# Suggested .mailmap lines (nothing is written; review, then paste into .mailmap and rebuild the index)",
          "# form: Canonical Name <canonical@email> Other Name <other@email>   # commits under the other identity"]
     for tier, title in (("high", "same full name, different emails"), ("noreply", "GitHub noreply address whose login matches another identity"),
-                        ("names", "one email, several spellings (already one identity; canonical spelling)")):
+                        ("names", "one email, several spellings (already one identity; canonical spelling)"),
+                        ("handle", "a handle matching a full name's first name (low confidence; check before pasting)")):
         L.append(f"\n# {tier}: {title} ({len(out[tier])})")
         L += [f"{l}   # {c}" for l, c in out[tier]]
     return "\n".join(L) + "\n"

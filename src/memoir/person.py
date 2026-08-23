@@ -223,5 +223,5 @@ def format_person(rep: dict, query: str, note: str | None) -> str:
         L.append("  directories (by expertise mass; top-3 current / built_it of files):")
         for d in rep["directories"]:
             rep_files = ", ".join(r["path"].rsplit("/", 1)[-1] for r in d["representative"])
-            L.append(f"    {d['dir']}/  {d['top3_current']}/{d['files']} ({d['coverage_current']:.0%}) · {d['top3_built_it']}/{d['files']} ({d['coverage_built_it']:.0%})  mass {d['mass']:.1f}  e.g. {rep_files}")
+            L.append(f"    {d['dir']}/  {d['top3_current']}/{d['files']} ({d['coverage_current']:.0%}) · {d['top3_built_it']}/{d['files']} ({d['coverage_built_it']:.0%})  e.g. {rep_files}")
     return "\n".join(L)

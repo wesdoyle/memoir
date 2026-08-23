@@ -7,9 +7,9 @@ from memoir.identities import suggest_mailmap
 from memoir.index import build_index, open_index
 
 
-def _repo(tmp_path: Path) -> Path:
-    r = tmp_path / "split"
-    r.mkdir()
+def _repo(base: Path) -> Path:
+    r = base
+    r.mkdir(parents=True)
     def git(*a, name, email, date):
         env = {"GIT_AUTHOR_NAME": name, "GIT_AUTHOR_EMAIL": email, "GIT_COMMITTER_NAME": name, "GIT_COMMITTER_EMAIL": email,
                "GIT_AUTHOR_DATE": date, "GIT_COMMITTER_DATE": date, "GIT_CONFIG_GLOBAL": "/dev/null", "HOME": str(r), "PATH": "/usr/bin:/bin"}
@@ -17,7 +17,9 @@ def _repo(tmp_path: Path) -> Path:
     git("init", "-q", "-b", "main", name="x", email="x@x", date="2024-01-01T00:00:00")
     authors = [("Zed Zee", "zed@work.example", 3), ("Zed Zee", "zed@home.example", 2),
                ("Zed Zee", "1234+zedz@users.noreply.github.com", 1), ("zedz", "zedz@other.example", 1),
-               ("Ann Lee", "ann@x.example", 2), ("ann", "ann@x.example", 1), ("Bo", "bo@a.example", 1), ("Bo", "bo@b.example", 1)]
+               ("Ann Lee", "ann@x.example", 2), ("ann", "ann@x.example", 1), ("Bo", "bo@a.example", 1), ("Bo", "bo@b.example", 1),
+               ("Filipi Fuchter", "ff@x.example", 3), ("filipi87", "filipi87@users.noreply.github.com", 2),
+               ("Paula Root", "paula@a.example", 2), ("Paula Wang", "paula@b.example", 2), ("paula99", "p99@c.example", 1)]
     i = 0
     for name, email, n in authors:
         for _ in range(n):
@@ -29,7 +31,7 @@ def _repo(tmp_path: Path) -> Path:
 
 
 def test_suggest_mailmap_tiers(tmp_path):
-    r = _repo(tmp_path)
+    r = _repo(tmp_path / "split")
     db = tmp_path / "i.sqlite"
     build_index(r, db)
     with open_index(db) as ix:
@@ -48,8 +50,22 @@ def test_suggest_mailmap_tiers(tmp_path):
 def test_identities_cli_prints_a_mailmap_block(fixture_repo, tmp_path):
     from typer.testing import CliRunner
     from memoir.cli import app
-    r = _repo(tmp_path)
+    r = _repo(tmp_path / "split")
     out = CliRunner().invoke(app, ["identities", "--repo", str(r)], catch_exceptions=False)
     assert out.exit_code == 0, out.output
     assert "# high" in out.output and "Zed Zee <zed@work.example> Zed Zee <zed@home.example>" in out.output
     assert "nothing is written" in out.output.lower() or "review" in out.output.lower()
+
+
+def test_handle_tier_links_handles_to_full_names(tmp_path):
+    r = _repo(tmp_path / "h")
+    db = tmp_path / "h.sqlite"
+    build_index(r, db)
+    with open_index(db) as ix:
+        out = suggest_mailmap(ix)
+    handle = {line for line, _ in out["handle"]}
+    assert "Filipi Fuchter <ff@x.example> filipi87 <filipi87@users.noreply.github.com>" in handle
+    # "ann" matches Ann Lee by name too, but shares Ann's email (already one identity) -> names tier, not handle
+    assert not any("ann@x.example> ann" in l for l in handle)
+    assert not any("bo@" in l for l in handle)  # single-token vs single-token: never suggested
+    assert not any("paula99" in l for l in handle)  # two different Paulas: ambiguous, never suggested

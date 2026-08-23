@@ -108,5 +108,5 @@ def format_experts(rep: dict, desc: str) -> str:
         if not rep[label]:
             L.append("    (nobody in the top-3 of any selected file)")
         for i, e in enumerate(rep[label], 1):
-            L.append(f"    {i}. {e['name']}  {e['files_top3']} files ({e['share']:.0%})  mass {e['mass']:.0f}  e.g. {e['best_file']}")
+            L.append(f"    {i}. {e['name']}  top-3 on {e['files_top3']} files ({e['share']:.0%})  e.g. {e['best_file']}")
     return "\n".join(L)

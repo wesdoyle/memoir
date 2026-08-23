@@ -90,6 +90,7 @@ def audit(
     repo: Path | None = typer.Option(None, "--repo"),
     worst: int = typer.Option(10, "--worst", help="How many worst cases to list"),
     now: str | None = typer.Option(None, "--now", help="Reference date YYYY-MM-DD"),
+    as_json: bool = typer.Option(False, "--json"),
 ) -> None:
     """Headline stat: % of files whose last committer is NOT in memoir's top-n (how often blame lies)."""
     root, rel = _resolve(directory, repo)
@@ -118,10 +119,21 @@ def audit(
     contested = [c for c in cases if c[4] > top]  # top-n membership is non-trivial only here
     bad_contested = [c for c in contested if c[1]["diverges"]]
     cpct = 100.0 * len(bad_contested) / len(contested) if contested else 0.0
+    bad.sort(key=lambda c: -(c[2].score - c[3]))
+    if as_json:
+        typer.echo(json.dumps({
+            "directory": rel, "top": top, "files": len(files), "counted": n,
+            "bot_last": bot_last, "no_human_history": empty,
+            "diverging": len(bad), "diverging_pct": round(pct, 1),
+            "contested": {"files": len(contested), "diverging": len(bad_contested), "diverging_pct": round(cpct, 1)},
+            "worst": [{"path": f, "last_commit": div["last_commit"], "last_score": round(last_score, 3),
+                       "top": {"name": best.author.name, "email": best.author.email}, "top_score": round(best.score, 3)}
+                      for f, div, best, last_score, _ in bad[:worst]],
+        }, indent=2))
+        return
     typer.echo(f"audit {rel}: {len(files)} tracked files; {bot_last} file(s) last touched by a bot and {empty} without human history excluded")
     typer.echo(f"blame lies: {len(bad)}/{n} files ({pct:.1f}%) — last committer not in memoir top-{top}")
     typer.echo(f"  among contested files (more than {top} authors): {len(bad_contested)}/{len(contested)} ({cpct:.1f}%)")
-    bad.sort(key=lambda c: -(c[2].score - c[3]))
     if bad:
         typer.echo(f"worst cases (largest gap between top expert and last committer):")
         for f, div, best, last_score, _ in bad[:worst]:
@@ -170,16 +182,21 @@ def mcp(
 @app.command()
 def identities(
     repo: Path | None = typer.Option(None, "--repo"),
+    as_json: bool = typer.Option(False, "--json"),
 ) -> None:
-    """Suggest .mailmap lines for split identities (same name / noreply / spellings). Nothing is written."""
+    """Suggest .mailmap lines for split identities (same name / noreply / spellings / handles). Nothing is written."""
     from memoir.identities import format_mailmap, suggest_mailmap
 
     root, _ = _resolve(".", repo)
     src = Source(root)
     try:
-        typer.echo(format_mailmap(suggest_mailmap(src.index)))
+        out = suggest_mailmap(src.index)
     finally:
         src.close()
+    if as_json:
+        typer.echo(json.dumps({k: [{"mailmap": l, "commits": c} for l, c in v] for k, v in out.items()}, indent=2))
+    else:
+        typer.echo(format_mailmap(out))
 
 
 @app.command()

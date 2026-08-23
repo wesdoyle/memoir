@@ -91,11 +91,11 @@ $ uv run memoir experts --match auth --prefix                          # a topic
 121 files (path tokens cluster); ranks as of 2026-08-22
   e.g. src/cluster.c, src/cluster.h, src/cluster_legacy.c, ...
   current — can answer today:
-    1. Binbin  69 files (57%)  mass 273  e.g. src/cluster_legacy.c
-    2. Viktor Söderqvist  25 files (21%)  mass 66  e.g. src/cluster.c
+    1. Binbin  top-3 on 69 files (57%)  e.g. src/cluster_legacy.c
+    2. Viktor Söderqvist  top-3 on 25 files (21%)  e.g. src/cluster.c
   built_it — built it (undecayed):
-    1. Binbin  67 files (55%)  mass 260  e.g. src/cluster_legacy.c
-    2. antirez  15 files (12%)  mass 242  e.g. src/cluster.c
+    1. Binbin  top-3 on 67 files (55%)  e.g. src/cluster_legacy.c
+    2. antirez  top-3 on 15 files (12%)  e.g. src/cluster.c
 ```
 
 Selectors (`--dir`, `--glob`, `--match`, `--files`) combine; a person's mass sums their score over the files where they are top-3, more for #1 than #3 and more for contested files. A topic word only means what the paths say — the sample shows what matched — and a selection under 3 files is flagged as a file question. `--json` for the structure.
@@ -103,10 +103,12 @@ Selectors (`--dir`, `--glob`, `--match`, `--files`) combine; a person's mass sum
 **Split identities**
 
 ```sh
-$ uv run memoir identities          # suggested .mailmap lines, tiered (same name / GitHub noreply / spellings); nothing is written
+$ uv run memoir identities          # suggested .mailmap lines, tiered (same name / GitHub noreply / spellings / handles); nothing is written
 ```
 
-Review, paste into `.mailmap`, rebuild the index. `person` already merges identities that share an email or a full name for its report and says so.
+Review, paste into `.mailmap`, rebuild the index (the `handle` tier — `filipi87` → `Filipi Fuchter` — is low confidence; check it first). `person` already merges identities that share an email or a full name for its report and says so.
+
+Every command takes `--json` for piping into `jq` and friends; ordering fields like `mass` live there, while the text views stick to counts, shares and examples.
 
 **For agents (MCP)**
 

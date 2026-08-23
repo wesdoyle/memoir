@@ -53,6 +53,7 @@ def test_tiny_selection_is_flagged(fixture_repo):
 def test_cli_text_json_and_stdin(fixture_repo):
     out = run("experts", "--dir", "src", "--repo", str(fixture_repo), "--now", "2026-08-21")
     assert "2 files" in out and "Alice Adams" in out and "Bob Smith" in out and "built_it" in out
+    assert "mass" not in out  # an opaque number; JSON keeps it as the sortable
     data = json.loads(run("experts", "--match", "core", "--repo", str(fixture_repo), "--now", "2026-08-21", "--json"))
     assert data["selection"]["files"] == 1 and _names(data["current"])[0] == "Alice Adams"
     out = run("experts", "--files", "-", "--repo", str(fixture_repo), "--now", "2026-08-21", input="src/helpers.py\n")

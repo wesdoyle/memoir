@@ -157,3 +157,16 @@ def test_json_carries_labeled_lists_and_flags(fixture_repo):
     assert data["flags"]["last_touch_breadth"] == 3
     assert data["flags"]["stability"]["top1_stable"] in (True, False)
     assert set(data["flags"]["stability"]["top1_by_half_life"]) == {"12", "18", "36", "inf"}
+
+
+def test_audit_json(fixture_repo):
+    data = json.loads(run("audit", "--repo", str(fixture_repo), "--top", "1", "--now", "2026-08-21", "--json"))
+    assert data["files"] == 5 and data["counted"] == 4
+    assert data["diverging"] == 2 and data["contested"]["diverging"] == 2
+    assert data["worst"][0]["path"] in ("src/core.py", "src/helpers.py")
+    assert {"path", "last_commit", "last_score", "top", "top_score"} <= set(data["worst"][0])
+
+
+def test_identities_json(fixture_repo):
+    data = json.loads(run("identities", "--repo", str(fixture_repo), "--json"))
+    assert set(data) == {"high", "noreply", "names", "handle"}
