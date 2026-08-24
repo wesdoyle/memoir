@@ -114,7 +114,7 @@ Use `--project`, not `--directory`: `--directory` changes the working directory 
 
 ## Related research
 
-The scoring shape descends from degree-of-authorship / degree-of-knowledge research: Fritz, Ou, Murphy & Murphy-Hill, "A Degree-of-Knowledge Model to Capture Source Code Familiarity," ICSE 2010. memoir's formula is a variant of that shape, not their calibration.
+memoir's scoring takes inspiration from degree-of-authorship / degree-of-knowledge research. See Fritz, Ou, Murphy & Murphy-Hill, "A Degree-of-Knowledge Model to Capture Source Code Familiarity," ICSE 2010.
 
 ## Worth exploring
 
