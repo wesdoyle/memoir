@@ -71,8 +71,6 @@ Viktor Söderqvist — keys: viktor.soderqvist@est.tech, viktor@zuiderkwast.se
     tests/support/  8/13 (62%) · 5/13 (38%)  mass 22.0  e.g. stacktrace.tcl, server.tcl, cluster_util.tcl
 ```
 
-A rollup, not a file list: the files where the person is in the top-3 (`current` = decayed, `built_it` = undecayed, always both), the directories ranked by expertise mass with a few representative files, and themes from path tokens (TF-IDF, no model). Vendored trees (`deps/`, `3rdparty/`, `vendor/` …) are excluded unless `--include-vendored`. `--json` for the full structure. Ranks come from the index's materialized per-file top-5 (computed at build/update time); `--now` outside the index's 30-day window recomputes live.
-
 **Who should be pulled in for a set of files?**
 
 ```sh
@@ -89,11 +87,7 @@ $ uv run memoir experts --match auth --prefix                          # a topic
     2. antirez  top-3 on 15 files (12%)  e.g. src/cluster.c
 ```
 
-Selectors (`--dir`, `--glob`, `--match`, `--files`) combine; a person's mass sums their score over the files where they are top-3, more for #1 than #3 and more for contested files. A topic word only means what the paths say — the sample shows what matched — and a selection under 3 files is flagged as a file question. `--json` for the structure.
-
-**For agents (MCP)**
-
-memoir serves five tools over stdio: `who_knows(path, n=3)` → compact ranked answer (`current`, `recent`, `built_it` when it differs, trust flags); `expertise_evidence(path, author)` → full evidence record and rank for one person; `blame_divergence(path, n=3)` → whether the last committer holds the knowledge, explained; `person_profile(query, n=5)` → what a person knows; `experts_for_files(paths | dir | glob | match, n=5)` → who has the most expertise across a set of files (e.g. the files of a change). Paths are relative to the repository root; the index is built or updated on demand (stderr notice on the first call).
+**MCP Setup**
 
 *Claude Code* — run inside the repository you want answers about (the server uses that repo; add `--repo PATH` to pin another):
 
@@ -116,14 +110,7 @@ Or commit it for the team as `.mcp.json` in the repository root:
     "args": ["run", "--project", "/path/to/memoir", "memoir", "mcp"] } } }
 ```
 
-*Claude Desktop* — `claude_desktop_config.json`, pinning the repo since Desktop has no working directory:
-
-```json
-{ "mcpServers": { "memoir": { "command": "uv",
-    "args": ["run", "--project", "/path/to/memoir", "memoir", "mcp", "--repo", "/path/to/your-repo"] } } }
-```
-
-Use `--project`, not `--directory`: `--directory` changes the working directory to memoir itself, and the server would then answer about the wrong repository (every tool result carries `repo` so a mismatch is visible). If `uv` is not on the PATH the host app uses, give its full path (e.g. `~/.local/bin/uv`). Only stdout is the MCP protocol; memoir's notices go to stderr.
+Use `--project`, not `--directory`: `--directory` changes the working directory to memoir itself. If `uv` is not on the PATH the host app uses, give its full path (e.g. `~/.local/bin/uv`).
 
 ## Related research
 
