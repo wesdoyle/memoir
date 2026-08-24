@@ -2,7 +2,7 @@
 
 memoir is a prototype codebase expert-identifier. It mines git history to find the people most likely to hold the mental model of a file. A basic CLI and MCP server provide results.
 
-Basic methods of attribution (the blame gutter, `git log`) often mask long-term authors and maintaners behind lint sweeps, renames, and bot commits. As agents do more engineering work in legacy codebases, and as teams of humans collaborate in realtime engineering environments, knowing which humans should be pulled into the room is useful routing infra. memoir is a first pass at that answer.
+Basic methods of attribution (the blame gutter, `git log`) often mask long-term authors and maintaners behind lint sweeps, renames, and bot commits. As agents do more engineering work in legacy codebases, and as teams of humans collaborate in realtime engineering environments, knowing which humans should be pulled into the room is useful routing infrastructure; this prototype provides tooling to explore that concept.
 
 ## Quickstart
 
